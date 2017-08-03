@@ -8,6 +8,7 @@ public class SpeedUp : MonoBehaviour {
     {
         if(collision.gameObject.tag == "Player")
         {
+            collision.gameObject.GetComponent<PlayerController>().ChangeSpeed(speed);
             Destroy(this.gameObject);
         }
     }
