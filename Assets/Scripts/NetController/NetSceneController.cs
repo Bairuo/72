@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class NetSceneController : MonoBehaviour {
     public Text IPInput; 
     public Text Information;
-    public Text PlayerNum;
     int port = 9990;
 
     public static NetSceneController instance;
@@ -27,7 +26,21 @@ public class NetSceneController : MonoBehaviour {
         if (Client.IsUse())
         {
             Client.instance.Update();
-            PlayerNum.text = "当前玩家人数：" + Client.instance.roomnum;
+
+            if (ServerNet.IsUse())
+            {
+                if (Client.instance.roomnum == 0) Information.text = "创建服务器失败";
+                else if (Client.instance.roomnum == 1) Information.text = "成功创建服务器, 等待玩家接入";
+                else if (Client.instance.roomnum == 2) Information.text = "已接入玩家：1";
+                else if (Client.instance.roomnum == 3) Information.text = "已接入玩家：2, 即将开始游戏";
+            }
+            else
+            {
+                if (Client.instance.roomnum == 0) Information.text = "连接服务器失败";
+                else if (Client.instance.roomnum == 1) Information.text = "房间人数错误！";
+                else if (Client.instance.roomnum == 2) Information.text = "成功连接, 当前玩家:2";
+                else if (Client.instance.roomnum == 3) Information.text = "成功连接, 当前玩家:3, 即将开始游戏";
+            }
         }
     }
 

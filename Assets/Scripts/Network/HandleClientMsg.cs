@@ -50,6 +50,17 @@ public class HandleClientMsg{
     }
 
     //（针对）战斗类协议
+    public void PlayerGenerate(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+        float x = proto.Getfloat(start, ref start);
+        float y = proto.Getfloat(start, ref start);
+
+        GenerateController.instance.CreatePlayer(x, y, id);
+    }
     public void ChangeSpeed(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
@@ -58,7 +69,7 @@ public class HandleClientMsg{
         string id = proto.GetString(start, ref start);
         float speed = proto.Getfloat(start, ref start);
 
-        //Client.instance.posmanager.EnterBlock(playerID, blockID);
+        Client.instance.posmanager.ChangeSpeed(id, speed);
     }
     public void ChangeHealth(ProtocolBase protoBase)
     {
@@ -68,7 +79,7 @@ public class HandleClientMsg{
         string id = proto.GetString(start, ref start);
         float health = proto.Getfloat(start, ref start);
 
-        //Client.instance.posmanager.LeaveBlock(blockID);
+        Client.instance.posmanager.ChangeHealth(id, health);
     }
     public void ChangeStatus(ProtocolBase protoBase)
     {
@@ -78,7 +89,7 @@ public class HandleClientMsg{
         string id = proto.GetString(start, ref start);
         int status = proto.GetInt(start, ref start);
 
-        //PlayerController.PlayerInit(net_id);
+        Client.instance.posmanager.ChangeStatus(id, status);
     }
 
     public void PlayerTurn(ProtocolBase protoBase)

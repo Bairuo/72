@@ -3,7 +3,7 @@ using System.Reflection;
 
 public class HandleServerMsg{
 
-    //连接类协议
+    // 连接类协议
     public void DisConnect(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.ClosePlayer(conn);
@@ -25,7 +25,7 @@ public class HandleServerMsg{
             {
                 ServerNet.instance.SendID(conn); //此函数目前加入一个空房间也相当于创建房间
                 ServerNet.instance.SendRoomNum(conn);
-                ServerNet.instance.HandleP2P(conn);
+                //ServerNet.instance.HandleP2P(conn);
             }
         }
         catch
@@ -34,7 +34,7 @@ public class HandleServerMsg{
         }
     }
 
-    //（针对）战斗类协议
+    // （针对）战斗类协议
 
     public void Hit(Conn conn, ProtocolBase protoBase)
     {
@@ -53,7 +53,11 @@ public class HandleServerMsg{
         ServerNet.instance.rooms[conn.roomid].UDPBroadcastOthers(protoBase, conn.id);
     }
 
-    //(通用）战斗类协议
+    // (通用）战斗类协议
+    public void PlayerGenerate(Conn conn, ProtocolBase protoBase)
+    {
+        ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
+    }
     public void ChangeSpeed(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
@@ -68,11 +72,11 @@ public class HandleServerMsg{
     }
 
     // Partner
-    public void AddPlayer(Conn conn, ProtocolBase protoBase) //战斗场景初始化玩家
+    public void AddPlayer(Conn conn, ProtocolBase protoBase)    // 战斗场景初始化玩家
     {
         ServerNet.instance.rooms[conn.roomid].Broadcast(protoBase);
     }
-    public void AddEnemy(Conn conn, ProtocolBase protoBase) //战斗场景初始化敌人
+    public void AddEnemy(Conn conn, ProtocolBase protoBase)     // 战斗场景初始化敌人
     {
         ServerNet.instance.rooms[conn.roomid].Broadcast(protoBase);
     }
@@ -86,7 +90,7 @@ public class HandleServerMsg{
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
 
-    //流程类协议
+    // 流程类协议
 
     public void NextLevel(Conn conn, ProtocolBase protoBase)
     {

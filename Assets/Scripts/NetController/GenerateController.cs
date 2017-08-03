@@ -3,19 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GenerateController : MonoBehaviour {
+    public static GenerateController instance;
+
+    public GenerateController()
+    {
+        instance = this;
+    }
 
 	// Use this for initialization
 	void Start () {
-        CreatePlayer(0, 0, Client.instance.playerid);
-        //CreatePlayer(0, 0, "0");
+        float p = float.Parse(Client.instance.playerid);
+        Client.instance.posmanager.Init(Client.instance.playerid);
+
+        Client.instance.SendPlayerGenerate(p, p, Client.instance.playerid);
+        CreatePlayer(p, p, Client.instance.playerid);
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (Client.IsUse())
-        {
-            Client.instance.Update();
-        }	
+        Client.instance.Update();
 	}
 
     public void CreatePlayer(float x, float y, string PlayerID)
@@ -29,6 +36,7 @@ public class GenerateController : MonoBehaviour {
         {
             GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
             camera.transform.SetParent(Player.transform);
+            camera.GetComponent<CameraController>().Init(Player);
         }
 
         Client.instance.posmanager.PlayerRegister(Player);

@@ -69,10 +69,10 @@ public class PosManager
                 int DataID = playersinfo[playerID].GetDataID();
                 ProtocolBytes unitproto = playersinfo[playerID].GetUnitData(DataID, "UpdateUnitInfo", playerID, players[playerID].transform.position);
                 ProtocolBytes UDPunitproto = playersinfo[playerID].GetUDPUnitData(DataID, "U", playerID, players[playerID].transform.position);
-
-                Client.instance.UDPSend(UDPunitproto);
+                
+                //Client.instance.UDPSend(UDPunitproto);
                 //Client.instance.UDPP2PBroadcast(UDPunitproto);
-                //Client.instance.Send(unitproto);
+                Client.instance.Send(unitproto);
             }
 
         }
@@ -184,7 +184,7 @@ public class PosManager
             Vector3 pos = player.transform.position;
 
             
-            //if (player.GetComponent<PlayerController>().netID == playerID) continue;
+            if (player.GetComponent<PlayerController>().PlayerID == playerID) continue;
             //Debug.Log(id + " " + fpos);
             lock(player)player.transform.position = Vector3.Lerp(pos, fpos, playersinfo[id].delta);
         }
