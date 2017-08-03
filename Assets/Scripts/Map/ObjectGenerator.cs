@@ -33,7 +33,7 @@ public class ObjectGenerator : MonoBehaviour
 		return true;
 	}
 	
-	Vector2 genLoc;
+	public Vector2 genLoc;
 	
 	void Update()
 	{
@@ -106,4 +106,5 @@ public class ObjectGenerator : MonoBehaviour
 		var a = Instantiate(sources[id]);
 		a.transform.position = loc;
 	}
+	
 }
