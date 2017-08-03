@@ -305,7 +305,16 @@ public class Client
             }
         }
     }*/
-
+    public void SendPlayerGenerate(float x, float y, string PlayerID)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("PlayerGenerate");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(x);
+        protocol.AddFloat(y);
+ 
+        Send(protocol);
+    }
     public void SendChangeSpeed(string PlayerID, float speed)
     {
         ProtocolBytes protocol = new ProtocolBytes();
@@ -488,7 +497,6 @@ public class Client
     //DispatchMsgEvent
     public void Update()
     {
-        
         if (posmanager.isInit)
         {
             posmanager.Update();
