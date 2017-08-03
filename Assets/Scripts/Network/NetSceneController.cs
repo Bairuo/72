@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,16 @@ public class NetSceneController : MonoBehaviour {
 
     }
 
+    public void ClickGame()
+    {
+        //EnterGame();
+    }
+
+    public void EnterGame()
+    {
+        Application.LoadLevel("BairuoTest");
+    }
+
     public void StartServer()
     {
         if (ServerNet.IsUse() || Client.IsUse())
@@ -24,7 +35,7 @@ public class NetSceneController : MonoBehaviour {
         ServerNet server = new ServerNet();
         server.Start(Network.player.ipAddress, port);
 
-        Information.text = Network.player.ipAddress.ToString();
+        Information.text = "服务器IP： " + Network.player.ipAddress;
     }
 
     public void StartConnect()
@@ -36,9 +47,13 @@ public class NetSceneController : MonoBehaviour {
 
         Client client = new Client();
 
-        if (client.Connect(IPInput.text, port) == false)
+        if (client.Connect(IPInput.text, port))
         {
-            
+            Information.text = "成功连接服务器";
+        }
+        else
+        {
+            Information.text = "加入服务器失败";
         }
 
     }
