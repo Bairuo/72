@@ -44,41 +44,72 @@ public class PlayerController : MonoBehaviour {
         }
 	}
 
-
+    // 关键操作
     public void Turn()
     {
         //transform.rota
     }
+    public void Dealth()
+    {
+        if (PlayerID != Client.instance.playerid) return;
+        transform.DetachChildren();
 
+        this.gameObject.SetActive(false);
+    }
+
+    public void PlayerDestroy()
+    {
+        Client.instance.posmanager.PlayerLogoff(PlayerID);
+        Destroy(this.gameObject);
+    }
+
+
+    // 属性更改
+    public void ChangeBrake(float brake)
+    {
+        if (PlayerID != Client.instance.playerid) return;
+        Client.instance.SendChangeBrake(PlayerID, brake);
+        RealChangeBrake(brake);
+    }
     public void ChangeSpeed(float speed)
     {
+        if (PlayerID != Client.instance.playerid) return;
         Client.instance.SendChangeSpeed(PlayerID, speed);
         RealChangeSpeed(speed);
     }
-
-    public void ChangeHealth(float health)
+    public void ChangeHealth(float health)      // 生命（参数）小于零时会触发死亡
     {
-        Client.instance.SendChangeHealth(PlayerID, health);
-        RealChangeHealth(health);
+        if (PlayerID != Client.instance.playerid) return;
+        if (health > 0)
+        {
+            Client.instance.SendChangeHealth(PlayerID, health);
+            RealChangeHealth(health);
+        }
+        else
+        {
+            Dealth();
+        }
+        
     }
-
     public void ChangeStatus(int status)
     {
+        if (PlayerID != Client.instance.playerid) return;
         Client.instance.SendChangeStatus(PlayerID, status);
         RealChangeStatus(status);
     }
 
-
+    public void RealChangeBrake(float brake)
+    {
+        this.brake = brake;
+    }
     public void RealChangeSpeed(float speed)
     {
         this.speed = speed;
     }
-
     public void RealChangeHealth(float health)
     {
         this.health = health;
     }
-
     public void RealChangeStatus(int status)
     {
         this.status = status;

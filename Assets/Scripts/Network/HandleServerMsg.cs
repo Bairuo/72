@@ -54,6 +54,10 @@ public class HandleServerMsg{
     }
 
     // (通用）战斗类协议
+    public void ChangeBrake(Conn conn, ProtocolBase protoBase)
+    {
+        ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
+    }
     public void PlayerGenerate(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);

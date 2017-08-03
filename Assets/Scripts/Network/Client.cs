@@ -315,6 +315,15 @@ public class Client
  
         Send(protocol);
     }
+    public void SendChangeBrake(string PlayerID, float brake)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeBrake");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(brake);
+
+        Send(protocol);
+    }
     public void SendChangeSpeed(string PlayerID, float speed)
     {
         ProtocolBytes protocol = new ProtocolBytes();
