@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
     public int status = 0;
-    int health;
-    float speed;
+    public float health;
+    public float speed;
 
 	// Use this for initialization
 	void Start () {
