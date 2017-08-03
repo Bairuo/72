@@ -11,7 +11,7 @@ public class HandleClientMsg{
         Client.instance.roomnum = num;
         if (num == 2 || ServerNet.IsUse())
         {
-            //SceneManager.instance.StartScene();
+            NetSceneController.instance.EnterGame();
         }
     }
     public void Success(ProtocolBase protoBase)
