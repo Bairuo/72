@@ -9,9 +9,12 @@ public class HandleClientMsg{
         string protoName = proto.GetString(start, ref start);
         int num = proto.GetInt(start, ref start);
         Client.instance.roomnum = num;
-        if (num == 2 || ServerNet.IsUse())
+
+        //if (ServerNet.IsUse() && num == 1) NetSceneController.instance.EnterGame();
+
+        if (num == 2)
         {
-            //SceneManager.instance.StartScene();
+            NetSceneController.instance.EnterGame();
         }
     }
     public void Success(ProtocolBase protoBase)
@@ -47,55 +50,35 @@ public class HandleClientMsg{
     }
 
     //（针对）战斗类协议
-    public void EnterBlock(ProtocolBase protoBase)
+    public void ChangeSpeed(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
         string name = proto.GetString(start, ref start);
-        string playerID = proto.GetString(start, ref start);
-        string blockID = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+        float speed = proto.Getfloat(start, ref start);
 
         //Client.instance.posmanager.EnterBlock(playerID, blockID);
     }
-    public void LeaveBlock(ProtocolBase protoBase)
+    public void ChangeHealth(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
         string name = proto.GetString(start, ref start);
-        string blockID = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+        float health = proto.Getfloat(start, ref start);
 
         //Client.instance.posmanager.LeaveBlock(blockID);
     }
-    public void PlayerInit(ProtocolBase protoBase)
+    public void ChangeStatus(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
         string name = proto.GetString(start, ref start);
-        string net_id = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+        int status = proto.GetInt(start, ref start);
 
         //PlayerController.PlayerInit(net_id);
-    }
-    public void AreaInit(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string tag = proto.GetString(start, ref start);
-        int patternID = proto.GetInt(start, ref start);
-
-        //TargetArea.NetAreaInit(tag, patternID);
-    }
-    public void BlockGenerate(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string net_id = proto.GetString(start, ref start);
-        float x = proto.Getfloat(start, ref start);
-        float y = proto.Getfloat(start, ref start);
-        int ID = proto.GetInt(start, ref start);
-
-        //BlockGenerator.instance.Generate(net_id, x, y, ID);
     }
 
     public void PlayerTurn(ProtocolBase protoBase)
@@ -105,10 +88,6 @@ public class HandleClientMsg{
     public void Shoot(ProtocolBase protoBase)
     {
         //Client.instance.posmanager.Shoot(protoBase);
-    }
-    public void Hit(ProtocolBase protoBase)
-    {
-        Client.instance.posmanager.Hit(protoBase);
     }
 
     //(通用）战斗类协议

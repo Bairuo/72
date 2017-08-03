@@ -305,6 +305,36 @@ public class Client
             }
         }
     }*/
+
+    public void SendChangeSpeed(string PlayerID, float speed)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeSpeed");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(speed);
+
+        Send(protocol);
+    }
+    public void SendChangeHealth(string PlayerID, float health)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeHealth");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(health);
+
+        Send(protocol);
+    }
+    public void SendChangeStatus(string PlayerID, int status)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeStatus");
+        protocol.AddString(PlayerID);
+        protocol.AddInt(status);
+
+        Send(protocol);
+    }
+    
+    // NI
     public void SendEnterBlock(string playerID, string blockID)
     {
         ProtocolBytes protocol = new ProtocolBytes();
@@ -351,7 +381,7 @@ public class Client
         Send(protocol);
     }
 
-
+    // Partner Adventure
     public void SendHit(string id, int isPlayer, int damage)
     {
         ProtocolBytes protocol = new ProtocolBytes();

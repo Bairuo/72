@@ -7,12 +7,28 @@ using UnityEngine.UI;
 public class NetSceneController : MonoBehaviour {
     public Text IPInput; 
     public Text Information;
+    public Text PlayerNum;
     int port = 9990;
 
+    public static NetSceneController instance;
+
+    public NetSceneController()
+    {
+        instance = this;
+    }
 
     void Start()
     {
 
+    }
+
+    void Update()
+    {
+        if (Client.IsUse())
+        {
+            Client.instance.Update();
+            PlayerNum.text = "当前玩家人数：" + Client.instance.roomnum;
+        }
     }
 
     public void ClickGame()
@@ -33,7 +49,10 @@ public class NetSceneController : MonoBehaviour {
         }
 
         ServerNet server = new ServerNet();
-        server.Start(Network.player.ipAddress, port);
+        Client client = new Client();
+
+        ServerNet.instance.Start(Network.player.ipAddress, port);
+        Client.instance.Connect(Network.player.ipAddress, port);
 
         Information.text = "服务器IP： " + Network.player.ipAddress;
     }

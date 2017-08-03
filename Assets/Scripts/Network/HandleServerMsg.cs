@@ -54,25 +54,20 @@ public class HandleServerMsg{
     }
 
     //(通用）战斗类协议
-    public void EnterBlock(Conn conn, ProtocolBase protoBase)
+    public void ChangeSpeed(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
-    public void PlayerInit(Conn conn, ProtocolBase protoBase)
-    {
-        ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
-        //ServerNet.instance.rooms[conn.roomid].Broadcast(protoBase);
-    }
-    public void AreaInit(Conn conn, ProtocolBase protoBase)
+    public void ChangeHealth(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
-    public void BlockGenerate(Conn conn, ProtocolBase protoBase)
+    public void ChangeStatus(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
 
-
+    // Partner
     public void AddPlayer(Conn conn, ProtocolBase protoBase) //战斗场景初始化玩家
     {
         ServerNet.instance.rooms[conn.roomid].Broadcast(protoBase);
