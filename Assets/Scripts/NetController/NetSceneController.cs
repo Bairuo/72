@@ -85,6 +85,8 @@ public class NetSceneController : MonoBehaviour {
 
         Client client = new Client();
 
+        client.Connect(IPInput.text, port);
+
         /*
         if (client.Connect(IPInput.text, port))
         {
