@@ -180,6 +180,21 @@ public class PosManager
             lock (players[net_id]) players[net_id].GetComponent<PlayerController>().PlayerDestroy();
         }
     }
+
+    public void ChangeMassLevel(string net_id, int masslevel)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeMassLevel(masslevel);
+        }
+    }
+    public void ChangeSpeedLevel(string net_id, int speedlevel)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeSpeedLevel(speedlevel);
+        }
+    }
     public void ChangeBrake(string net_id, float brake)
     {
         if (players.ContainsKey(net_id))

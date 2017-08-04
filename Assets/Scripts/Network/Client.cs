@@ -339,6 +339,26 @@ public class Client
  
         Send(protocol);
     }
+
+
+    public void SendChangeMassLevel(string PlayerID, int masslevel)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeMassLevel");
+        protocol.AddString(PlayerID);
+        protocol.AddInt(masslevel);
+
+        Send(protocol);
+    }
+    public void SendChangeSpeedLevel(string PlayerID, int speedlevel)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeSpeedLevel");
+        protocol.AddString(PlayerID);
+        protocol.AddInt(speedlevel);
+
+        Send(protocol);
+    }
     public void SendChangeBrake(string PlayerID, float brake)
     {
         ProtocolBytes protocol = new ProtocolBytes();
