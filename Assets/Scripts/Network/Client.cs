@@ -223,7 +223,7 @@ public class Client
         byte[] bytes = protocol.Encode();
         byte[] length = BitConverter.GetBytes(bytes.Length);
         byte[] sendbuff = length.Concat(bytes).ToArray();
-        IPEndPoint ip = new IPEndPoint(IPAddress.Parse(Host), 9970);
+        IPEndPoint ip = new IPEndPoint(IPAddress.Parse(Host), 9990);
         UDPsocket.SendTo(sendbuff, ip);
     }
     public void UDPSend(ProtocolBase protocol, IPEndPoint remote)
@@ -305,6 +305,17 @@ public class Client
             }
         }
     }*/
+    public void SendPropGenerate(string tag, int id, Vector2 loc)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("PropGenerate");
+        protocol.AddString(tag);
+        protocol.AddInt(id);
+        protocol.AddFloat(loc.x);
+        protocol.AddFloat(loc.y);
+
+        Send(protocol);
+    }
     public void SendSafyAreaInfo(float radius)
     {
         ProtocolBytes protocol = new ProtocolBytes();

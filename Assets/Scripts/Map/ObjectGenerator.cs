@@ -116,8 +116,13 @@ public class ObjectGenerator : MonoBehaviour
 				}
 				if(!generated[i] && t >= timeline[i])
 				{
-					Generate(genid[i], genloc[i]);
-					generated[i] = true;
+                    if (Client.instance.playerid == "0")
+                    {
+                        Client.instance.SendPropGenerate(this.tag, genid[i], genloc[i]);
+                        Generate(genid[i], genloc[i]);
+                        generated[i] = true;
+                    }
+
 				}
 			}
 			if(t > lifeTime)

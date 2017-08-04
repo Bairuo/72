@@ -98,7 +98,10 @@ public class NetSceneController : MonoBehaviour {
 
     public void DisConnect()
     {
-
+        if (ServerNet.IsUse())
+            ServerNet.instance.Close();
+        if (Client.IsUse())
+            Client.instance.Close();
     }
 
     public void OnStartClick()
@@ -113,6 +116,7 @@ public class NetSceneController : MonoBehaviour {
         pStart.SetActive(true);
         pConnect.SetActive(false);
         pStartServer.SetActive(false);
+        DisConnect();
     }
 
     public void OnStartServerClick()
