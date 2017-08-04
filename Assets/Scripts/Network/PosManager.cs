@@ -95,11 +95,11 @@ public class PosManager
             if (item.Value.active == true)
             {
                 int DataID = playersinfo[item.Key].GetDataID();
-                ProtocolBytes unitproto = playersinfo[item.Key].GetUnitData(DataID, "UpdateUnitInfo", item.Key, item.Value.transform.position);
+                //ProtocolBytes unitproto = playersinfo[item.Key].GetUnitData(DataID, "UpdateUnitInfo", item.Key, item.Value.transform.position);
                 ProtocolBytes UDPunitproto = playersinfo[item.Key].GetUDPUnitData(DataID, "U", item.Key, item.Value.transform.position);
 
-                unitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.x);
-                unitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.y);
+                //unitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.x);
+                //unitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.y);
                 UDPunitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.x);
                 UDPunitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.y);
 
@@ -172,9 +172,20 @@ public class PosManager
         }
     }
 
+    Dictionary<string, ObjectGenerator> Generators = new Dictionary<string, ObjectGenerator>();
     public void PropGenerate(string tag, int id, Vector2 loc)
     {
-        ObjectGenerator Generator = GameObject.FindGameObjectWithTag(tag).GetComponent<ObjectGenerator>();
+        ObjectGenerator Generator;
+        if (Generators.ContainsKey(tag))
+        {
+            Generator = Generators[tag];
+        }
+        else
+        {
+            Generator = GameObject.FindGameObjectWithTag(tag).GetComponent<ObjectGenerator>();
+            Generators.Add(tag, Generator);
+        }
+
         if (Generator != null)
         {
             Generator.Generate(id, loc);
