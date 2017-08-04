@@ -27,8 +27,6 @@ public class ItemTagger : MonoBehaviour
 			(Mathf.FloorToInt((lifetime - t) / flashdelay) % 2 == 0 ? 1.0f : 0.0f) +
 			((lifetime - t) % flashdelay / flashdelay) * (Mathf.FloorToInt((lifetime - t) / flashdelay) % 2 == 0 ? -1.0f : 1.0f));
 		
-		//Debug.Log((Mathf.FloorToInt((lifetime - t) / flashdelay) % 2 == 0 ? 0.0f : 1.0f) + " " + ((lifetime - t) % flashdelay / flashdelay * (Mathf.FloorToInt((lifetime - t) / flashdelay) % 2 == 0 ? 1.0f : -1.0f)));
-		
 		if(t <= 0f)
 		{
 			Cancel();

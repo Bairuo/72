@@ -21,8 +21,6 @@ public class SaftyArea : MonoBehaviour
 		radius = maxRadius;
 		rd = this.gameObject.GetComponent<SpriteRenderer>();
 		rmt = rd.material;
-		//rmt.SetFloat("_InnerRadius", radius - circleWidth);
-		//rmt.SetFloat("_OutterRadius", radius);
 	}
 	
 	void Update()
