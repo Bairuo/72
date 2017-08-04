@@ -47,6 +47,7 @@ public class PosManager
     {
         Client.instance.DelListener("UpdateUnitInfo", UpdateUnitInfo);
         Client.instance.DelListener("U", UpdateUnitInfo);
+        Client.instance.DelListener("SafyAreaInfo", SafyAreaInfo);
 
         players.Clear();
 
@@ -63,6 +64,8 @@ public class PosManager
         playerID = id;
         Client.instance.AddListener("UpdateUnitInfo", UpdateUnitInfo);
         Client.instance.AddListener("U", UpdateUnitInfo);
+        Client.instance.AddListener("SafyAreaInfo", SafyAreaInfo);
+
     }
 
     public void SendPos()
@@ -99,6 +102,21 @@ public class PosManager
 
             }*/
         }
+
+        Client.instance.SendSafyAreaInfo(SaftyArea.instance.radius);
+        
+    }
+
+
+
+    public void SafyAreaInfo(ProtocolBase protocol)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protocol;
+        int start = 0;
+        string protoName = proto.GetString(start, ref start);
+        float radius = proto.Getfloat(start, ref start);
+
+        SaftyArea.instance.radius = radius;
     }
 
     public void UpdateUnitInfo(ProtocolBase protocol)

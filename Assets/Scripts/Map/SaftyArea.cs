@@ -11,12 +11,19 @@ public class SaftyArea : MonoBehaviour
 	public float damagePerSec;
 	// public float minRadius;
 	float initRadius;
-	
+
 	SpriteRenderer rd;
 	Material rmt;
 		
 	public int InvBit = 0x1;
-	
+
+    public static SaftyArea instance;
+
+    public SaftyArea()
+    {
+        instance = this;
+    }
+
 	void Start()
 	{
 		radius = maxRadius;
@@ -26,7 +33,8 @@ public class SaftyArea : MonoBehaviour
 	
 	void Update()
 	{
-		radius -= decreasePerSec * Time.deltaTime;
+
+        if (Client.instance.playerid == "0") radius -= decreasePerSec * Time.deltaTime;
 		// drawing precess...
 		rmt.SetFloat("_InnerRadius", radius - circleWidth);
 		rmt.SetFloat("_OuterRadius", radius);

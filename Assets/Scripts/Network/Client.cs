@@ -305,6 +305,14 @@ public class Client
             }
         }
     }*/
+    public void SendSafyAreaInfo(float radius)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("SafyAreaInfo");
+        protocol.AddFloat(radius);
+
+        Send(protocol);
+    }
     public void SendPlayerDestroy(string PlayerID)
     {
         ProtocolBytes protocol = new ProtocolBytes();
