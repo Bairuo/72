@@ -74,6 +74,27 @@ public class HandleClientMsg{
 
         GenerateController.instance.CreatePlayer(x, y, id);
     }
+
+    public void ChangeMassLevel(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+        int masslevel = proto.GetInt(start, ref start);
+
+        Client.instance.posmanager.ChangeMassLevel(id, masslevel);
+    }
+    public void ChangeSpeedLevel(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+        int speedlevel = proto.GetInt(start, ref start);
+
+        Client.instance.posmanager.ChangeSpeed(id, speedlevel);
+    }
     public void ChangeBrake(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;

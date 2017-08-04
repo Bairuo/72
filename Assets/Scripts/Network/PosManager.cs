@@ -165,6 +165,7 @@ public class PosManager
             {
                 playersinfo[id].Update(pos);
                 playersinfo[id].LastReceiveID = DataID;
+                //players[id].GetComponent<Rigidbody2D>().velocity = velocity;
                 players[id].GetComponent<PlayerController>().fict_velocity = velocity;
                 //Debug.Log(playersinfo[id].fpos);
             }
@@ -177,6 +178,21 @@ public class PosManager
         if (players.ContainsKey(net_id))
         {
             lock (players[net_id]) players[net_id].GetComponent<PlayerController>().PlayerDestroy();
+        }
+    }
+
+    public void ChangeMassLevel(string net_id, int masslevel)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeMassLevel(masslevel);
+        }
+    }
+    public void ChangeSpeedLevel(string net_id, int speedlevel)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeSpeedLevel(speedlevel);
         }
     }
     public void ChangeBrake(string net_id, float brake)
@@ -217,9 +233,7 @@ public class PosManager
             lastSendTime = Time.time;
         }
 
-        //Debug.Log("??");
-        //Debug.Log(players.Count);
-
+        
         foreach (var item in players)
         {
             //Debug.Log(item.Key);
