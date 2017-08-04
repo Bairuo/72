@@ -62,7 +62,11 @@ public class PlayerController : MonoBehaviour {
             Cir.transform.Rotate(rotate_axis, 30 * Time.deltaTime);
         }
 
-        if (PlayerID != Client.instance.playerid) return;
+        if (PlayerID != Client.instance.playerid)
+        {
+            GetComponent<Rigidbody2D>().velocity = velocity_zero;
+            return;
+        }
 
         // 移动
         if (Input.GetMouseButtonDown(0))
