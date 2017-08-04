@@ -18,8 +18,15 @@ public class Invulnerablity : MonoBehaviour {
         obj = collision.gameObject;
         if (obj.tag == "Player")
         {
-            childObj.SetActive(true);
-            childObj.GetComponent<InvController>().InvStart(obj, time);
+            if(!obj.transform.Find("Inv"))
+            {
+                childObj.SetActive(true);
+                childObj.GetComponent<InvController>().InvStart(obj, time);
+            }
+            else
+            {
+                obj.transform.Find("Inv").gameObject.GetComponent<InvController>().SetTimer(time);
+            }
             Destroy(this.gameObject);
         }
     }
