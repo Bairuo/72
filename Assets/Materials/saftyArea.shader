@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-Shader "safty-area"
+﻿Shader "safty-area"
 {
 	Properties
 	{
@@ -10,11 +8,12 @@ Shader "safty-area"
 	}
 	SubShader
 	{
-		// No culling or depth
+		Tags{ "RenderType" = "Opaque" "Queue" = "Transparent" "IgnoreProjector" = "True" }
+		
 		Cull Off ZWrite Off ZTest Always
 		
 		Blend SrcAlpha OneMinusSrcAlpha
-
+		
 		Pass
 		{
 			CGPROGRAM
@@ -44,10 +43,7 @@ Shader "safty-area"
 				float4 worldCoord = mul(unity_ObjectToWorld, v.vertex);
 				o.worldCoord = float2(worldCoord.x, worldCoord.y);
 				
-				//float4 worldCoord = UnityObjectToViewPos(v.vertex);
-				
 				o.color = v.color;
-				//o.color = float4(o.worldCoord, 1.0f, 1.0f);
 				return o;
 			}
 			
@@ -60,7 +56,7 @@ Shader "safty-area"
 				float2 coord = i.worldCoord;
 				float dist = sqrt(coord.x * coord.x + coord.y * coord.y);
 				float rate = (clamp(dist, _InnerRadius, _OuterRadius) - _InnerRadius) / (_OuterRadius - _InnerRadius);
-				float4 color = float4(1.0f, 0.0f, 0.0f, rate);
+				float4 color = float4(1.0f, 1.0f, 1.0f, rate) * i.color;
 				return color;
 			}
 			ENDCG
