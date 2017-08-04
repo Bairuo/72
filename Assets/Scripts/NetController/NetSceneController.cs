@@ -6,7 +6,11 @@ using UnityEngine.UI;
 
 public class NetSceneController : MonoBehaviour {
     public Text IPInput; 
-    public Text Information;
+    public Text cInformation;
+    public Text sInformation;
+    public GameObject pStart;
+    public GameObject pConnect;
+    public GameObject pStartServer;
     int port = 9990;
 
     public static NetSceneController instance;
@@ -18,7 +22,9 @@ public class NetSceneController : MonoBehaviour {
 
     void Start()
     {
-
+        pStart.SetActive(true);
+        pConnect.SetActive(false);
+        pStartServer.SetActive(false);
     }
 
     void Update()
@@ -29,17 +35,17 @@ public class NetSceneController : MonoBehaviour {
 
             if (ServerNet.IsUse())
             {
-                if (Client.instance.roomnum == 0) Information.text = "创建服务器失败";
-                else if (Client.instance.roomnum == 1) Information.text = "服务器IP:" + Network.player.ipAddress + ", 等待玩家接入";
-                else if (Client.instance.roomnum == 2) Information.text = "服务器IP:" + Network.player.ipAddress + ", 已接入玩家：1";
-                else if (Client.instance.roomnum == 3) Information.text = "服务器IP:" + Network.player.ipAddress + ", 已接入玩家：2, 即将开始游戏";
+                if (Client.instance.roomnum == 0) sInformation.text = "创建服务器失败";
+                else if (Client.instance.roomnum == 1) sInformation.text = "服务器IP:" + Network.player.ipAddress + ", 等待玩家接入";
+                else if (Client.instance.roomnum == 2) sInformation.text = "服务器IP:" + Network.player.ipAddress + ", 已接入玩家：1";
+                else if (Client.instance.roomnum == 3) sInformation.text = "服务器IP:" + Network.player.ipAddress + ", 已接入玩家：2, 即将开始游戏";
             }
             else
             {
-                if (Client.instance.roomnum == 0) Information.text = "连接服务器失败";
-                else if (Client.instance.roomnum == 1) Information.text = "房间人数错误！";
-                else if (Client.instance.roomnum == 2) Information.text = "成功连接, 当前玩家:2";
-                else if (Client.instance.roomnum == 3) Information.text = "成功连接, 当前玩家:3, 即将开始游戏";
+                if (Client.instance.roomnum == 0) cInformation.text = "连接服务器失败";
+                else if (Client.instance.roomnum == 1) cInformation.text = "房间人数错误！";
+                else if (Client.instance.roomnum == 2) cInformation.text = "成功连接, 当前玩家:2";
+                else if (Client.instance.roomnum == 3) cInformation.text = "成功连接, 当前玩家:3, 即将开始游戏";
             }
         }
     }
@@ -67,7 +73,7 @@ public class NetSceneController : MonoBehaviour {
         ServerNet.instance.Start(Network.player.ipAddress, port);
         Client.instance.Connect(Network.player.ipAddress, port);
 
-        Information.text = "服务器IP： " + Network.player.ipAddress;
+        sInformation.text = "服务器IP： " + Network.player.ipAddress;
     }
 
     public void StartConnect()
@@ -81,11 +87,11 @@ public class NetSceneController : MonoBehaviour {
 
         if (client.Connect(IPInput.text, port))
         {
-            Information.text = "成功连接服务器";
+            cInformation.text = "成功连接服务器";
         }
         else
         {
-            Information.text = "加入服务器失败";
+            cInformation.text = "加入服务器失败";
         }
 
     }
@@ -94,4 +100,26 @@ public class NetSceneController : MonoBehaviour {
     {
 
     }
+
+    public void OnStartClick()
+    {
+        pStart.SetActive(false);
+        pConnect.SetActive(true);
+        pStartServer.SetActive(false);
+    }
+
+    public void OnReturnClick()
+    {
+        pStart.SetActive(true);
+        pConnect.SetActive(false);
+        pStartServer.SetActive(false);
+    }
+
+    public void OnStartServerClick()
+    {
+        pStart.SetActive(false);
+        pConnect.SetActive(false);
+        pStartServer.SetActive(true);
+    }
+
 }
