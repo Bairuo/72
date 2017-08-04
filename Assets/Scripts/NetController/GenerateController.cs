@@ -15,7 +15,7 @@ public class GenerateController : MonoBehaviour {
         float p = float.Parse(Client.instance.playerid) * 4;
         Client.instance.posmanager.Init(Client.instance.playerid);
 
-        Client.instance.SendPlayerGenerate(p, p, Client.instance.playerid);
+        Client.instance.SendPlayerGenerate(Client.instance.playerid, p, p);
         CreatePlayer(p, p, Client.instance.playerid);
 
 	}
@@ -33,10 +33,13 @@ public class GenerateController : MonoBehaviour {
         Player.GetComponent<PlayerController>().PlayerID = PlayerID;
         Player.GetComponent<PlayerController>().SetCir();
 
+
         if (PlayerID == Client.instance.playerid)
         {
             GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
             camera.transform.SetParent(Player.transform);
+            float z = camera.transform.position.z;
+            camera.transform.localPosition = new Vector3(0, 0, z);
         }
 
         Client.instance.posmanager.PlayerRegister(Player);

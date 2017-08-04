@@ -70,6 +70,9 @@ public class PosManager
 
     public void SendPos()
     {
+        if (playerID != "0") return;
+
+        /*
         if (players.ContainsKey(playerID)) {
             if (players[playerID].active == true)
             {
@@ -85,32 +88,25 @@ public class PosManager
                 Client.instance.Send(unitproto);
             }
 
-        }
+        }*/
 
-        foreach (var item in blocks)
+        foreach (var item in players)
         {
-            /*
-            if (item.Value.GetComponentInChildren<TransformController>() != null)
+            if (item.Value.active == true)
             {
-                string netID = item.Value.GetComponentInChildren<TransformController>().controllerID;
-                if (netID != playerID) continue;
+                int DataID = playersinfo[item.Key].GetDataID();
+                ProtocolBytes unitproto = playersinfo[item.Key].GetUnitData(DataID, "UpdateUnitInfo", item.Key, item.Value.transform.position);
 
-                Block block = item.Value.GetComponent<Block>();
+                unitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.x);
+                unitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.y);
 
-                int DataID = blocksinfo[item.Key].GetDataID();
-                ProtocolBytes unitproto = blocksinfo[item.Key].GetUnitData(DataID, "UpdateUnitInfo", block.net_id, item.Value.transform.position);
-                ProtocolBytes UDPunitproto = blocksinfo[item.Key].GetUDPUnitData(DataID, "U", block.net_id, item.Value.transform.position);
-
-                Client.instance.UDPSend(UDPunitproto);
-
-            }*/
+                Client.instance.Send(unitproto);
+            }
         }
 
-        if (playerID == "0") Client.instance.SendSafyAreaInfo(SaftyArea.instance.radius);
+        Client.instance.SendSafyAreaInfo(SaftyArea.instance.radius);
         
     }
-
-
 
     public void SafyAreaInfo(ProtocolBase protocol)
     {
@@ -123,8 +119,7 @@ public class PosManager
     }
 
     public void UpdateUnitInfo(ProtocolBase protocol)
-    {        
-
+    {
         ProtocolBytes proto = (ProtocolBytes)protocol;
         int start = 0;
         string protoName = proto.GetString(start, ref start);
@@ -180,6 +175,15 @@ public class PosManager
             lock (players[net_id]) players[net_id].GetComponent<PlayerController>().PlayerDestroy();
         }
     }
+    public void PlayerClick(string net_id, float x, float y, float z)
+    {
+        if (playerID != "0") return;
+        Vector3 ClickPos = new Vector3(x, y, z);
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().AddForce(ClickPos);
+        }
+    }
 
     public void ChangeMassLevel(string net_id, int masslevel)
     {
@@ -193,6 +197,13 @@ public class PosManager
         if (players.ContainsKey(net_id))
         {
             lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeSpeedLevel(speedlevel);
+        }
+    }
+    public void ChangeMass(string net_id, float mass)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeMass(mass);
         }
     }
     public void ChangeBrake(string net_id, float brake)
@@ -233,7 +244,7 @@ public class PosManager
             lastSendTime = Time.time;
         }
 
-        
+        if (playerID == "0") return;
         foreach (var item in players)
         {
             //Debug.Log(item.Key);
@@ -244,28 +255,11 @@ public class PosManager
             Vector3 pos = player.transform.position;
 
             
-            if (player.GetComponent<PlayerController>().PlayerID == playerID) continue;
+            //if (player.GetComponent<PlayerController>().PlayerID == playerID) continue;
             //Debug.Log(id + " " + fpos);
             lock(player)player.transform.position = Vector3.Lerp(pos, fpos, playersinfo[id].delta);
         }
 
-        foreach (var item in blocks)
-        {/*
-            if (item.Value.GetComponentInChildren<TransformController>() != null)
-            {
-                string netID = item.Value.GetComponentInChildren<TransformController>().controllerID;
-                if (netID == playerID) continue;
-                //Debug.Log(2);
-                //Debug.Log("Update" + item.Key + " " + blocksinfo[item.Key].fpos);
-
-                GameObject block = item.Value;
-                string id = item.Key;
-                Vector3 fpos = blocksinfo[id].fpos;
-                Vector3 pos = block.transform.position;
-
-                lock (block) block.transform.position = Vector3.Lerp(pos, fpos, blocksinfo[id].delta);
-            }*/
-        }
     }
     
 }
