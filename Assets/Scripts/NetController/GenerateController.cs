@@ -12,7 +12,7 @@ public class GenerateController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        float p = float.Parse(Client.instance.playerid);
+        float p = float.Parse(Client.instance.playerid) * 4;
         Client.instance.posmanager.Init(Client.instance.playerid);
 
         Client.instance.SendPlayerGenerate(p, p, Client.instance.playerid);

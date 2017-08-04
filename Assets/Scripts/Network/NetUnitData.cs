@@ -45,11 +45,12 @@ public class NetUnitData{
         }
         else
         {
+            /*
             if (id != Client.instance.playerid)
             {
                 Rigidbody2D r = obj.GetComponent<Rigidbody2D>();
                 r.constraints = RigidbodyConstraints2D.FreezeAll;
-            }
+            }*/
         }
 
     }

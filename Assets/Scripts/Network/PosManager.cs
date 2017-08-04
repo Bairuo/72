@@ -76,7 +76,10 @@ public class PosManager
                 int DataID = playersinfo[playerID].GetDataID();
                 ProtocolBytes unitproto = playersinfo[playerID].GetUnitData(DataID, "UpdateUnitInfo", playerID, players[playerID].transform.position);
                 ProtocolBytes UDPunitproto = playersinfo[playerID].GetUDPUnitData(DataID, "U", playerID, players[playerID].transform.position);
-                
+
+                unitproto.AddFloat(players[playerID].GetComponent<Rigidbody2D>().velocity.x);
+                unitproto.AddFloat(players[playerID].GetComponent<Rigidbody2D>().velocity.y);
+
                 //Client.instance.UDPSend(UDPunitproto);
                 //Client.instance.UDPP2PBroadcast(UDPunitproto);
                 Client.instance.Send(unitproto);
@@ -103,7 +106,7 @@ public class PosManager
             }*/
         }
 
-        Client.instance.SendSafyAreaInfo(SaftyArea.instance.radius);
+        if (playerID == "0") Client.instance.SendSafyAreaInfo(SaftyArea.instance.radius);
         
     }
 
@@ -130,14 +133,19 @@ public class PosManager
         float x = proto.Getfloat(start, ref start);
         float y = proto.Getfloat(start, ref start);
         float z = proto.Getfloat(start, ref start);
+
+        float velocity_x = proto.Getfloat(start, ref start);
+        float velocity_y = proto.Getfloat(start, ref start);
+
         Vector3 pos = new Vector3(x, y, z);
+        Vector2 velocity = new Vector2(velocity_x, velocity_y);
 
         //Debug.Log(protoName + " DataID:" + DataID);
 
-        UpdateUnitInfo(id, DataID, pos);
+        UpdateUnitInfo(id, DataID, pos, velocity);
         
     }
-    public void UpdateUnitInfo(string id, int DataID, Vector3 pos)
+    public void UpdateUnitInfo(string id, int DataID, Vector3 pos, Vector2 velocity)
     {
         //Debug.Log(id);
         if (blocksinfo.ContainsKey(id))
@@ -150,12 +158,14 @@ public class PosManager
             }
 
         }
+
         if (playersinfo.ContainsKey(id))
         {
             if (Sys.IsOrderRight(playersinfo[id].LastReceiveID, DataID))
             {
                 playersinfo[id].Update(pos);
                 playersinfo[id].LastReceiveID = DataID;
+                players[id].GetComponent<PlayerController>().fict_velocity = velocity;
                 //Debug.Log(playersinfo[id].fpos);
             }
 
@@ -213,7 +223,7 @@ public class PosManager
         foreach (var item in players)
         {
             //Debug.Log(item.Key);
-            if (item.Value.active == false) continue;
+            if (item.Value == null || item.Value.active == false) continue;
             GameObject player = item.Value;
             string id = item.Key;
             Vector3 fpos = playersinfo[id].fpos;
