@@ -8,6 +8,7 @@ public class SaftyArea : MonoBehaviour
 	public float maxRadius;
 	public float circleWidth;
 	public float decreasePerSec;
+	public float damagePerSec;
 	// public float minRadius;
 	float initRadius;
 	
@@ -34,13 +35,13 @@ public class SaftyArea : MonoBehaviour
 		
 		foreach(var i in GameObject.FindGameObjectsWithTag("Player"))
 		{
-			if(Vector2.Distance(i.transform.position, this.gameObject.transform.position) <= radius)
+			if(Vector2.Distance(i.transform.position, this.gameObject.transform.position) >= radius)
 			{
 				var ctr = i.GetComponent<PlayerController>();
 				if((ctr.status & InvBit) == 0)
 				{
 					float h = ctr.health;
-					ctr.ChangeHealth(h - Time.deltaTime * decreasePerSec);
+					ctr.ChangeHealth(h - Time.deltaTime * damagePerSec);
 				}
 			}
 		}
