@@ -188,6 +188,7 @@ public class PosManager
     {
         if (players.ContainsKey(net_id))
         {
+            lock (playersinfo[net_id]) playersinfo[net_id].fpos = playersinfo[net_id].lpos = new Vector3(x, y, z);
             lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangePosition(x, y, z);
         }
     }

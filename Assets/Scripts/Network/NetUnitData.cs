@@ -6,7 +6,7 @@ public class NetUnitData{
     //对于其它物体来说id是创建端的InstanceID
     string id;
     public Vector3 fpos;
-    Vector3 lpos;
+    public Vector3 lpos;
     float lastRecvTime = float.MinValue;
     public float delta = 1;
     public int DATAindex = 0;
