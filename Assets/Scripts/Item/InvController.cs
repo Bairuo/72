@@ -33,7 +33,7 @@ public class InvController : MonoBehaviour {
         this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().ChangeStatus(1);
         timer = time;
         start = true;
-        Debug.Log(start);
+        //Debug.Log(start);
     }
 
     public void InvInit()
