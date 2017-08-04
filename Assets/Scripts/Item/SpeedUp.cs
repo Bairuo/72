@@ -8,10 +8,10 @@ public class SpeedUp : MonoBehaviour {
     {
         if(collision.gameObject.tag == "Player")
         {
-            if(collision.gameObject.GetComponent<PlayerController>().SpeedLevel < 4)
-            {
-                collision.gameObject.GetComponent<PlayerController>().SpeedLevel++;
-            }
+            //if(collision.gameObject.GetComponent<PlayerController>().SpeedLevel < 4)
+            //{
+                //collision.gameObject.GetComponent<PlayerController>().SpeedLevel++;
+            //}
             Destroy(this.gameObject);
         }
     }
