@@ -184,6 +184,13 @@ public class PosManager
             lock (players[net_id]) players[net_id].GetComponent<PlayerController>().AddForce(ClickPos);
         }
     }
+    public void ChangePosition(string net_id, float x, float y, float z)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangePosition(x, y, z);
+        }
+    }
 
     public void ChangeMassLevel(string net_id, int masslevel)
     {

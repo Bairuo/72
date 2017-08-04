@@ -172,9 +172,10 @@ public class PlayerController : MonoBehaviour {
 
     public void ChangePosition(float x, float y, float z)
     {
-
+        if (PlayerID != Client.instance.playerid) return;
+        Client.instance.SendChangePosition(PlayerID, x, y, z);
+        RealChangePosition(x, y, z);
     }
-
     public void ChangeMassLevel(int masslevel)
     {
         if (PlayerID != Client.instance.playerid) return;
@@ -226,6 +227,10 @@ public class PlayerController : MonoBehaviour {
         RealChangeStatus(status);
     }
 
+    public void RealChangePosition(float x, float y, float z)
+    {
+        transform.position = new Vector3(x, y, z);
+    }
     public void RealChangeSpeedLevel(int speedlevel)
     {
         SpeedLevel = speedlevel;

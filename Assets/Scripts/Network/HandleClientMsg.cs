@@ -86,6 +86,18 @@ public class HandleClientMsg{
 
         Client.instance.posmanager.PlayerClick(id, x, y, z);
     }
+    public void ChangePosition(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+        float x = proto.Getfloat(start, ref start);
+        float y = proto.Getfloat(start, ref start);
+        float z = proto.Getfloat(start, ref start);
+
+        Client.instance.posmanager.ChangePosition(id, x, y, z);
+    }
 
 
     public void ChangeMassLevel(ProtocolBase protoBase)
