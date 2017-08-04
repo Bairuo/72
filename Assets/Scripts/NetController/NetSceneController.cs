@@ -30,9 +30,9 @@ public class NetSceneController : MonoBehaviour {
             if (ServerNet.IsUse())
             {
                 if (Client.instance.roomnum == 0) Information.text = "创建服务器失败";
-                else if (Client.instance.roomnum == 1) Information.text = "成功创建服务器, 等待玩家接入";
-                else if (Client.instance.roomnum == 2) Information.text = "已接入玩家：1";
-                else if (Client.instance.roomnum == 3) Information.text = "已接入玩家：2, 即将开始游戏";
+                else if (Client.instance.roomnum == 1) Information.text = "服务器IP:" + Network.player.ipAddress + ", 等待玩家接入";
+                else if (Client.instance.roomnum == 2) Information.text = "服务器IP:" + Network.player.ipAddress + ", 已接入玩家：1";
+                else if (Client.instance.roomnum == 3) Information.text = "服务器IP:" + Network.player.ipAddress + ", 已接入玩家：2, 即将开始游戏";
             }
             else
             {
