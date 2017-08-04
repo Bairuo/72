@@ -85,6 +85,7 @@ public class NetSceneController : MonoBehaviour {
 
         Client client = new Client();
 
+        /*
         if (client.Connect(IPInput.text, port))
         {
             cInformation.text = "成功连接服务器";
@@ -92,7 +93,7 @@ public class NetSceneController : MonoBehaviour {
         else
         {
             cInformation.text = "加入服务器失败";
-        }
+        }*/
 
     }
 
