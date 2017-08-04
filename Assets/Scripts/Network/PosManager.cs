@@ -165,6 +165,7 @@ public class PosManager
             {
                 playersinfo[id].Update(pos);
                 playersinfo[id].LastReceiveID = DataID;
+                //players[id].GetComponent<Rigidbody2D>().velocity = velocity;
                 players[id].GetComponent<PlayerController>().fict_velocity = velocity;
                 //Debug.Log(playersinfo[id].fpos);
             }
@@ -217,9 +218,7 @@ public class PosManager
             lastSendTime = Time.time;
         }
 
-        //Debug.Log("??");
-        //Debug.Log(players.Count);
-
+        
         foreach (var item in players)
         {
             //Debug.Log(item.Key);

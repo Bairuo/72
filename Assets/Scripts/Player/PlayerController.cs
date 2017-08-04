@@ -54,7 +54,19 @@ public class PlayerController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        if (PlayerID != Client.instance.playerid) return;
+
+        // 光环旋转
+
+        if (Cir != null)
+        {
+            Cir.transform.Rotate(rotate_axis, 30 * Time.deltaTime);
+        }
+
+        if (PlayerID != Client.instance.playerid)
+        {
+            GetComponent<Rigidbody2D>().velocity = velocity_zero;
+            return;
+        }
 
         // 移动
         if (Input.GetMouseButtonDown(0))
@@ -76,12 +88,6 @@ public class PlayerController : MonoBehaviour {
 
         }
 
-        // 光环旋转
-
-        if (Cir != null)
-        {
-            Cir.transform.Rotate(rotate_axis, 30 * Time.deltaTime);
-        }
 	}
 
     // 根据速度自动旋转
