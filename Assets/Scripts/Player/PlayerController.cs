@@ -64,29 +64,21 @@ public class PlayerController : MonoBehaviour {
             Cir.transform.Rotate(rotate_axis, 30 * Time.deltaTime);
         }
 
-        if (PlayerID != Client.instance.playerid)
+        /*
+        if (PlayerID != "0")
         {
             GetComponent<Rigidbody2D>().velocity = velocity_zero;
             return;
-        }
+        }*/
 
         // 移动
+        if (PlayerID != Client.instance.playerid) return;
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 ClickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            float distance = Vector2.Distance(transform.position, ClickPos);
 
-            // 加速
-            Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
-            Vector2 SpeedForce = (Vector2)(ClickPos - transform.position);
-
-            // 由于没有刹车操作，自动判断刹车
-
-            if (Vector2.Angle(velocity, SpeedForce) > brakeAngle)      
-            {
-                GetComponent<Rigidbody2D>().velocity *= brake;
-            }
-            GetComponent<Rigidbody2D>().AddForce(SpeedForce * speed);
+            Client.instance.SendPlayerClick(PlayerID, ClickPos.x, ClickPos.y, ClickPos.z);
+            if (PlayerID == "0") AddForce(ClickPos);
 
         }
 
@@ -97,7 +89,7 @@ public class PlayerController : MonoBehaviour {
     {
         Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
 
-        if (PlayerID == Client.instance.playerid) velocity = GetComponent<Rigidbody2D>().velocity;
+        if (Client.instance.playerid == "0") velocity = GetComponent<Rigidbody2D>().velocity;
         else velocity = fict_velocity;
 
         float angle;
@@ -124,6 +116,23 @@ public class PlayerController : MonoBehaviour {
     }
 
     // 关键操作
+    public void AddForce(Vector3 ClickPos)
+    {
+        float distance = Vector2.Distance(transform.position, ClickPos);
+        
+        // 加速
+        Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
+        Vector2 SpeedForce = (Vector2)(ClickPos - transform.position);
+
+        // 由于没有刹车操作，自动判断刹车
+
+        if (Vector2.Angle(velocity, SpeedForce) > brakeAngle)
+        {
+            GetComponent<Rigidbody2D>().velocity *= brake;
+        }
+        //Debug.Log(SpeedForce);
+        GetComponent<Rigidbody2D>().AddForce(SpeedForce * speed);
+    }
     public void Dealth()
     {
         if (PlayerID != Client.instance.playerid) return;
@@ -133,7 +142,6 @@ public class PlayerController : MonoBehaviour {
 
         this.gameObject.SetActive(false);
     }
-
     public void PlayerDestroy()
     {
         Client.instance.posmanager.PlayerLogoff(PlayerID);
@@ -148,7 +156,6 @@ public class PlayerController : MonoBehaviour {
         }
 
     }
-
     private void Victory()
     {
 
@@ -167,6 +174,12 @@ public class PlayerController : MonoBehaviour {
         if (PlayerID != Client.instance.playerid) return;
         Client.instance.SendChangeSpeedLevel(PlayerID, speedlevel);
         RealChangeSpeedLevel(speedlevel);
+    }
+    public void ChangeMass(float mass)
+    {
+        if (PlayerID != Client.instance.playerid) return;
+        Client.instance.SendChangeMass(PlayerID, mass);
+        RealChangeMass(mass);
     }
     public void ChangeBrake(float brake)
     {
@@ -208,6 +221,10 @@ public class PlayerController : MonoBehaviour {
     public void RealChangeMassLevel(int masslevel)
     {
         MassLevel = masslevel;
+    }
+    public void RealChangeMass(float mass)
+    {
+        GetComponent<Rigidbody2D>().mass = mass;
     }
     public void RealChangeBrake(float brake)
     {

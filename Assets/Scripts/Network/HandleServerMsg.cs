@@ -70,6 +70,10 @@ public class HandleServerMsg{
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
+    public void PlayerClick(Conn conn, ProtocolBase protoBase)
+    {
+        ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
+    }
     public void PlayerGenerate(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
@@ -80,6 +84,10 @@ public class HandleServerMsg{
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
     public void ChangeMassLevel(Conn conn, ProtocolBase protoBase)
+    {
+        ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
+    }
+    public void ChangeMass(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
