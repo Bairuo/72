@@ -96,11 +96,15 @@ public class PosManager
             {
                 int DataID = playersinfo[item.Key].GetDataID();
                 ProtocolBytes unitproto = playersinfo[item.Key].GetUnitData(DataID, "UpdateUnitInfo", item.Key, item.Value.transform.position);
+                ProtocolBytes UDPunitproto = playersinfo[item.Key].GetUDPUnitData(DataID, "U", item.Key, item.Value.transform.position);
 
                 unitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.x);
                 unitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.y);
+                UDPunitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.x);
+                UDPunitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.y);
 
                 Client.instance.Send(unitproto);
+                //Client.instance.UDPSend(UDPunitproto);
             }
         }
 
@@ -135,7 +139,7 @@ public class PosManager
         Vector3 pos = new Vector3(x, y, z);
         Vector2 velocity = new Vector2(velocity_x, velocity_y);
 
-        //Debug.Log(protoName + " DataID:" + DataID);
+        Debug.Log(protoName + " DataID:" + DataID);
 
         UpdateUnitInfo(id, DataID, pos, velocity);
         
@@ -246,7 +250,7 @@ public class PosManager
     public void Update()
     {
         //0.085,0.075,0.1,0.15,0.19,0.2
-        if (Time.time - lastSendTime > 0.085f)
+        if (Time.time - lastSendTime > 0.075f)
         {
             SendPos();
             lastSendTime = Time.time;

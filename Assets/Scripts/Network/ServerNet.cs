@@ -148,6 +148,7 @@ public class ServerNet
     
     private void UDPReceiveCb(IAsyncResult ar)
     {
+        UnityEngine.Debug.Log(1);
         int count = UDPsocket.EndReceiveFrom(ar, ref UDPRemote);
         
         Array.Copy(UDPreadBuff, UDPlenBytes, sizeof(Int32));
@@ -159,7 +160,7 @@ public class ServerNet
         int conn_id = protocol.GetInt(start, ref start);
 
         string protoName = protocol.GetString(start, ref start);
-
+        UnityEngine.Debug.Log(protoName);
         if (protoName == "A")
         {
             conns[conn_id].UDPRemote = UDPRemote;

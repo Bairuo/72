@@ -136,7 +136,7 @@ public class ObjectGenerator : MonoBehaviour
 		}
 	}
 	
-	void Generate(int id, Vector2 loc)
+	public void Generate(int id, Vector2 loc)
 	{
 		var a = Instantiate(sources[id]);
 		a.transform.position = loc;

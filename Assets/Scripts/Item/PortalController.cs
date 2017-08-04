@@ -12,7 +12,7 @@ public class PortalController : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        radius = GameObject.Find("safety-area").GetComponent<SaftyArea>().radius;
+        radius = GameObject.Find("saftyArea").GetComponent<SaftyArea>().radius;
         Vector2 pos_t = Random.insideUnitCircle * radius;
         pos_2 = pos_t;
         obj = Object.Instantiate(original);
