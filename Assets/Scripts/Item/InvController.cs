@@ -36,6 +36,11 @@ public class InvController : MonoBehaviour {
         //Debug.Log(start);
     }
 
+    public void SetTimer(float time)
+    {
+        timer = time;
+    }
+
     public void InvInit()
     {
         start = false;
