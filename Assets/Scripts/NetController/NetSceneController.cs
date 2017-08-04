@@ -117,6 +117,7 @@ public class NetSceneController : MonoBehaviour {
 
     public void OnStartServerClick()
     {
+        StartServer();
         pStart.SetActive(false);
         pConnect.SetActive(false);
         pStartServer.SetActive(true);
