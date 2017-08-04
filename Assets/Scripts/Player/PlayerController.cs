@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
     GameObject camera;
+    GameObject fog;
     public GameObject Cir;
 
     // 可更改属性
@@ -32,7 +33,13 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         camera = GameObject.FindGameObjectWithTag("MainCamera");
-        
+        fog = GameObject.FindGameObjectWithTag("fog");
+        if (PlayerID == Client.instance.playerid)
+        {
+            fog.transform.SetParent(transform);
+            float z = fog.transform.position.z;
+            fog.transform.localPosition = new Vector3(0, 0, z);
+        }
 	}
 
 
@@ -162,6 +169,11 @@ public class PlayerController : MonoBehaviour {
     }
 
     // 属性更改
+
+    public void ChangePosition(float x, float y, float z)
+    {
+
+    }
 
     public void ChangeMassLevel(int masslevel)
     {
