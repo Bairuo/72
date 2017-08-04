@@ -5,75 +5,128 @@ using UnityEngine;
 public class ObjectGenerator : MonoBehaviour
 {
 	public SaftyArea saftyArea;
-	
 	public GameObject[] sources;
 	public float[] weight;
-	float weightSum;
-	public float areaMulti; // things are generated within radius * areaMulti area.
-	public int timesAttempt;
-	
-	public GameObject taggerSource;
+	public float minDelay; // delay between generating two objects.
 	public float taggerDelay;
+	public float groupDelay;
 	
-	public float delay;
+	public int generateCount;
+	public float beginTime; // when to begin the generation.
+	public float lifeTime;
 	
-	public float t;
-	public bool tagged;
+	int[] genid;
+	float[] timeline;
+	float[] taggerTimeline;
+	Vector2[] genloc;
+	bool[] generated;
+	bool[] taggerGenerated;
+	
+	public float areaMulti; // things are generated within radius * areaMulti area.
+	public GameObject taggerSource;
+	
+	public float t; // should be 0 at the beginning.
+	public bool prepared = false; // whether the information is established.
+	
+	void GlobalInit()
+	{
+		/// generate all information for generating operations.
+		if(weight.Length != sources.Length)
+		{
+			Debug.Log("WARNING: you should make every sources an explicit weight.");
+		}
+		
+		timeline = new float[generateCount];
+		taggerTimeline = new float[generateCount];
+		genid = new int[generateCount];
+		genloc = new Vector2[generateCount];
+		generated = new bool[generateCount];
+		taggerGenerated = new bool[generateCount];
+		
+		for(int i=0; i<generateCount; i++)
+		{
+			generated[i] = false;
+			taggerGenerated[i] = false;
+		}
+		
+		float steptime = groupDelay - generateCount * minDelay;
+		
+		/// item and location selction.
+		float wsum = 0f;
+		foreach(var i in weight)
+			wsum += i;
+		for(int i=0; i<generateCount; i++)
+		{
+			float cp = Random.Range(0f, wsum);
+			for(int j=0; j<sources.Length; j++)	
+			{
+				if(cp - weight[j] <= 0f)
+				{
+					genid[i] = j;
+					break;
+				}
+				cp -= weight[j];
+			}
+		}
+		
+		/// time line.
+		for(int i=0; i<generateCount; i++)
+		{
+			timeline[i] = Random.Range(0f, steptime);
+		}
+		System.Array.Sort(timeline);
+		for(int i=0; i<generateCount; i++)
+		{
+			timeline[i] += i * minDelay + beginTime;
+		}
+		for(int i=0; i<generateCount; i++)
+		{
+			taggerTimeline[i] = timeline[i] - taggerDelay;
+		}
+		
+		/// use timeline to calculate radius, generate the loc inside.
+		for(int i=0; i<generateCount; i++)
+		{
+			float R = (saftyArea.maxRadius - timeline[i] * saftyArea.decreasePerSec) * areaMulti;
+			float r = Mathf.Sqrt(Random.Range(0f, 1f)) * R;
+			float a = Random.Range(0f, 2 * Mathf.PI);
+			genloc[i] = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r;
+		}
+		
+		prepared = true;
+	}
 	
 	void Start()
 	{
-		foreach(var i in weight)
-		{
-			weightSum += i;
-		}
+		GlobalInit();
 	}
-	
-	public bool CanGenerate(Vector2 loc)
-	{
-		return true;
-	}
-	
-	public Vector2 genLoc;
 	
 	void Update()
 	{
-		t -= Time.deltaTime;
+		t += Time.deltaTime;
 		
-		if(t <= taggerDelay && !tagged)
+		if(prepared)
 		{
-			SetRandomGenLoc();
-			GenerateTagger();
-			tagged = true;
-		}
-		if(t <= 0f)
-		{
-			Generate();
-			t += delay;
-			tagged = false;
-		}
-	}
-	
-	void SetRandomGenLoc()
-	{
-		// random location inside the circle.
-		for(int i=0; i<timesAttempt; i++)
-		{
-			float dist = Mathf.Sqrt(Random.Range(0f, 1f)) * saftyArea.radius * areaMulti;
-			float angle = Random.Range(0.0f, Mathf.PI * 2.0f);
-			Vector2 loc = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * dist;
-			if(CanGenerate(loc))
+			for(int i=0; i<generateCount; i++)
 			{
-				// generate.
-				genLoc = loc;
-				break;
+				if(!taggerGenerated[i] && t >= taggerTimeline[i])
+				{
+					GenerateTagger(genloc[i]);
+					taggerGenerated[i] = true;
+				}
+				if(!generated[i] && t >= timeline[i])
+				{
+					Generate(genid[i], genloc[i]);
+					generated[i] = true;
+				}
+			}
+			if(t > lifeTime)
+			{
+				Destroy(this.gameObject);
 			}
 		}
 	}
-	
-	void GenerateTagger()
-	{
-		GenerateTagger(genLoc);
-	}
+
 	void GenerateTagger(Vector2 loc)
 	{
 		if(taggerSource != null)
@@ -83,24 +136,6 @@ public class ObjectGenerator : MonoBehaviour
 		}
 	}
 	
-	void Generate()
-	{
-		// random choose an object.
-		int id = -1;
-		float r = Random.Range(0f, weightSum);
-		for(int i=0; i<sources.Length; i++)
-		{
-			if(r - weight[i] <= 0f)
-			{
-				id = i;
-				break;
-			}
-			r -= weight[i];
-		}
-		
-		// generate an item.
-		Generate(id, genLoc);
-	}
 	void Generate(int id, Vector2 loc)
 	{
 		var a = Instantiate(sources[id]);
@@ -108,3 +143,100 @@ public class ObjectGenerator : MonoBehaviour
 	}
 	
 }
+
+
+
+// public class ObjectGenerator : MonoBehaviour
+// {
+// 	public SaftyArea saftyArea;
+// 	public GameObject[] sources;
+// 	public float[] weight;
+// 	float weightSum;
+// 	public float areaMulti; // things are generated within radius * areaMulti area.
+// 	public int timesAttempt;
+// 	public GameObject taggerSource;
+// 	public float taggerDelay;
+// 	public float delay;
+// 	public float t;
+// 	public bool tagged;
+// 	void Start()
+// 	{
+// 		foreach(var i in weight)
+// 		{
+// 			weightSum += i;
+// 		}
+// 	}
+// 	public bool CanGenerate(Vector2 loc)
+// 	{
+// 		return true;
+// 	}
+// 	public Vector2 genLoc;
+// 	void Update()
+// 	{
+// 		t -= Time.deltaTime;
+		
+// 		if(t <= taggerDelay && !tagged)
+// 		{
+// 			SetRandomGenLoc();
+// 			GenerateTagger();
+// 			tagged = true;
+// 		}
+// 		if(t <= 0f)
+// 		{
+// 			Generate();
+// 			t += delay;
+// 			tagged = false;
+// 		}
+// 	}
+// 	void SetRandomGenLoc()
+// 	{
+// 		// random location inside the circle.
+// 		for(int i=0; i<timesAttempt; i++)
+// 		{
+// 			float dist = Mathf.Sqrt(Random.Range(0f, 1f)) * saftyArea.radius * areaMulti;
+// 			float angle = Random.Range(0.0f, Mathf.PI * 2.0f);
+// 			Vector2 loc = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * dist;
+// 			if(CanGenerate(loc))
+// 			{
+// 				// generate.
+// 				genLoc = loc;
+// 				break;
+// 			}
+// 		}
+// 	}
+// 	void GenerateTagger()
+// 	{
+// 		GenerateTagger(genLoc);
+// 	}
+// 	void GenerateTagger(Vector2 loc)
+// 	{
+// 		if(taggerSource != null)
+// 		{
+// 			var a = GameObject.Instantiate(taggerSource);
+// 			a.transform.position = loc;
+// 		}
+// 	}
+// 	void Generate()
+// 	{
+// 		// random choose an object.
+// 		int id = -1;
+// 		float r = Random.Range(0f, weightSum);
+// 		for(int i=0; i<sources.Length; i++)
+// 		{
+// 			if(r - weight[i] <= 0f)
+// 			{
+// 				id = i;
+// 				break;
+// 			}
+// 			r -= weight[i];
+// 		}
+		
+// 		// generate an item.
+// 		Generate(id, genLoc);
+// 	}
+// 	void Generate(int id, Vector2 loc)
+// 	{
+// 		var a = Instantiate(sources[id]);
+// 		a.transform.position = loc;
+// 	}
+// }
