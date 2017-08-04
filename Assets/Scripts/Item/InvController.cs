@@ -9,11 +9,11 @@ public class InvController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log(start);
+        //Debug.Log(start);
         if(start)
         {
             timer -= Time.deltaTime;
-            Debug.Log(timer);
+            //Debug.Log(timer);
             if(timer <= 0)
             {
                 this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().ChangeStatus(0);

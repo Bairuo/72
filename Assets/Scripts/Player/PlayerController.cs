@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour {
     Vector2 velocity_zero = new Vector2(0, 0);
     Vector2 up = new Vector2(0, 1);
     Vector2 left = new Vector2(-1, 0);
+
+    public Vector2 fict_velocity = new Vector2(0, 0);
     float now_angle = 0;
 
 	// Use this for initialization
@@ -86,12 +88,19 @@ public class PlayerController : MonoBehaviour {
     void LateUpdate()
     {
         Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
-        float angle = Vector2.Angle(up, velocity);
+
+        if (PlayerID == Client.instance.playerid) velocity = GetComponent<Rigidbody2D>().velocity;
+        else velocity = fict_velocity;
+
+        float angle;
+        if (velocity != velocity_zero) angle = Vector2.Angle(up, velocity);
+        else angle = now_angle;
 
         if (Vector2.Dot(left, velocity) < 0)
         {
             angle = -angle;
         }
+
 
         if (velocity != velocity_zero)
         {
