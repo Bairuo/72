@@ -1,10 +1,13 @@
-﻿Shader "safty-area"
+﻿Shader "fog"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_OuterRadius ("OuterRadius", Float) = 12.0
 		_InnerRadius ("InnerRadius", Float) = 10.0
+		_locx ("Location X", Float) = 0.0
+		_locy ("Location Y", Float) = 0.0
+		_Color ("Real color", Vector) = (0.0, 0.0, 0.0, 0.0)
 	}
 	SubShader
 	{
@@ -25,13 +28,13 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				float4 color : COLOR0;
+				//float4 color : COLOR0;
 			};
 
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
-				float4 color : COLOR0;
+				//float4 color : COLOR0;
 				float2 worldCoord : COLOR1;
 			};
 
@@ -43,20 +46,25 @@
 				float4 worldCoord = mul(unity_ObjectToWorld, v.vertex);
 				o.worldCoord = float2(worldCoord.x, worldCoord.y);
 				
-				o.color = v.color;
+				//o.color = v.color;
 				return o;
 			}
 			
 			sampler2D _MainTex;
 			float _InnerRadius;
 			float _OuterRadius;
-
+			float _locx;
+			float _locy;
+			float4 _Color;
+			
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float2 coord = i.worldCoord;
-				float dist = sqrt(coord.x * coord.x + coord.y * coord.y);
+				float2 loc = float2(_locx, _locy);
+				float dist = length(loc - coord);
 				float rate = (clamp(dist, _InnerRadius, _OuterRadius) - _InnerRadius) / (_OuterRadius - _InnerRadius);
-				float4 color = float4(1.0f, 1.0f, 1.0f, rate) * i.color;
+				//float4 color = float4(1.0f, 1.0f, 1.0f, rate) * i.color;
+				float4 color = float4(1.0f, 1.0f, 1.0f, rate) * _Color;
 				return color;
 			}
 			ENDCG
