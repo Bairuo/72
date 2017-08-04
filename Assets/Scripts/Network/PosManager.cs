@@ -25,22 +25,23 @@ public class PosManager
     public float lastSendTime = float.MinValue;
 
     public static PosManager instance;
-
-
     public PosManager()
     {
         instance = this;
     }
-    /*
+    
     public void PlayerRegister(GameObject player)
     {
-        string netID = player.GetComponent<PlayerController>().netID;
+        string netID = player.GetComponent<PlayerController>().PlayerID;
         NetUnitData playerinfo = new NetUnitData(netID, player);
 
-        //Debug.Log("Register: " + netID);
         lock(players)players.Add(netID, player);
         lock(playersinfo)playersinfo.Add(netID, playerinfo);
-    }*/
+    }
+    public void PlayerLogoff(string netID)
+    {
+        
+    }
 
     public void Close()
     {
@@ -63,38 +64,6 @@ public class PosManager
         Client.instance.AddListener("UpdateUnitInfo", UpdateUnitInfo);
         Client.instance.AddListener("U", UpdateUnitInfo);
     }
-    public void StartFight() //发送初始化信息 
-    {
-        //发送自己的信息
-        CharactAttribute info = new CharactAttribute(player);
-        ProtocolBytes proto = info.GetInfoProto("AddPlayer");
-        Client.instance.Send(proto);
-
-        //房主或服务器
-        /*
-        if (playerID == "0") 
-        {
-            foreach (var item in GameController.instance.enemies)
-            {
-                item.Value.GetComponent<EnemyController>().Target = player;
-                info = new CharactAttribute(item.Value);
-                Client.instance.Send(info.GetInfoProto("AddEnemy"));
-            }
-            foreach (var item in GameController.instance.enemies2)
-            {
-                item.Value.GetComponent<EnemyController>().Target = player;
-                info = new CharactAttribute(item.Value);
-                Client.instance.Send(info.GetInfoProto("AddEnemy"));
-            }
-        }
-        else
-        {
-            GameController.instance.ClearEnemy();
-            Client.instance.AddListener("UpdateUnitInfo", UpdateUnitInfo);
-        }
-         * */
-
-    }
 
     public void SendPos()
     {
@@ -104,10 +73,10 @@ public class PosManager
                 int DataID = playersinfo[playerID].GetDataID();
                 ProtocolBytes unitproto = playersinfo[playerID].GetUnitData(DataID, "UpdateUnitInfo", playerID, players[playerID].transform.position);
                 ProtocolBytes UDPunitproto = playersinfo[playerID].GetUDPUnitData(DataID, "U", playerID, players[playerID].transform.position);
-
-                Client.instance.UDPSend(UDPunitproto);
+                
+                //Client.instance.UDPSend(UDPunitproto);
                 //Client.instance.UDPP2PBroadcast(UDPunitproto);
-                //Client.instance.Send(unitproto);
+                Client.instance.Send(unitproto);
             }
 
         }
@@ -174,58 +143,42 @@ public class PosManager
 
         }
     }
-    /*
-    public void EnterBlock(string playerID, string blockID)
-    {
-        if (players.ContainsKey(playerID) && blocks.ContainsKey(blockID))
-        {
-            players[playerID].GetComponent<PlayerController>().PlayerEnter(players[playerID], blocks[blockID]);
-        }
-    }*/
-    /*
-    public void LeaveBlock(string blockID)
-    {
-        if (blocks.ContainsKey(blockID))
-        {
-            lock (blocks[blockID])
-            {
-                TransformController t = blocks[blockID].GetComponentInChildren<TransformController>();
-                if (t != null)
-                {
-                    t.PlayerLeave();
-                }
-            }
-        }
-    }*/
-    public void Hit(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string protoName = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-        int isPlayer = proto.GetInt(start, ref start);
-        int damage = proto.GetInt(start, ref start);
 
-        GameObject temp;
-        if (isPlayer == 1)
+    public void PlayerDestroy(string net_id)
+    {
+        if (players.ContainsKey(net_id))
         {
-            if (id == playerID || !players.ContainsKey(id)) return;
-            temp = players[id];
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().PlayerDestroy();
         }
-        else
-        {
-            if (playerID == "0" || !blocks.ContainsKey(id)) return;
-            temp = blocks[id];
-        }
-
     }
-
-    // UDP speed up
-    string id_last = "-1";
-    int forward_last = -1;
-    bool stand_last = false;
-    float x_last = 0, y_last = 0, z_last = 0;
-
+    public void ChangeBrake(string net_id, float brake)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeBrake(brake);
+        }
+    }
+    public void ChangeSpeed(string net_id, float speed)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeSpeed(speed);
+        }
+    }
+    public void ChangeHealth(string net_id, float health)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeHealth(health);
+        }
+    }
+    public void ChangeStatus(string net_id, int status)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeStatus(status);
+        }
+    }
   
     public void Update()
     {
@@ -249,7 +202,7 @@ public class PosManager
             Vector3 pos = player.transform.position;
 
             
-            //if (player.GetComponent<PlayerController>().netID == playerID) continue;
+            if (player.GetComponent<PlayerController>().PlayerID == playerID) continue;
             //Debug.Log(id + " " + fpos);
             lock(player)player.transform.position = Vector3.Lerp(pos, fpos, playersinfo[id].delta);
         }

@@ -305,6 +305,70 @@ public class Client
             }
         }
     }*/
+    public void SendPlayerDestroy(string PlayerID)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("PlayerDestroy");
+        protocol.AddString(PlayerID);
+
+        Send(protocol);
+    }
+    public void SendFail()
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("Fail");
+
+        Send(protocol);
+    }
+
+    public void SendPlayerGenerate(float x, float y, string PlayerID)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("PlayerGenerate");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(x);
+        protocol.AddFloat(y);
+ 
+        Send(protocol);
+    }
+    public void SendChangeBrake(string PlayerID, float brake)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeBrake");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(brake);
+
+        Send(protocol);
+    }
+    public void SendChangeSpeed(string PlayerID, float speed)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeSpeed");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(speed);
+
+        Send(protocol);
+    }
+    public void SendChangeHealth(string PlayerID, float health)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeHealth");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(health);
+
+        Send(protocol);
+    }
+    public void SendChangeStatus(string PlayerID, int status)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeStatus");
+        protocol.AddString(PlayerID);
+        protocol.AddInt(status);
+
+        Send(protocol);
+    }
+    
+    // NI
     public void SendEnterBlock(string playerID, string blockID)
     {
         ProtocolBytes protocol = new ProtocolBytes();
@@ -351,7 +415,7 @@ public class Client
         Send(protocol);
     }
 
-
+    // Partner Adventure
     public void SendHit(string id, int isPlayer, int damage)
     {
         ProtocolBytes protocol = new ProtocolBytes();
@@ -458,7 +522,6 @@ public class Client
     //DispatchMsgEvent
     public void Update()
     {
-        
         if (posmanager.isInit)
         {
             posmanager.Update();
