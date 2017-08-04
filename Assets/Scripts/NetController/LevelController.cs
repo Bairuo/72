@@ -7,7 +7,7 @@ public class LevelController : MonoBehaviour {
     public Image lv1;
     public Image lv2;
     public Image lv3;
-    public Image Lv3;
+    public Image lv4;
     public int level;
 	// Use this for initialization
 	void Start () {
@@ -38,34 +38,34 @@ public class LevelController : MonoBehaviour {
 
     public void LoadLevel1()
     {
-        lv1.color = new Color(1, 1, 0.8f);
-        lv1.color = new Color(1, 1, 0.5f);
-        lv1.color = new Color(1, 1, 0.3f);
-        lv1.color = new Color(1, 1, 0.2f);
+        lv1.color = new Color(1, 1, 1, 0.8f);
+        lv1.color = new Color(1, 1, 1, 0.5f);
+        lv1.color = new Color(1, 1, 1, 0.3f);
+        lv1.color = new Color(1, 1, 1, 0.2f);
     }
 
     public void LoadLevel2()
     {
-        lv1.color = new Color(1, 1, 0.8f);
-        lv1.color = new Color(1, 1, 0.8f);
-        lv1.color = new Color(1, 1, 0.3f);
-        lv1.color = new Color(1, 1, 0.2f);
+        lv1.color = new Color(1, 1, 1, 0.8f);
+        lv2.color = new Color(1, 1, 1, 0.8f);
+        lv3.color = new Color(1, 1, 1, 0.3f);
+        lv4.color = new Color(1, 1, 1, 0.2f);
     }
 
     public void LoadLevel3()
     {
-        lv1.color = new Color(1, 1, 0.8f);
-        lv1.color = new Color(1, 1, 0.8f);
-        lv1.color = new Color(1, 1, 0.8f);
-        lv1.color = new Color(1, 1, 0.2f);
+        lv1.color = new Color(1, 1, 1, 0.8f);
+        lv2.color = new Color(1, 1, 1, 0.8f);
+        lv3.color = new Color(1, 1, 1, 0.8f);
+        lv4.color = new Color(1, 1, 1, 0.2f);
     }
 
     public void LoadLevel4()
     {
-        lv1.color = new Color(1, 1, 0.8f);
-        lv1.color = new Color(1, 1, 0.8f);
-        lv1.color = new Color(1, 1, 0.8f);
-        lv1.color = new Color(1, 1, 0.8f);
+        lv1.color = new Color(1, 1, 1, 0.8f);
+        lv2.color = new Color(1, 1, 1, 0.8f);
+        lv3.color = new Color(1, 1, 1, 0.8f);
+        lv4.color = new Color(1, 1, 1, 0.8f);
     }
 
 }
