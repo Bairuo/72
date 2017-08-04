@@ -328,8 +328,7 @@ public class Client
 
         Send(protocol);
     }
-
-    public void SendPlayerGenerate(float x, float y, string PlayerID)
+    public void SendPlayerGenerate(string PlayerID, float x, float y)
     {
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("PlayerGenerate");
@@ -339,7 +338,17 @@ public class Client
  
         Send(protocol);
     }
+    public void SendPlayerClick(string PlayerID, float x, float y, float z)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("PlayerClick");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(x);
+        protocol.AddFloat(y);
+        protocol.AddFloat(z);
 
+        Send(protocol);
+    }
 
     public void SendChangeMassLevel(string PlayerID, int masslevel)
     {
@@ -356,6 +365,15 @@ public class Client
         protocol.AddString("ChangeSpeedLevel");
         protocol.AddString(PlayerID);
         protocol.AddInt(speedlevel);
+
+        Send(protocol);
+    }
+    public void SendChangeMass(string PlayerID, float mass)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeMass");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(mass);
 
         Send(protocol);
     }
