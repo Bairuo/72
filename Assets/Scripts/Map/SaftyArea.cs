@@ -5,40 +5,45 @@ using UnityEngine;
 public class SaftyArea : MonoBehaviour
 {
 	public float radius;
+	public float maxRadius;
+	public float circleWidth;
 	public float decreasePerSec;
+	public float damagePerSec;
 	// public float minRadius;
 	float initRadius;
 	
-	public SpriteRenderer rd;
-	Vector2 rdInitScale;
-	
+	SpriteRenderer rd;
+	Material rmt;
+		
 	public int InvBit = 0x1;
 	
 	void Start()
 	{
-		initRadius = radius;
-		rdInitScale = rd.gameObject.transform.localScale;
+		radius = maxRadius;
+		rd = this.gameObject.GetComponent<SpriteRenderer>();
+		rmt = rd.material;
 	}
 	
 	void Update()
 	{
-		radius -= decreasePerSec;
+		radius -= decreasePerSec * Time.deltaTime;
+		// drawing precess...
+		rmt.SetFloat("_InnerRadius", radius - circleWidth);
+		rmt.SetFloat("_OuterRadius", radius);
 		if(radius < 0.0f) radius = 0.0f;
+		
 		
 		foreach(var i in GameObject.FindGameObjectsWithTag("Player"))
 		{
-			if(Vector2.Distance(i.transform.position, this.gameObject.transform.position) <= radius)
+			if(Vector2.Distance(i.transform.position, this.gameObject.transform.position) >= radius)
 			{
 				var ctr = i.GetComponent<PlayerController>();
 				if((ctr.status & InvBit) == 0)
 				{
 					float h = ctr.health;
-					ctr.ChangeHealth(h - Time.deltaTime * decreasePerSec);
+					ctr.ChangeHealth(h - Time.deltaTime * damagePerSec);
 				}
 			}
 		}
-		
-		float rate = radius / initRadius;
-		rd.gameObject.transform.localScale = rate * rdInitScale;
 	}
 }
