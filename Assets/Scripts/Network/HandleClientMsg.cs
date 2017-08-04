@@ -50,6 +50,30 @@ public class HandleClientMsg{
     }
 
     //（针对）战斗类协议
+
+    public void PortalDestroy(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        int PortalID = proto.GetInt(start, ref start);
+
+        PortalController.DestroyBoth(PortalID);
+
+    }
+    public void PortalCreate(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        int PortalID = proto.GetInt(start, ref start);
+        float x = proto.Getfloat(start, ref start);
+        float y = proto.Getfloat(start, ref start);
+
+        UnityEngine.Vector2 pos = new UnityEngine.Vector2(x, y);
+        PortalController.SetAnother(PortalID, pos);
+
+    }
     public void Fail(ProtocolBase protoBase)
     {
 

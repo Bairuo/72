@@ -82,6 +82,14 @@ public class HandleServerMsg{
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
+    public void PortalCreate(Conn conn, ProtocolBase protoBase)
+    {
+        ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
+    }
+    public void PortalDestroy(Conn conn, ProtocolBase protoBase)
+    {
+        ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
+    }
 
     public void ChangePosition(Conn conn, ProtocolBase protoBase)
     {

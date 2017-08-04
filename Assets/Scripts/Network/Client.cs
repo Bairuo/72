@@ -305,6 +305,24 @@ public class Client
             }
         }
     }*/
+    public void SendPortalDestroy(int PortalID)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("PortalDestroy");
+        protocol.AddInt(PortalID);
+
+        Send(protocol);
+    }
+    public void SendPortalCreate(int PortalID, Vector2 pos)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("PortalCreate");
+        protocol.AddInt(PortalID);
+        protocol.AddFloat(pos.x);
+        protocol.AddFloat(pos.y);
+
+        Send(protocol);
+    }
     public void SendPropGenerate(string tag, int id, Vector2 loc)
     {
         ProtocolBytes protocol = new ProtocolBytes();
