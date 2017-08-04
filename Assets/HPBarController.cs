@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-public class ImageFillTest : MonoBehaviour {
+public class HPBarController : MonoBehaviour {
 
     public Image image;
+    public GameObject player;
 
 	// Use this for initialization
 	void Start () {
@@ -15,7 +15,6 @@ public class ImageFillTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        image.fillAmount -= Time.deltaTime / 10;
-        Debug.Log(image.fillAmount);
+        image.fillAmount = player.GetComponent<PlayerController>().health / 100;
 	}
 }
