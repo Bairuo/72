@@ -14,7 +14,7 @@ Shader "safty-area"
 		Cull Off ZWrite Off ZTest Always
 		
 		Blend SrcAlpha OneMinusSrcAlpha
-
+		
 		Pass
 		{
 			CGPROGRAM
