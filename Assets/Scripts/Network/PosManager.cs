@@ -172,6 +172,14 @@ public class PosManager
         }
     }
 
+    public void PropGenerate(string tag, int id, Vector2 loc)
+    {
+        ObjectGenerator Generator = GameObject.FindGameObjectWithTag(tag).GetComponent<ObjectGenerator>();
+        if (Generator != null)
+        {
+            Generator.Generate(id, loc);
+        }
+    }
     public void PlayerDestroy(string net_id)
     {
         if (players.ContainsKey(net_id))

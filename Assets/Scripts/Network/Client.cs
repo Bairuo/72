@@ -305,6 +305,17 @@ public class Client
             }
         }
     }*/
+    public void SendPropGenerate(string tag, int id, Vector2 loc)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("PropGenerate");
+        protocol.AddString(tag);
+        protocol.AddInt(id);
+        protocol.AddFloat(loc.x);
+        protocol.AddFloat(loc.y);
+
+        Send(protocol);
+    }
     public void SendSafyAreaInfo(float radius)
     {
         ProtocolBytes protocol = new ProtocolBytes();
