@@ -103,8 +103,8 @@ public class PosManager
                 UDPunitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.x);
                 UDPunitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.y);
 
-                Client.instance.Send(unitproto);
-                //Client.instance.UDPSend(UDPunitproto);
+                //Client.instance.Send(unitproto);
+                Client.instance.UDPSend(UDPunitproto);
             }
         }
 
@@ -139,7 +139,7 @@ public class PosManager
         Vector3 pos = new Vector3(x, y, z);
         Vector2 velocity = new Vector2(velocity_x, velocity_y);
 
-        Debug.Log(protoName + " DataID:" + DataID);
+        //Debug.Log(protoName + " DataID:" + DataID + " velocity " + velocity);
 
         UpdateUnitInfo(id, DataID, pos, velocity);
         

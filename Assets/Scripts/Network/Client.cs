@@ -223,7 +223,7 @@ public class Client
         byte[] bytes = protocol.Encode();
         byte[] length = BitConverter.GetBytes(bytes.Length);
         byte[] sendbuff = length.Concat(bytes).ToArray();
-        IPEndPoint ip = new IPEndPoint(IPAddress.Parse(Host), 9970);
+        IPEndPoint ip = new IPEndPoint(IPAddress.Parse(Host), 9990);
         UDPsocket.SendTo(sendbuff, ip);
     }
     public void UDPSend(ProtocolBase protocol, IPEndPoint remote)
