@@ -170,6 +170,11 @@ public class PlayerController : MonoBehaviour {
 
     // 属性更改
 
+    public void ChangePosition(float x, float y, float z)
+    {
+
+    }
+
     public void ChangeMassLevel(int masslevel)
     {
         if (PlayerID != Client.instance.playerid) return;
