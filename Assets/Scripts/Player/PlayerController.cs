@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour {
     public GameObject Cir;
 
     // 可更改属性
+    public int SpeedLevel = 1;
+    public int MassLevel = 1;
     public int status = 0;
     public float health;
     public float speed = 1;
@@ -153,6 +155,19 @@ public class PlayerController : MonoBehaviour {
     }
 
     // 属性更改
+
+    public void ChangeMassLevel(int masslevel)
+    {
+        if (PlayerID != Client.instance.playerid) return;
+        Client.instance.SendChangeMassLevel(PlayerID, masslevel);
+        RealChangeMassLevel(masslevel);
+    }
+    public void ChangeSpeedLevel(int speedlevel)
+    {
+        if (PlayerID != Client.instance.playerid) return;
+        Client.instance.SendChangeSpeedLevel(PlayerID, speedlevel);
+        RealChangeSpeedLevel(speedlevel);
+    }
     public void ChangeBrake(float brake)
     {
         if (PlayerID != Client.instance.playerid) return;
@@ -186,6 +201,14 @@ public class PlayerController : MonoBehaviour {
         RealChangeStatus(status);
     }
 
+    public void RealChangeSpeedLevel(int speedlevel)
+    {
+        SpeedLevel = speedlevel;
+    }
+    public void RealChangeMassLevel(int masslevel)
+    {
+        MassLevel = masslevel;
+    }
     public void RealChangeBrake(float brake)
     {
         this.brake = brake;

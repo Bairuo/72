@@ -74,6 +74,15 @@ public class HandleServerMsg{
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
+
+    public void ChangeSpeedLevel(Conn conn, ProtocolBase protoBase)
+    {
+        ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
+    }
+    public void ChangeMassLevel(Conn conn, ProtocolBase protoBase)
+    {
+        ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
+    }
     public void ChangeSpeed(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
