@@ -21,7 +21,7 @@ public class FogController : MonoBehaviour
 		begina = GetAlpha(rd);
 	}
 	
-	void MakeVisible(float time)
+	public void MakeVisible(float time)
 	{
 		rec = t = time;
 	}

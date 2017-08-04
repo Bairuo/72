@@ -338,6 +338,17 @@ public class Client
  
         Send(protocol);
     }
+    public void SendChangePosition(string PlayerID, float x, float y, float z)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangePosition");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(x);
+        protocol.AddFloat(y);
+        protocol.AddFloat(z);
+
+        Send(protocol);
+    }
     public void SendPlayerClick(string PlayerID, float x, float y, float z)
     {
         ProtocolBytes protocol = new ProtocolBytes();
