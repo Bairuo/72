@@ -48,6 +48,7 @@ public class PosManager
         Client.instance.DelListener("UpdateUnitInfo", UpdateUnitInfo);
         Client.instance.DelListener("U", UpdateUnitInfo);
         Client.instance.DelListener("SafyAreaInfo", SafyAreaInfo);
+        Client.instance.DelListener("PropGenerate", PropGenerate);
 
         players.Clear();
 
@@ -65,6 +66,7 @@ public class PosManager
         Client.instance.AddListener("UpdateUnitInfo", UpdateUnitInfo);
         Client.instance.AddListener("U", UpdateUnitInfo);
         Client.instance.AddListener("SafyAreaInfo", SafyAreaInfo);
+        Client.instance.AddListener("PropGenerate", PropGenerate);
 
     }
 
@@ -122,6 +124,8 @@ public class PosManager
         SaftyArea.instance.radius = radius;
     }
 
+
+
     public void UpdateUnitInfo(ProtocolBase protocol)
     {
         ProtocolBytes proto = (ProtocolBytes)protocol;
@@ -170,6 +174,20 @@ public class PosManager
             }
 
         }
+    }
+
+
+    public void PropGenerate(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        string tag = proto.GetString(start, ref start);
+        int id = proto.GetInt(start, ref start);
+        float x = proto.Getfloat(start, ref start);
+        float y = proto.Getfloat(start, ref start);
+
+        Client.instance.posmanager.PropGenerate(tag, id, new UnityEngine.Vector2(x, y));
     }
 
     Dictionary<string, ObjectGenerator> Generators = new Dictionary<string, ObjectGenerator>();
