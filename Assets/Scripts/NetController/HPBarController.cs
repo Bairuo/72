@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SliderController : MonoBehaviour {
+public class HPBarController : MonoBehaviour {
 
-    public Slider slider;
+    public Image image;
+    public GameObject player;
 
 	// Use this for initialization
 	void Start () {
@@ -14,6 +15,6 @@ public class SliderController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        slider.value -= Time.deltaTime;
+        image.fillAmount = player.GetComponent<PlayerController>().health / 100;
 	}
 }
