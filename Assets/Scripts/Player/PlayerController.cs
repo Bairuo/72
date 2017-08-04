@@ -161,6 +161,11 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    public bool IsMine()
+    {
+        return PlayerID == Client.instance.playerid;
+    }
+
     // 属性更改
 
     public void ChangeMassLevel(int masslevel)
