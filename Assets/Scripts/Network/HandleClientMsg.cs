@@ -122,18 +122,6 @@ public class HandleClientMsg{
 
         Client.instance.posmanager.ChangePosition(id, x, y, z);
     }
-    public void PropGenerate(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string tag = proto.GetString(start, ref start);
-        int id = proto.GetInt(start, ref start);
-        float x = proto.Getfloat(start, ref start);
-        float y = proto.Getfloat(start, ref start);
-
-        Client.instance.posmanager.PropGenerate(tag, id, new UnityEngine.Vector2(x, y));
-    }
 
     public void ChangeMassLevel(ProtocolBase protoBase)
     {
