@@ -31,12 +31,12 @@ public class GenerateController : MonoBehaviour {
         GameObject prefab = Resources.Load("Player") as GameObject;
         GameObject Player = GameObject.Instantiate(prefab, pos, Quaternion.identity);
         Player.GetComponent<PlayerController>().PlayerID = PlayerID;
+        Player.GetComponent<PlayerController>().SetCir();
 
         if (PlayerID == Client.instance.playerid)
         {
             GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
             camera.transform.SetParent(Player.transform);
-            camera.GetComponent<CameraController>().Init(Player);
         }
 
         Client.instance.posmanager.PlayerRegister(Player);

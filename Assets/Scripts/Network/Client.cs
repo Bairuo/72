@@ -305,6 +305,22 @@ public class Client
             }
         }
     }*/
+    public void SendPlayerDestroy(string PlayerID)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("PlayerDestroy");
+        protocol.AddString(PlayerID);
+
+        Send(protocol);
+    }
+    public void SendFail()
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("Fail");
+
+        Send(protocol);
+    }
+
     public void SendPlayerGenerate(float x, float y, string PlayerID)
     {
         ProtocolBytes protocol = new ProtocolBytes();
@@ -313,6 +329,15 @@ public class Client
         protocol.AddFloat(x);
         protocol.AddFloat(y);
  
+        Send(protocol);
+    }
+    public void SendChangeBrake(string PlayerID, float brake)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("ChangeBrake");
+        protocol.AddString(PlayerID);
+        protocol.AddFloat(brake);
+
         Send(protocol);
     }
     public void SendChangeSpeed(string PlayerID, float speed)

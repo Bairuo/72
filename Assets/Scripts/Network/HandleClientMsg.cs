@@ -10,7 +10,7 @@ public class HandleClientMsg{
         int num = proto.GetInt(start, ref start);
         Client.instance.roomnum = num;
 
-        //if (ServerNet.IsUse() && num == 1) NetSceneController.instance.EnterGame();
+        if (ServerNet.IsUse() && num == 1) NetSceneController.instance.EnterGame();
 
         if (num == 2)
         {
@@ -50,6 +50,19 @@ public class HandleClientMsg{
     }
 
     //（针对）战斗类协议
+    public void Fail(ProtocolBase protoBase)
+    {
+
+    }
+    public void PlayerDestroy(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+
+        Client.instance.posmanager.PlayerDestroy(id);
+    }
     public void PlayerGenerate(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
@@ -60,6 +73,16 @@ public class HandleClientMsg{
         float y = proto.Getfloat(start, ref start);
 
         GenerateController.instance.CreatePlayer(x, y, id);
+    }
+    public void ChangeBrake(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+        float brake = proto.Getfloat(start, ref start);
+
+        Client.instance.posmanager.ChangeSpeed(id, brake);
     }
     public void ChangeSpeed(ProtocolBase protoBase)
     {

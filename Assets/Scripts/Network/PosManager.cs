@@ -38,6 +38,10 @@ public class PosManager
         lock(players)players.Add(netID, player);
         lock(playersinfo)playersinfo.Add(netID, playerinfo);
     }
+    public void PlayerLogoff(string netID)
+    {
+        
+    }
 
     public void Close()
     {
@@ -140,6 +144,20 @@ public class PosManager
         }
     }
 
+    public void PlayerDestroy(string net_id)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().PlayerDestroy();
+        }
+    }
+    public void ChangeBrake(string net_id, float brake)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().RealChangeBrake(brake);
+        }
+    }
     public void ChangeSpeed(string net_id, float speed)
     {
         if (players.ContainsKey(net_id))
