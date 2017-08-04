@@ -40,7 +40,7 @@ public class PosManager
     }
     public void PlayerLogoff(string netID)
     {
-
+        
     }
 
     public void Close()
@@ -144,6 +144,13 @@ public class PosManager
         }
     }
 
+    public void PlayerDestroy(string net_id)
+    {
+        if (players.ContainsKey(net_id))
+        {
+            lock (players[net_id]) players[net_id].GetComponent<PlayerController>().PlayerDestroy();
+        }
+    }
     public void ChangeBrake(string net_id, float brake)
     {
         if (players.ContainsKey(net_id))

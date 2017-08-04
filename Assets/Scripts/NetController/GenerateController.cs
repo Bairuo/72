@@ -36,7 +36,6 @@ public class GenerateController : MonoBehaviour {
         {
             GameObject camera = GameObject.FindGameObjectWithTag("MainCamera");
             camera.transform.SetParent(Player.transform);
-            camera.GetComponent<CameraController>().Init(Player);
         }
 
         Client.instance.posmanager.PlayerRegister(Player);

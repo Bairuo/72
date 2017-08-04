@@ -3,20 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
+    GameObject camera;
+
+    // 可更改属性
     public int status = 0;
     public float health;
     public float speed = 1;
-
     public float brake = 0;     // 刹车系数
 
+    // 固定参数
+    public float brakeAngle = 60;
+
+
+    // 其它变量
     public string PlayerID = "0";
 
 
-    Vector2 last_velocity = new Vector2(0, 1); 
+    float now_angle = 0;
 
 	// Use this for initialization
 	void Start () {
-		
+        camera = GameObject.FindGameObjectWithTag("MainCamera");
 	}
 	
 	// Update is called once per frame
@@ -32,26 +39,49 @@ public class PlayerController : MonoBehaviour {
             Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
             Vector2 SpeedForce = (Vector2)(ClickPos - transform.position);
 
-            if (Vector2.Dot(velocity, SpeedForce) < 0)      // 由于没有刹车操作，自动判断刹车
+            // 由于没有刹车操作，自动判断刹车
+
+            if (Vector2.Angle(velocity, SpeedForce) > brakeAngle)      
             {
                 GetComponent<Rigidbody2D>().velocity *= brake;
             }
             GetComponent<Rigidbody2D>().AddForce(SpeedForce * speed);
 
-            // 旋转
-
-            
         }
 	}
 
-    // 关键操作
-    public void Turn()
+    // 根据速度自动旋转
+    void LateUpdate()
     {
-        //transform.rota
+        Vector2 up = new Vector2(0, 1);
+        Vector2 left = new Vector2(-1, 0);
+        Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
+        float angle = Vector2.Angle(up, velocity);
+
+        if (Vector2.Dot(left, velocity) < 0)
+        {
+            angle = -angle;
+        }
+
+        if (velocity != new Vector2(0, 0))
+        {
+            now_angle = Mathf.Lerp(now_angle, angle, 3 * Time.deltaTime);
+            transform.rotation = Quaternion.identity;
+            transform.Rotate(new Vector3(0, 0, 1), now_angle);
+        }
+
+        if (PlayerID == Client.instance.playerid)
+        {
+            camera.transform.rotation = camera.GetComponent<CameraController>().rotation;
+        }
+        
     }
+
+    // 关键操作
     public void Dealth()
     {
         if (PlayerID != Client.instance.playerid) return;
+        Client.instance.SendPlayerDestroy(PlayerID);
         transform.DetachChildren();
 
         this.gameObject.SetActive(false);
@@ -61,8 +91,21 @@ public class PlayerController : MonoBehaviour {
     {
         Client.instance.posmanager.PlayerLogoff(PlayerID);
         Destroy(this.gameObject);
+
+        // 胜利检验
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        if (players.Length == 1)
+        {
+            Client.instance.SendFail();
+            Victory();
+        }
+
     }
 
+    private void Victory()
+    {
+
+    }
 
     // 属性更改
     public void ChangeBrake(float brake)

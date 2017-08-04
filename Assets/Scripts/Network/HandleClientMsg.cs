@@ -50,6 +50,19 @@ public class HandleClientMsg{
     }
 
     //（针对）战斗类协议
+    public void Fail(ProtocolBase protoBase)
+    {
+
+    }
+    public void PlayerDestroy(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+
+        Client.instance.posmanager.PlayerDestroy(id);
+    }
     public void PlayerGenerate(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
