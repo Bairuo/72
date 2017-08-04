@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
     GameObject camera;
+    public GameObject Cir;
 
     // 可更改属性
     public int status = 0;
@@ -18,18 +19,42 @@ public class PlayerController : MonoBehaviour {
     // 其它变量
     public string PlayerID = "0";
 
-
+    Vector3 rotate_axis = new Vector3(0, 0, 1);
+    Vector2 velocity_zero = new Vector2(0, 0);
+    Vector2 up = new Vector2(0, 1);
+    Vector2 left = new Vector2(-1, 0);
     float now_angle = 0;
 
 	// Use this for initialization
 	void Start () {
         camera = GameObject.FindGameObjectWithTag("MainCamera");
+        
 	}
-	
+
+
+    public void SetCir()
+    {
+        Sprite cirsprite;
+        if (PlayerID == Client.instance.playerid)
+        {
+            cirsprite = Resources.Load<Sprite>("Player/carCir_me");
+        }
+        else
+        {
+            cirsprite = Resources.Load<Sprite>("Player/carCir_enemy");
+        }
+
+        if (cirsprite != null)
+        {
+            Cir.GetComponent<SpriteRenderer>().sprite = cirsprite;
+        }
+    }
+
 	// Update is called once per frame
 	void Update () {
         if (PlayerID != Client.instance.playerid) return;
 
+        // 移动
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 ClickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -48,13 +73,18 @@ public class PlayerController : MonoBehaviour {
             GetComponent<Rigidbody2D>().AddForce(SpeedForce * speed);
 
         }
+
+        // 光环旋转
+
+        if (Cir != null)
+        {
+            Cir.transform.Rotate(rotate_axis, 30 * Time.deltaTime);
+        }
 	}
 
     // 根据速度自动旋转
     void LateUpdate()
     {
-        Vector2 up = new Vector2(0, 1);
-        Vector2 left = new Vector2(-1, 0);
         Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
         float angle = Vector2.Angle(up, velocity);
 
@@ -63,18 +93,17 @@ public class PlayerController : MonoBehaviour {
             angle = -angle;
         }
 
-        if (velocity != new Vector2(0, 0))
+        if (velocity != velocity_zero)
         {
             now_angle = Mathf.Lerp(now_angle, angle, 3 * Time.deltaTime);
             transform.rotation = Quaternion.identity;
-            transform.Rotate(new Vector3(0, 0, 1), now_angle);
+            transform.Rotate(rotate_axis, now_angle);
         }
 
         if (PlayerID == Client.instance.playerid)
         {
             camera.transform.rotation = camera.GetComponent<CameraController>().rotation;
         }
-        
     }
 
     // 关键操作
@@ -82,6 +111,7 @@ public class PlayerController : MonoBehaviour {
     {
         if (PlayerID != Client.instance.playerid) return;
         Client.instance.SendPlayerDestroy(PlayerID);
+        Destroy(Cir);
         transform.DetachChildren();
 
         this.gameObject.SetActive(false);
