@@ -111,7 +111,7 @@ public class PlayerController : MonoBehaviour {
 
         if (velocity != velocity_zero)
         {
-            now_angle = Mathf.Lerp(now_angle, angle, 3 * Time.deltaTime);
+            now_angle = Mathf.Lerp(now_angle, angle, 4 * Time.deltaTime);
             transform.rotation = Quaternion.identity;
             transform.Rotate(rotate_axis, now_angle);
         }
