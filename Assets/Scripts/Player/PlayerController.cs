@@ -22,7 +22,9 @@ public class PlayerController : MonoBehaviour {
 
     // 记录属性
     public int ImpactTimes = 0;
+    public int ItemTimes = 0;
     float SurvivalTime = 0;
+    float InvTime = 0;
 
     // 其它变量
     public string PlayerID = "0";
@@ -73,6 +75,10 @@ public class PlayerController : MonoBehaviour {
         if (health > 0)
         {
             SurvivalTime += Time.deltaTime;
+            if (status == 1)
+            {
+                InvTime += Time.deltaTime;
+            }
         }
 
         // 光环旋转
@@ -146,6 +152,11 @@ public class PlayerController : MonoBehaviour {
                 }
             }
         }
+
+        if (collision.tag == "Item")
+        {
+            ItemTimes++;
+        }
     }
 
     // 关键操作
@@ -178,7 +189,10 @@ public class PlayerController : MonoBehaviour {
         Destroy(Cir);
         transform.DetachChildren();
 
+        int playernum = GameObject.FindGameObjectsWithTag("Player").Length;
 
+        RewardUIController.SetInformation(ImpactTimes, ItemTimes, SurvivalTime, InvTime, playernum);
+        Application.LoadLevel("reward");
 
         this.gameObject.SetActive(false);
     }
