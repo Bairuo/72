@@ -6,7 +6,6 @@ public class InvController : MonoBehaviour {
 
     private float timer;
     private bool start;
-    public bool tag = true;
 	
 	// Update is called once per frame
 	void Update () {
@@ -31,7 +30,7 @@ public class InvController : MonoBehaviour {
     public void InvStart(GameObject obj, float time)
     {
         FatherObjChanger(obj);
-        if (this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().status != 1 && obj.transform.Find("Inv"))
+        if (this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().status != 1)
             this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().ChangeStatus(1);
         timer = time;
         start = true;
