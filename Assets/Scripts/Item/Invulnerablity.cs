@@ -27,6 +27,7 @@ public class Invulnerablity : MonoBehaviour {
             {
                 obj.transform.Find("Inv").gameObject.GetComponent<InvController>().SetTimer(time);
             }
+            childObj.GetComponent<InvController>().tag = false;
             Destroy(this.gameObject);
         }
     }
