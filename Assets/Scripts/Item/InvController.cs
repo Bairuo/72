@@ -29,11 +29,22 @@ public class InvController : MonoBehaviour {
 
     public void InvStart(GameObject obj, float time)
     {
+<<<<<<< HEAD
         FatherObjChanger(obj);
         if (this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().status != 1)
             this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().ChangeStatus(1);
         timer = time;
         start = true;
+=======
+        if (tag)
+        {
+            FatherObjChanger(obj);
+            if (this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().status != 1)
+                this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().ChangeStatus(1);
+            timer = time;
+            start = true;
+        }
+>>>>>>> f9f1af245a7e51703bdf606dde13d4eb609c4d93
         //Debug.Log(start);
     }
 

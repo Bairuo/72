@@ -6,7 +6,11 @@ public class Invulnerablity : MonoBehaviour {
     public float time;
     private GameObject obj;
     private GameObject childObj;
+<<<<<<< HEAD
     public bool _tag = true;
+=======
+    private bool _tag = true;
+>>>>>>> f9f1af245a7e51703bdf606dde13d4eb609c4d93
     void Start()
     {
         childObj = this.gameObject.transform.Find("Inv").gameObject;
@@ -21,9 +25,15 @@ public class Invulnerablity : MonoBehaviour {
         {
             if(!obj.transform.Find("Inv"))
             {
+<<<<<<< HEAD
                 childObj.SetActive(true);
                 if(_tag)
                 {
+=======
+                if(_tag)
+                {
+                    childObj.SetActive(true);
+>>>>>>> f9f1af245a7e51703bdf606dde13d4eb609c4d93
                     childObj.GetComponent<InvController>().InvStart(obj, time);
                     _tag = false;
                 }
