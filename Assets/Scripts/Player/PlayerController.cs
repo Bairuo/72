@@ -132,6 +132,12 @@ public class PlayerController : MonoBehaviour {
             if (velocity1.magnitude > velocity2.magnitude)
             {
                 collision.gameObject.GetComponent<Rigidbody2D>().velocity += velocity1 * ImpactForce;
+
+                if (velocity1.magnitude > 15)
+                {
+                    float health = collision.gameObject.GetComponent<PlayerController>().health;
+                    collision.gameObject.GetComponent<PlayerController>().ChangeHealth(health - velocity1.magnitude);
+                }
             }
         }
     }
