@@ -16,8 +16,13 @@ public class PlayerController : MonoBehaviour {
     public float brake = 0;     // 刹车系数
 
     // 固定参数
+    private float InitialMass = 1;
     public float brakeAngle = 60;
+    public float ImpactForce = 2;
 
+    // 记录属性
+    public int ImpactTimes = 0;
+    float SurvivalTime = 0;
 
     // 其它变量
     public string PlayerID = "0";
@@ -34,6 +39,7 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
         camera = GameObject.FindGameObjectWithTag("MainCamera");
         fog = GameObject.FindGameObjectWithTag("fog");
+        InitialMass = GetComponent<Rigidbody2D>().mass;
         if (PlayerID == Client.instance.playerid)
         {
             fog.transform.SetParent(transform);
@@ -64,19 +70,17 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        if (health > 0)
+        {
+            SurvivalTime += Time.deltaTime;
+        }
+
         // 光环旋转
 
         if (Cir != null)
         {
             Cir.transform.Rotate(rotate_axis, 30 * Time.deltaTime);
         }
-
-        /*
-        if (PlayerID != "0")
-        {
-            GetComponent<Rigidbody2D>().velocity = velocity_zero;
-            return;
-        }*/
 
         // 移动
         if (PlayerID != Client.instance.playerid) return;
@@ -111,7 +115,7 @@ public class PlayerController : MonoBehaviour {
 
         if (velocity != velocity_zero)
         {
-            now_angle = Mathf.Lerp(now_angle, angle, 3 * Time.deltaTime);
+            now_angle = Mathf.Lerp(now_angle, angle, 4 * Time.deltaTime);
             transform.rotation = Quaternion.identity;
             transform.Rotate(rotate_axis, now_angle);
         }
@@ -119,6 +123,28 @@ public class PlayerController : MonoBehaviour {
         if (PlayerID == Client.instance.playerid)
         {
             camera.transform.rotation = camera.GetComponent<CameraController>().rotation;
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Player" && Client.instance.playerid == "0")
+        {
+            Vector2 velocity1 = GetComponent<Rigidbody2D>().velocity;
+            Vector2 velocity2 = collision.gameObject.GetComponent<Rigidbody2D>().velocity;
+
+            ImpactTimes++;
+
+            if (velocity1.magnitude > velocity2.magnitude)
+            {
+                collision.gameObject.GetComponent<Rigidbody2D>().velocity += velocity1 * ImpactForce;
+
+                if (velocity1.magnitude > 15)
+                {
+                    float health = collision.gameObject.GetComponent<PlayerController>().health;
+                    collision.gameObject.GetComponent<PlayerController>().ChangeHealth(health - velocity1.magnitude);
+                }
+            }
         }
     }
 
@@ -130,15 +156,20 @@ public class PlayerController : MonoBehaviour {
         // 加速
         Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
         Vector2 SpeedForce = (Vector2)(ClickPos - transform.position);
+        float turnangle = Vector2.Angle(velocity, SpeedForce);
+
+        // 数值处理
+        brake = CalcBrake(turnangle);
+        float speedK = CalcSpeedConstant(SpeedLevel);
 
         // 由于没有刹车操作，自动判断刹车
 
-        if (Vector2.Angle(velocity, SpeedForce) > brakeAngle)
+        if (turnangle > brakeAngle)
         {
             GetComponent<Rigidbody2D>().velocity *= brake;
         }
         //Debug.Log(SpeedForce);
-        GetComponent<Rigidbody2D>().AddForce(SpeedForce * speed);
+        GetComponent<Rigidbody2D>().AddForce(SpeedForce * speed * speedK);
     }
     public void Dealth()
     {
@@ -146,6 +177,8 @@ public class PlayerController : MonoBehaviour {
         Client.instance.SendPlayerDestroy(PlayerID);
         Destroy(Cir);
         transform.DetachChildren();
+
+
 
         this.gameObject.SetActive(false);
     }
@@ -171,6 +204,65 @@ public class PlayerController : MonoBehaviour {
     public bool IsMine()
     {
         return PlayerID == Client.instance.playerid;
+    }
+
+    // 数值计算
+    private float CalcBrake(float turnangle)
+    {
+        float brake = 0;
+
+        if (turnangle > 160) brake = 0;
+        else if (turnangle > 130) brake = 0.1f;
+        else if (turnangle > 90) brake = 0.2f;
+        else if (turnangle > 60) brake = 0.3f;
+
+        return brake;
+    }
+    private float CalcSpeedConstant(float speedlevel)
+    {
+        float SpeedK = 1;
+
+        if (speedlevel == 1)
+        {
+            SpeedK = 1;
+        }
+        else if (speedlevel == 2)
+        {
+            SpeedK = 1.33f;
+        }
+        else if (speedlevel == 3)
+        {
+            SpeedK = 1.66f;
+        }
+        else if (speedlevel == 4)
+        {
+            SpeedK = 2;
+        }
+
+        return SpeedK;
+    }
+    private float CalcMassConstant(float masslevel)
+    {
+        float MassK = 1;
+
+        if (masslevel == 1)
+        {
+            MassK = 1;
+        }
+        else if (masslevel == 2)
+        {
+            MassK = 2;
+        }
+        else if (masslevel == 3)
+        {
+            MassK = 3;
+        }
+        else if (masslevel == 4)
+        {
+            MassK = 4;
+        }
+
+        return MassK;
     }
 
     // 属性更改
@@ -243,6 +335,8 @@ public class PlayerController : MonoBehaviour {
     public void RealChangeMassLevel(int masslevel)
     {
         MassLevel = masslevel;
+        float massK = CalcMassConstant(MassLevel);
+        GetComponent<Rigidbody2D>().mass = InitialMass * massK;
     }
     public void RealChangeMass(float mass)
     {
