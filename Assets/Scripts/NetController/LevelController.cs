@@ -39,8 +39,8 @@ public class LevelController : MonoBehaviour {
     public void LoadLevel1()
     {
         lv1.color = new Color(1, 1, 1, 0.8f);
-        lv2.color = new Color(1, 1, 1, 0.5f);
-        lv3.color = new Color(1, 1, 1, 0.3f);
+        lv2.color = new Color(1, 1, 1, 0.2f);
+        lv3.color = new Color(1, 1, 1, 0.2f);
         lv4.color = new Color(1, 1, 1, 0.2f);
     }
 
@@ -48,7 +48,7 @@ public class LevelController : MonoBehaviour {
     {
         lv1.color = new Color(1, 1, 1, 0.8f);
         lv2.color = new Color(1, 1, 1, 0.8f);
-        lv3.color = new Color(1, 1, 1, 0.3f);
+        lv3.color = new Color(1, 1, 1, 0.2f);
         lv4.color = new Color(1, 1, 1, 0.2f);
     }
 

@@ -14,7 +14,7 @@ public class InvController : MonoBehaviour {
         {
             timer -= Time.deltaTime;
             //Debug.Log(timer);
-            if(timer <= 0)
+            if(timer <= 0 && this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().status == 1)
             {
                 this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().ChangeStatus(0);
                 Destroy(this.gameObject);
@@ -30,7 +30,8 @@ public class InvController : MonoBehaviour {
     public void InvStart(GameObject obj, float time)
     {
         FatherObjChanger(obj);
-        this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().ChangeStatus(1);
+        if(this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().status != 1)
+            this.gameObject.transform.parent.gameObject.GetComponent<PlayerController>().ChangeStatus(1);
         timer = time;
         start = true;
         //Debug.Log(start);
