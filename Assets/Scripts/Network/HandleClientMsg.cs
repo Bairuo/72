@@ -12,7 +12,7 @@ public class HandleClientMsg{
 
         //if (ServerNet.IsUse() && num == 1) NetSceneController.instance.EnterGame();
 
-        if (num == 4)
+        if (num == 2)
         {
             NetSceneController.instance.EnterGame();
         }

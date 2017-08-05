@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour {
     // 固定参数
     private float InitialMass = 1;
     public float brakeAngle = 60;
-    public float ImpactForce = 2;
+    public float ImpactForce = 4;
 
     // 记录属性
     public int ImpactTimes = 0;
@@ -151,12 +151,16 @@ public class PlayerController : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.tag == "Player")
+        {
+            ImpactTimes++;
+        }
+
         if (collision.tag == "Player" && Client.instance.playerid == "0")
         {
             Vector2 velocity1 = GetComponent<Rigidbody2D>().velocity;
             Vector2 velocity2 = collision.gameObject.GetComponent<Rigidbody2D>().velocity;
 
-            ImpactTimes++;
 
             if (velocity1.magnitude > velocity2.magnitude)
             {
