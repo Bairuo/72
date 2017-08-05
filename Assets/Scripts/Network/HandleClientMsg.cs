@@ -10,7 +10,7 @@ public class HandleClientMsg{
         int num = proto.GetInt(start, ref start);
         Client.instance.roomnum = num;
 
-        if (ServerNet.IsUse() && num == 1) NetSceneController.instance.EnterGame();
+        //if (ServerNet.IsUse() && num == 1) NetSceneController.instance.EnterGame();
 
         if (num == 2)
         {
