@@ -94,7 +94,7 @@ public class PosManager
 
         foreach (var item in players)
         {
-            if (item.Value.active == true)
+            if (item.Value != null && item.Value.active == true)
             {
                 int DataID = playersinfo[item.Key].GetDataID();
                 //ProtocolBytes unitproto = playersinfo[item.Key].GetUnitData(DataID, "UpdateUnitInfo", item.Key, item.Value.transform.position);
@@ -162,7 +162,7 @@ public class PosManager
 
         }
 
-        if (playersinfo.ContainsKey(id))
+        if (playersinfo.ContainsKey(id) && players[id] != null)
         {
             if (Sys.IsOrderRight(playersinfo[id].LastReceiveID, DataID))
             {
