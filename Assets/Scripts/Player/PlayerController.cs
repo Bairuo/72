@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour {
 
     // 控制变量
     bool IsDamaged = false;
+    bool HostandDeath = false;
     float damagetimer = 0;
     float damageTime = 0.2f;
 
@@ -213,27 +214,40 @@ public class PlayerController : MonoBehaviour {
         int playernum = GameObject.FindGameObjectsWithTag("Player").Length;
 
         RewardUIController.SetInformation(ImpactTimes, ItemTimes, SurvivalTime, InvTime, playernum);
-        Application.LoadLevel("reward");
+
+        if (Client.instance.playerid != "0" || Client.instance.playerid == "0" && playernum == 2)
+        {
+            Application.LoadLevel("reward");
+        }
+        else
+        {
+            HostandDeath = true;
+        }
 
         this.gameObject.SetActive(false);
     }
+
     public void PlayerDestroy()
     {
         Client.instance.posmanager.PlayerLogoff(PlayerID);
+
         Destroy(this.gameObject);
 
         // 胜利检验
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        if (players.Length == 1)
+
+        if (players.Length - 1 == 1)
         {
-            Client.instance.SendFail();
+            //Client.instance.SendFail();
             Victory();
         }
+        
 
     }
     private void Victory()
     {
-
+        if (!HostandDeath) RewardUIController.SetInformation(ImpactTimes, ItemTimes, SurvivalTime, InvTime, 1);
+        Application.LoadLevel("reward");
     }
 
     public bool IsMine()

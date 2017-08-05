@@ -6,6 +6,7 @@ public class Invulnerablity : MonoBehaviour {
     public float time;
     private GameObject obj;
     private GameObject childObj;
+    private bool _tag = true;
     void Start()
     {
         childObj = this.gameObject.transform.Find("Inv").gameObject;
@@ -20,8 +21,12 @@ public class Invulnerablity : MonoBehaviour {
         {
             if(!obj.transform.Find("Inv"))
             {
-                childObj.SetActive(true);
-                childObj.GetComponent<InvController>().InvStart(obj, time);
+                if(_tag)
+                {
+                    childObj.SetActive(true);
+                    childObj.GetComponent<InvController>().InvStart(obj, time);
+                    _tag = false;
+                }
             }
             else
             {
