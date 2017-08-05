@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Room{
-    public int max = 2;
+    public int max = 4;
     public int num = 0;
     public int[] players = new int[4] { -1, -1, -1, -1 };
 

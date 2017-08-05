@@ -6,6 +6,9 @@ public class PlayerController : MonoBehaviour {
     GameObject camera;
     GameObject fog;
     public GameObject Cir;
+    public Sprite normalCar;
+    public Sprite invCar;
+    public Sprite bloodCar;
 
     // 可更改属性
     public int SpeedLevel = 1;
@@ -36,6 +39,11 @@ public class PlayerController : MonoBehaviour {
 
     public Vector2 fict_velocity = new Vector2(0, 0);
     float now_angle = 0;
+
+    // 控制变量
+    bool IsDamaged = false;
+    float damagetimer = 0;
+    float damageTime = 0.2f;
 
 	// Use this for initialization
 	void Start () {
@@ -71,6 +79,15 @@ public class PlayerController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
+        if (IsDamaged) damagetimer += Time.deltaTime;
+
+        if (damagetimer > damageTime)
+        {
+            GetComponent<SpriteRenderer>().sprite = normalCar;
+            damagetimer = 0;
+            IsDamaged = false;
+        }
 
         if (health > 0)
         {
@@ -366,10 +383,22 @@ public class PlayerController : MonoBehaviour {
     }
     public void RealChangeHealth(float health)
     {
+        IsDamaged = true;
+        damagetimer = 0;
+        GetComponent<SpriteRenderer>().sprite = bloodCar;
         this.health = health;
     }
     public void RealChangeStatus(int status)
     {
+        if (status == 0)
+        {
+            GetComponent<SpriteRenderer>().sprite = normalCar;
+        }
+        else if (status == 1)
+        {
+            GetComponent<SpriteRenderer>().sprite = invCar;
+        }
+
         this.status = status;
     }
 }
