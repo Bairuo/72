@@ -35,6 +35,11 @@ public class RewardUIController : MonoBehaviour {
 		
 	}
 
+    public void EnterNetStart()
+    {
+        Application.LoadLevel("NetStart");
+    }
+
     public static void SetInformation(int coltime, int itemtime, float survivaltime, float invtime, int order)
     {
         colTime = coltime;
