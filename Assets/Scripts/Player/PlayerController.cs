@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour {
 
     // 记录属性
     public int ImpactTimes = 0;
+    float SurvivalTime = 0;
 
     // 其它变量
     public string PlayerID = "0";
@@ -68,6 +69,11 @@ public class PlayerController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
+        if (health > 0)
+        {
+            SurvivalTime += Time.deltaTime;
+        }
 
         // 光环旋转
 
@@ -171,6 +177,8 @@ public class PlayerController : MonoBehaviour {
         Client.instance.SendPlayerDestroy(PlayerID);
         Destroy(Cir);
         transform.DetachChildren();
+
+
 
         this.gameObject.SetActive(false);
     }
