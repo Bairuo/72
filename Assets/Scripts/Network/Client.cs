@@ -50,6 +50,7 @@ public class Client
     public string playerid;
     public string roomid = "未知";
     public string questroom = "-1";
+    public int prepareNum = 0;
     public int roomnum = 0;
     public int conn_id = -1;
     string Host;
@@ -501,63 +502,20 @@ public class Client
         Send(protocol);
     }
 
-    // Partner Adventure
-    public void SendHit(string id, int isPlayer, int damage)
+
+    public void BrodcastMessage(string ProtocolName)
     {
         ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("Hit");
-        protocol.AddString(id);
-        protocol.AddInt(isPlayer);
-        protocol.AddInt(damage);
+    }
+
+    // 通用
+    public void SendStartGame()
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("StartGame");
 
         Send(protocol);
     }
-    public void SendShoot(string id, int isPlayer, int forward, Vector3 pos, int addforce)
-    {
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("Shoot");
-        protocol.AddString(id);
-        protocol.AddInt(isPlayer);
-
-        protocol.AddInt(forward);
-
-        protocol.AddFloat(pos.x);
-        protocol.AddFloat(pos.y);
-        protocol.AddFloat(pos.z);
-
-        protocol.AddInt(addforce);
-
-        Send(protocol);
-    }
-    public void SendPlayerTurn(int forward, bool stand, Vector3 pos)
-    {
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("PlayerTurn");
-        protocol.AddString(playerid);
-        protocol.AddInt(forward);
-        protocol.AddBool(stand);
-
-        protocol.AddFloat(pos.x);
-        protocol.AddFloat(pos.y);
-        protocol.AddFloat(pos.z);
-
-        ProtocolBytes UDPprotocol = new ProtocolBytes();
-        UDPprotocol.AddInt(conn_id);
-
-        UDPprotocol.AddString("U");
-        UDPprotocol.AddString(playerid);
-        UDPprotocol.AddInt(forward);
-        UDPprotocol.AddBool(stand);
-
-        UDPprotocol.AddFloat(pos.x);
-        UDPprotocol.AddFloat(pos.y);
-        UDPprotocol.AddFloat(pos.z);
-
-        UDPSend(UDPprotocol);
-        Send(protocol);
-    }
-
-    //通用
     public void SendStartScene(int index)
     {
         ProtocolBytes protocol = new ProtocolBytes();
@@ -605,7 +563,7 @@ public class Client
         Client.instance.Send(protocol);
     }
 
-    //DispatchMsgEvent
+    // DispatchMsgEvent
     public void Update()
     {
         if (posmanager.isInit)

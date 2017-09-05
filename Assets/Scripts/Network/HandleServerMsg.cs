@@ -2,7 +2,6 @@
 using System.Reflection;
 
 public class HandleServerMsg{
-
     // 连接类协议
     public void DisConnect(Conn conn, ProtocolBase protoBase)
     {
@@ -140,7 +139,10 @@ public class HandleServerMsg{
     }
 
     // 流程类协议
-
+    public void StartGame(Conn conn, ProtocolBase protoBase)
+    {
+        ServerNet.instance.rooms[conn.roomid].Broadcast(protoBase);
+    }
     public void NextLevel(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].Broadcast(protoBase);
@@ -152,6 +154,22 @@ public class HandleServerMsg{
     public void Prepare(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].prepare++;
+        Room connRoom = ServerNet.instance.rooms[conn.roomid];
+
+        ProtocolBytes protoPrepare = new ProtocolBytes();
+        protoPrepare.AddString("PrepareNum");
+        protoPrepare.AddInt(connRoom.prepare);
+
+        ServerNet.instance.rooms[conn.roomid].Broadcast(protoPrepare);
+
+
+        if (connRoom.prepare == connRoom.num)
+        {
+            ProtocolBytes protoStart = new ProtocolBytes();
+            protoStart.AddString("StartGame");
+
+            ServerNet.instance.rooms[conn.roomid].Broadcast(protoStart);
+        }
     }
 
     public void Pause(Conn conn, ProtocolBase protoBase)

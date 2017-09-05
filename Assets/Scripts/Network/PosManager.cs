@@ -124,8 +124,6 @@ public class PosManager
         SaftyArea.instance.radius = radius;
     }
 
-
-
     public void UpdateUnitInfo(ProtocolBase protocol)
     {
         ProtocolBytes proto = (ProtocolBytes)protocol;
@@ -175,7 +173,6 @@ public class PosManager
 
         }
     }
-
 
     public void PropGenerate(ProtocolBase protoBase)
     {
