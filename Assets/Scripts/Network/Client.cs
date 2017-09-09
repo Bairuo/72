@@ -382,13 +382,15 @@ public class Client
     public void SendPlayerClick(string PlayerID, float x, float y, float z)
     {
         ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("PlayerClick");
+        //protocol.AddString("PlayerClick");
+        protocol.AddInt(conn_id);
+        protocol.AddString("C");
         protocol.AddString(PlayerID);
         protocol.AddFloat(x);
         protocol.AddFloat(y);
         protocol.AddFloat(z);
 
-        Send(protocol);
+        UDPSend(protocol);
     }
 
     public void SendChangeMassLevel(string PlayerID, int masslevel)
@@ -436,6 +438,7 @@ public class Client
 
         Send(protocol);
     }
+
     public void SendChangeHealth(string PlayerID, float health)
     {
         ProtocolBytes protocol = new ProtocolBytes();
@@ -456,23 +459,6 @@ public class Client
     }
     
     // NI
-    public void SendEnterBlock(string playerID, string blockID)
-    {
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("EnterBlock");
-        protocol.AddString(playerID);
-        protocol.AddString(blockID);
-
-        Send(protocol);
-    }
-    public void SendLeaveBlock(string blockID)
-    {
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("LeaveBlock");
-        protocol.AddString(blockID);
-
-        Send(protocol);
-    }
     public void SendPlayerInit()
     {
         ProtocolBytes protocol = new ProtocolBytes();
@@ -480,12 +466,6 @@ public class Client
         protocol.AddString(playerid);
 
         Send(protocol);
-    }
-
-
-    public void BrodcastMessage(string ProtocolName)
-    {
-        ProtocolBytes protocol = new ProtocolBytes();
     }
 
     // 通用
@@ -583,16 +563,10 @@ public class Client
         if (protocol == null) return;
         string name = protocol.GetName();
 
-        MethodInfo mm = handleClientMsg.GetType().GetMethod(name);
-        if (mm != null)
-        {
-            object[] obj = new object[] { protocol };
-            mm.Invoke(handleClientMsg, obj);
-        }
-
         if (eventDict.ContainsKey(name))
         {
             eventDict[name](protocol);
+            return;
         }
 
         if (onceDict.ContainsKey(name))
@@ -600,6 +574,14 @@ public class Client
             onceDict[name](protocol);
             onceDict[name] = null;
             onceDict.Remove(name);
+            return;
+        }
+
+        MethodInfo mm = handleClientMsg.GetType().GetMethod(name);
+        if (mm != null)
+        {
+            object[] obj = new object[] { protocol };
+            mm.Invoke(handleClientMsg, obj);
         }
     }
     public void AddListener(string name, Delegate cb)

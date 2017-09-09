@@ -45,11 +45,19 @@ public class Room{
         isFull = false;
     }
 
-    public void SendToRoomServer(ProtocolBase protocol)
+    public void ForwardToRoomServer(ProtocolBase protocol)
     {
         if (ServerNet.instance.conns[players[0]].isUse)
         {
             ServerNet.instance.Send(players[0], protocol);
+        }
+    }
+
+    public void UDPForwardToRoomServer(ProtocolBase protocol)
+    {
+        if (ServerNet.instance.conns[players[0]].isUse)
+        {
+            ServerNet.instance.UDPSend(players[0], protocol);
         }
     }
 

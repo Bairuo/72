@@ -72,7 +72,7 @@ public class HandleServerMsg{
     public void PlayerClick(Conn conn, ProtocolBase protoBase)
     {
         //ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
-        ServerNet.instance.rooms[conn.roomid].SendToRoomServer(protoBase);
+        ServerNet.instance.rooms[conn.roomid].ForwardToRoomServer(protoBase);
     }
     public void PlayerGenerate(Conn conn, ProtocolBase protoBase)
     {

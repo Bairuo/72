@@ -65,6 +65,7 @@ public class PosManager
         playerID = id;
         Client.instance.AddListener("UpdateUnitInfo", UpdateUnitInfo);
         Client.instance.AddListener("U", UpdateUnitInfo);
+        Client.instance.AddListener("C", PlayerClick);
         Client.instance.AddListener("SafyAreaInfo", SafyAreaInfo);
         Client.instance.AddListener("PropGenerate", PropGenerate);
 
@@ -122,6 +123,19 @@ public class PosManager
         float radius = proto.Getfloat(start, ref start);
 
         SaftyArea.instance.radius = radius;
+    }
+
+    public void PlayerClick(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        string id = proto.GetString(start, ref start);
+        float x = proto.Getfloat(start, ref start);
+        float y = proto.Getfloat(start, ref start);
+        float z = proto.Getfloat(start, ref start);
+
+        PlayerClick(id, x, y, z);
     }
 
     public void UpdateUnitInfo(ProtocolBase protocol)

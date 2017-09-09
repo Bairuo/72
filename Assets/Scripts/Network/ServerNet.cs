@@ -160,6 +160,9 @@ public class ServerNet
 
         string protoName = protocol.GetString(start, ref start);
 
+        // UDP打洞
+        // 重要协议性能优化
+
         if (protoName == "A")
         {
             conns[conn_id].UDPRemote = UDPRemote;
@@ -168,9 +171,28 @@ public class ServerNet
         }
         else if (protoName != "U")
         {
+            // 位置同步相关重要协议重组
+            string playerID = protocol.GetString(start, ref start);
+            float cx = protocol.Getfloat(start, ref start);
+            float cy = protocol.Getfloat(start, ref start);
+            float cz = protocol.Getfloat(start, ref start);
+
+            ProtocolBytes CRecombine = new ProtocolBytes();
+            CRecombine.AddString(protoName);
+            CRecombine.AddString(playerID);
+            CRecombine.AddFloat(cx);
+            CRecombine.AddFloat(cy);
+            CRecombine.AddFloat(cz);
+
+            //HandleMsg(conns[conn_id], CRecombine);
+
+            handleServerMsg.PlayerClick(conns[conn_id], CRecombine);
+
             UDPsocket.BeginReceiveFrom(UDPreadBuff, 0, BUFFER_SIZE, SocketFlags.None, ref TempRemote, UDPReceiveCb, UDPreadBuff);
             return;
         }
+
+        // UDP位置同步协议重组
 
         int DataID = protocol.GetInt(start, ref start);
         string id = protocol.GetString(start, ref start);
@@ -195,7 +217,9 @@ public class ServerNet
         Recombine.AddFloat(velocity_x);
         Recombine.AddFloat(velocity_y);
 
-        HandleMsg(conns[conn_id], Recombine);
+        //HandleMsg(conns[conn_id], Recombine);   // 交给相应房间处理
+
+        handleServerMsg.U(conns[conn_id], Recombine);
 
         Array.Copy(UDPreadBuff, sizeof(Int32) + msgLength, UDPreadBuff, 0, count);
 

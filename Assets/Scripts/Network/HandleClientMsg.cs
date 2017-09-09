@@ -1,7 +1,7 @@
 ﻿using System;
 
 public class HandleClientMsg{
-    // 连接类（信息回馈）
+    // 流程、连接相关
     public void StartGame(ProtocolBase protoBase)
     {
         NetSceneController.instance.EnterGame();
@@ -107,18 +107,9 @@ public class HandleClientMsg{
 
         GenerateController.instance.CreatePlayer(x, y, id);
     }
-    public void PlayerClick(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-        float x = proto.Getfloat(start, ref start);
-        float y = proto.Getfloat(start, ref start);
-        float z = proto.Getfloat(start, ref start);
 
-        Client.instance.posmanager.PlayerClick(id, x, y, z);
-    }
+
+    // 改变属性
     public void ChangePosition(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
@@ -131,7 +122,6 @@ public class HandleClientMsg{
 
         Client.instance.posmanager.ChangePosition(id, x, y, z);
     }
-
     public void ChangeMassLevel(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
