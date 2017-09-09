@@ -481,26 +481,6 @@ public class Client
 
         Send(protocol);
     }
-    public void SendBlockGenerate(string net_id, float x, float y, int ID)
-    {
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("BlockGenerate");
-        protocol.AddString(net_id);
-        protocol.AddFloat(x);
-        protocol.AddFloat(y);
-        protocol.AddInt(ID);
-
-        Send(protocol);
-    }
-    public void SendAreaInit(string tag, int patternID)
-    {
-        ProtocolBytes protocol = new ProtocolBytes();
-        protocol.AddString("AreaInit");
-        protocol.AddString(tag);
-        protocol.AddInt(patternID);
-
-        Send(protocol);
-    }
 
 
     public void BrodcastMessage(string ProtocolName)

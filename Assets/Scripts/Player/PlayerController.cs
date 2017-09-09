@@ -112,7 +112,9 @@ public class PlayerController : MonoBehaviour {
         {
             Vector3 ClickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            Client.instance.SendPlayerClick(PlayerID, ClickPos.x, ClickPos.y, ClickPos.z);
+            // Click只有房主接收（且房主不必发送），在房主客户端处理物理碰撞
+            if (PlayerID != "0") Client.instance.SendPlayerClick(PlayerID, ClickPos.x, ClickPos.y, ClickPos.z);
+            
             if (PlayerID == "0") AddForce(ClickPos);
 
         }

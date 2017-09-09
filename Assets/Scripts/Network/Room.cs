@@ -45,6 +45,14 @@ public class Room{
         isFull = false;
     }
 
+    public void SendToRoomServer(ProtocolBase protocol)
+    {
+        if (ServerNet.instance.conns[players[0]].isUse)
+        {
+            ServerNet.instance.Send(players[0], protocol);
+        }
+    }
+
     public void Broadcast(ProtocolBase protocol)
     {
         for (int i = 0; i < num; i++)
