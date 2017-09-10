@@ -127,8 +127,8 @@ public class Client
                 return false;
             }
             //Debug.Log(((IPEndPoint)socket.LocalEndPoint).Port);
-            ip = new IPEndPoint(IPAddress.Any, ((IPEndPoint)socket.LocalEndPoint).Port);
-            UDPsocket.Bind(ip);
+            //ip = new IPEndPoint(IPAddress.Any, ((IPEndPoint)socket.LocalEndPoint).Port);
+            //UDPsocket.Bind(ip);
 
             isUse = true;
             ipAdress = host;

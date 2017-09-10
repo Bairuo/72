@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour {
 
     // 控制变量
     bool IsDamaged = false;
-    bool HostandDeath = false;
+    static bool HostAndDeath = false;
     float damagetimer = 0;
     float damageTime = 0.2f;
 
@@ -213,17 +213,17 @@ public class PlayerController : MonoBehaviour {
         Destroy(Cir);
         transform.DetachChildren();
 
-        int playernum = GameObject.FindGameObjectsWithTag("Player").Length;
+        int playernum = GameObject.FindGameObjectsWithTag("Player").Length;     // 自己未被摧毁前，当前场景中的剩余玩家数即是排名
 
         RewardUIController.SetInformation(ImpactTimes, ItemTimes, SurvivalTime, InvTime, playernum);
-
-        if (Client.instance.playerid != "0" || Client.IsRoomServer() && playernum == 2)
+        
+        if (!Client.IsRoomServer() || Client.IsRoomServer() && playernum == 2 || Client.instance.roomnum == 1)  //房间人数只有1-测试模式时也将切换场景 
         {
             Application.LoadLevel("reward");
         }
         else
         {
-            HostandDeath = true;
+            HostAndDeath = true;
         }
 
         this.gameObject.SetActive(false);
@@ -248,7 +248,9 @@ public class PlayerController : MonoBehaviour {
     }
     private void Victory()
     {
-        if (!HostandDeath) RewardUIController.SetInformation(ImpactTimes, ItemTimes, SurvivalTime, InvTime, 1);
+        // 没有死亡，没有载入reward
+        // 不是因为房主的原因不载入reward
+        if (!HostAndDeath) RewardUIController.SetInformation(ImpactTimes, ItemTimes, SurvivalTime, InvTime, 1);
         Application.LoadLevel("reward");
     }
 

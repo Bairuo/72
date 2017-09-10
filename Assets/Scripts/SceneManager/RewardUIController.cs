@@ -17,6 +17,15 @@ public class RewardUIController : MonoBehaviour {
     public static float invTime = 0;
     public static int Order = 1;
 
+    public static void SetInformation(int coltime, int itemtime, float survivaltime, float invtime, int order)
+    {
+        colTime = coltime;
+        itemTimes = itemtime;
+        survivalTime = survivaltime;
+        invTime = invtime;
+        Order = order;
+    }
+
     // Use this for initialization
     void Start () {
         text1.text = colTime.ToString();
@@ -27,26 +36,20 @@ public class RewardUIController : MonoBehaviour {
         if (Order == 0) Order = 1;
 
         st.GetComponent<Image>().sprite = sprites[Order - 1];
-        
+
+        ResetConnection();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    void ResetConnection()
+    {
+        if (Client.IsUse())
+            Client.instance.Close();
+        if (ServerNet.IsUse())
+            ServerNet.instance.Close();
+    }
 
     public void EnterNetStart()
     {
         Application.LoadLevel("NetStart");
     }
-
-    public static void SetInformation(int coltime, int itemtime, float survivaltime, float invtime, int order)
-    {
-        colTime = coltime;
-        itemTimes = itemtime;
-        survivalTime = survivaltime;
-        invTime = invtime;
-        Order = order;
-    }
-
 }
