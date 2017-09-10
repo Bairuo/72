@@ -63,12 +63,15 @@ public class PosManager
         isInit = true;
 
         playerID = id;
+
+
+        // 重要协议注册， 位置同步，玩家点击操作，安全区信息，物体创建
         Client.instance.AddListener("UpdateUnitInfo", UpdateUnitInfo);
         Client.instance.AddListener("U", UpdateUnitInfo);
         Client.instance.AddListener("C", PlayerClick);
         Client.instance.AddListener("SafyAreaInfo", SafyAreaInfo);
+        Client.instance.AddListener("TaggerGenerate", TaggerGenerate);
         Client.instance.AddListener("PropGenerate", PropGenerate);
-
     }
 
     public void SendPos()
@@ -188,6 +191,17 @@ public class PosManager
         }
     }
 
+    public void TaggerGenerate(ProtocolBase protoBase)
+    {
+        ProtocolBytes proto = (ProtocolBytes)protoBase;
+        int start = 0;
+        string name = proto.GetString(start, ref start);
+        string tag = proto.GetString(start, ref start);
+        float x = proto.Getfloat(start, ref start);
+        float y = proto.Getfloat(start, ref start);
+
+        TaggerGenerate(tag, new UnityEngine.Vector2(x, y));
+    }
     public void PropGenerate(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
@@ -198,10 +212,28 @@ public class PosManager
         float x = proto.Getfloat(start, ref start);
         float y = proto.Getfloat(start, ref start);
 
-        Client.instance.posmanager.PropGenerate(tag, id, new UnityEngine.Vector2(x, y));
+        PropGenerate(tag, id, new UnityEngine.Vector2(x, y));
     }
 
     Dictionary<string, ObjectGenerator> Generators = new Dictionary<string, ObjectGenerator>();
+    public void TaggerGenerate(string tag, Vector2 loc)
+    {
+        ObjectGenerator Generator;
+        if (Generators.ContainsKey(tag))
+        {
+            Generator = Generators[tag];
+        }
+        else
+        {
+            Generator = GameObject.FindGameObjectWithTag(tag).GetComponent<ObjectGenerator>();
+            Generators.Add(tag, Generator);
+        }
+
+        if (Generator != null)
+        {
+            Generator.GenerateTagger(loc);
+        }
+    }
     public void PropGenerate(string tag, int id, Vector2 loc)
     {
         ObjectGenerator Generator;

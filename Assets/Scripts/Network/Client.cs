@@ -79,6 +79,17 @@ public class Client
             return instance.isUse;
         }
     }
+    public static bool IsRoomServer()
+    {
+        if (!IsUse())
+        {
+            return false;
+        }
+        else
+        {
+            return instance.playerid == "0";
+        }
+    }
 
     public bool Connect(string host, int port)
     {
@@ -324,14 +335,24 @@ public class Client
 
         Send(protocol);
     }
-    public void SendPropGenerate(string tag, int id, Vector2 loc)
+    public void SendTaggerGenerate(string tag, Vector2 pos)
+    {
+        ProtocolBytes protocol = new ProtocolBytes();
+        protocol.AddString("TaggerGenerate");
+        protocol.AddString(tag);
+        protocol.AddFloat(pos.x);
+        protocol.AddFloat(pos.y);
+
+        Send(protocol);
+    }
+    public void SendPropGenerate(string tag, int id, Vector2 pos)
     {
         ProtocolBytes protocol = new ProtocolBytes();
         protocol.AddString("PropGenerate");
         protocol.AddString(tag);
         protocol.AddInt(id);
-        protocol.AddFloat(loc.x);
-        protocol.AddFloat(loc.y);
+        protocol.AddFloat(pos.x);
+        protocol.AddFloat(pos.y);
 
         Send(protocol);
     }
@@ -399,7 +420,6 @@ public class Client
         protocol.AddString("ChangeMassLevel");
         protocol.AddString(PlayerID);
         protocol.AddInt(masslevel);
-
         Send(protocol);
     }
     public void SendChangeSpeedLevel(string PlayerID, int speedlevel)

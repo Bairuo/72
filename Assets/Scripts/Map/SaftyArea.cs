@@ -34,7 +34,7 @@ public class SaftyArea : MonoBehaviour
 	void Update()
 	{
 
-        if (Client.instance.playerid == "0") radius -= decreasePerSec * Time.deltaTime;
+        if (Client.IsRoomServer()) radius -= decreasePerSec * Time.deltaTime;
 		// drawing precess...
 		rmt.SetFloat("_InnerRadius", radius - circleWidth);
 		rmt.SetFloat("_OuterRadius", radius);

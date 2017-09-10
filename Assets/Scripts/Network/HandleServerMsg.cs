@@ -34,6 +34,15 @@ public class HandleServerMsg{
     }
 
     // （针对）战斗类协议
+    public void U(Conn conn, ProtocolBase protoBase)            //直接被调用,不通过HandleMsg,不通过反射
+    {
+        ServerNet.instance.rooms[conn.roomid].UDPBroadcastOthers(protoBase, conn.id);
+    }
+    public void PlayerClick(Conn conn, ProtocolBase protoBase)  //直接被调用,不通过HandleMsg,不通过反射
+    {
+        //ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
+        ServerNet.instance.rooms[conn.roomid].ForwardToRoomServer(protoBase);
+    }
 
     public void Hit(Conn conn, ProtocolBase protoBase)
     {
@@ -47,10 +56,7 @@ public class HandleServerMsg{
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
-    public void U(Conn conn, ProtocolBase protoBase)
-    {
-        ServerNet.instance.rooms[conn.roomid].UDPBroadcastOthers(protoBase, conn.id);
-    }
+
 
     // (通用）战斗类协议
     public void SafyAreaInfo(Conn conn, ProtocolBase protoBase)
@@ -69,11 +75,7 @@ public class HandleServerMsg{
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
-    public void PlayerClick(Conn conn, ProtocolBase protoBase)
-    {
-        //ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
-        ServerNet.instance.rooms[conn.roomid].ForwardToRoomServer(protoBase);
-    }
+
     public void PlayerGenerate(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
@@ -91,6 +93,7 @@ public class HandleServerMsg{
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
     }
 
+    // 改变属性，位置等事件操作由本地发送，各客户端接收
     public void ChangePosition(Conn conn, ProtocolBase protoBase)
     {
         ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);

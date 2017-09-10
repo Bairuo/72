@@ -126,7 +126,7 @@ public class PlayerController : MonoBehaviour {
     {
         Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
 
-        if (Client.instance.playerid == "0") velocity = GetComponent<Rigidbody2D>().velocity;
+        if (Client.IsRoomServer()) velocity = GetComponent<Rigidbody2D>().velocity;
         else velocity = fict_velocity;
 
         float angle;
@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour {
             ImpactTimes++;
         }
 
-        if (collision.tag == "Player" && Client.instance.playerid == "0")
+        if (collision.tag == "Player" && Client.IsRoomServer())
         {
             Vector2 velocity1 = GetComponent<Rigidbody2D>().velocity;
             Vector2 velocity2 = collision.gameObject.GetComponent<Rigidbody2D>().velocity;
@@ -217,7 +217,7 @@ public class PlayerController : MonoBehaviour {
 
         RewardUIController.SetInformation(ImpactTimes, ItemTimes, SurvivalTime, InvTime, playernum);
 
-        if (Client.instance.playerid != "0" || Client.instance.playerid == "0" && playernum == 2)
+        if (Client.instance.playerid != "0" || Client.IsRoomServer() && playernum == 2)
         {
             Application.LoadLevel("reward");
         }

@@ -30,6 +30,7 @@ public class GenerateController : MonoBehaviour {
         Vector3 pos = new Vector3(x, y, 0);
         GameObject prefab = Resources.Load("Player") as GameObject;
         GameObject Player = GameObject.Instantiate(prefab, pos, Quaternion.identity);
+
         Player.GetComponent<PlayerController>().PlayerID = PlayerID;
         Player.GetComponent<PlayerController>().SetCir();
 

@@ -19,7 +19,7 @@ public class PortalController : MonoBehaviour {
         radius = GameObject.Find("saftyArea").GetComponent<SaftyArea>().radius;
         Vector2 pos_t = Random.insideUnitCircle * radius;
 
-        if (Client.instance.playerid == "0")
+        if (Client.IsRoomServer())
         {
             Client.instance.SendPortalCreate(PortalID, pos_t);
             SetAnother(pos_t);
@@ -70,7 +70,7 @@ public class PortalController : MonoBehaviour {
         GameObject gbj = collision.gameObject;
         if(gbj.tag == "Player")
         {
-            if (Client.instance.playerid == "0")
+            if (Client.IsRoomServer())
             {
                 gbj.GetComponent<PlayerController>().ChangePosition(pos_2.x, pos_2.y, pos_2.z);
                 Client.instance.SendPortalDestroy(PortalID);

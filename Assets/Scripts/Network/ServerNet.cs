@@ -184,8 +184,8 @@ public class ServerNet
             CRecombine.AddFloat(cy);
             CRecombine.AddFloat(cz);
 
-            //HandleMsg(conns[conn_id], CRecombine);
-
+            // HandleMsg(conns[conn_id], CRecombine);
+            // 直接调用，不通过反射
             handleServerMsg.PlayerClick(conns[conn_id], CRecombine);
 
             UDPsocket.BeginReceiveFrom(UDPreadBuff, 0, BUFFER_SIZE, SocketFlags.None, ref TempRemote, UDPReceiveCb, UDPreadBuff);
@@ -218,7 +218,7 @@ public class ServerNet
         Recombine.AddFloat(velocity_y);
 
         //HandleMsg(conns[conn_id], Recombine);   // 交给相应房间处理
-
+        // 直接调用，不通过反射
         handleServerMsg.U(conns[conn_id], Recombine);
 
         Array.Copy(UDPreadBuff, sizeof(Int32) + msgLength, UDPreadBuff, 0, count);
@@ -306,7 +306,7 @@ public class ServerNet
 
         /******去掉已经处理的消息******/
         int count = conn.buffCount - conn.msgLength - sizeof(Int32);
-        //要复制的数据，复制开始索引，复制目标，存储开始索引，元素数目
+        // 要复制的数据，复制开始索引，复制目标，存储开始索引，元素数目
         Array.Copy(conn.readBuff, sizeof(Int32) + conn.msgLength, conn.readBuff, 0, count);
         conn.buffCount = count;
         if (conn.buffCount > 0)
@@ -337,18 +337,19 @@ public class ServerNet
         }
     }
 
-    //处理消息
-    private void HandleMsg(Conn conn, ProtocolBase protobBase)
+    // 处理消息
+    private void HandleMsg(Conn conn, ProtocolBase protoBase)
     {
-        string name = protobBase.GetName();
-        
+        string name = protoBase.GetName();
+        // GetMethod已经用到反射，但不是影响效率的关键(Invoke)
+        // 默认调用BroadcastOther
         MethodInfo mm = handleServerMsg.GetType().GetMethod(name);
         if (mm == null)
         {
-            //HandleMsg没有对应方法
+            ServerNet.instance.rooms[conn.roomid].BroadcastOthers(protoBase, conn.id);
             return;
         }
-        Object[] obj = new object[] { conn, protobBase };
+        Object[] obj = new object[] { conn, protoBase };
         mm.Invoke(handleServerMsg, obj);
 
     }

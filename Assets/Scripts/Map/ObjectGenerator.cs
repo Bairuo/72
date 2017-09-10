@@ -111,12 +111,16 @@ public class ObjectGenerator : MonoBehaviour
 			{
 				if(!taggerGenerated[i] && t >= taggerTimeline[i])
 				{
-					GenerateTagger(genloc[i]);
-					taggerGenerated[i] = true;
+                    if (Client.IsRoomServer())
+                    {
+                        Client.instance.SendTaggerGenerate(this.tag, genloc[i]);
+                        GenerateTagger(genloc[i]);
+                        taggerGenerated[i] = true;
+                    }
 				}
 				if(!generated[i] && t >= timeline[i])
 				{
-                    if (Client.instance.playerid == "0")
+                    if (Client.IsRoomServer())
                     {
                         Client.instance.SendPropGenerate(this.tag, genid[i], genloc[i]);
                         Generate(genid[i], genloc[i]);
@@ -132,7 +136,7 @@ public class ObjectGenerator : MonoBehaviour
 		}
 	}
 
-	void GenerateTagger(Vector2 loc)
+	public void GenerateTagger(Vector2 loc)
 	{
 		if(taggerSource != null)
 		{
