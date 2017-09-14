@@ -33,7 +33,7 @@ public class Body : MonoBehaviour
     public bool freezed = false;
     
     /// The max distance from collider polygon and object's center.
-    public float farDist;
+    [HideInInspector] public float farDist;
     
     List<Force> forces = new List<Force>();
     List<Torque> torques = new List<Torque>();
@@ -125,27 +125,24 @@ public class Body : MonoBehaviour
     }
     
     int colCount;
-    public GameObject taggerSource;
-    GameObject[] taggers = new GameObject[15]; // [!]DEBUG REQUEST. REMOVE WHEN NOT DEBUGGING!!! 
     Vector2[] isc = new Vector2[15]; // intersection points location in world space.
+    
+    // DEBUG SECTION |=>
+    public GameObject taggerSource;
+    GameObject[] taggers = new GameObject[15]; // [!]DEBUG REQUEST. REMOVE WHEN NOT DEBUGGING!!!
+    // <=| DEBUG SECTION.
     
     // Call this function when current collider first collides with another.
     public bool CollisionCall(Body ox, float timestep)
     {
-        // single force calculation:
-        //   calculate the force within this gameobject's script.
-        //   for the other collider, not changing anything though.
-        // the time this pair of forces applied are equal to two colliders.
-        // force depends on :
-        // speed, contact conditions, and hardness.
-        
         var cx = ox.col;
         colCount = Calc.GetIntersectionPoints(col, cx, ref isc);
         
-        // ============== DEBUG : CONTACTS ==============
+        // DEBUG SECTION |=>
         
         if(taggers[0] == null)
         {
+            taggerSource = Resources.Load("Physics/nromal-arrow") as GameObject;
             var col = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
             for(int i = taggers.Length - 1; i >= 0; i--)
             {
@@ -170,9 +167,11 @@ public class Body : MonoBehaviour
         
         for(int i = colCount; i < taggers.Length; i++) taggers[i].transform.position = Vector2.one * 99999f;
         
+        // <=| DEBUG SECTION.
+        
         if(colCount == 0) return false;
         
-        // ============ Collision Response ==============
+        // ============ Collision React ==============
         // Consider forces applied to itself.
         // Not affect the other collider.
         var ob = cx.gameObject.GetComponent<Body>();
@@ -202,7 +201,7 @@ public class Body : MonoBehaviour
                 Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rc, f) / this.MOI, rc)) +
                 Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rp, f) / ob.MOI, rp)));
             
-            if(Vector2.Distance(isc[0], isc[1]) > 1.0f || I.magnitude < 100f) // seperate two objects for no reason.
+            if(Vector2.Distance(isc[0], isc[1]) > 1.0f || I.magnitude < 100f || Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
             {
                 Vector2 dip = ob.gameObject.transform.position - this.gameObject.transform.position;
                 this.velocity -= dip.normalized * Mathf.Pow(0.2f, timestep);

@@ -63,19 +63,6 @@ public class Calc
     
     public static Vector2 IntersectionPoint(Segment A, Segment B)
     {
-        // A brominary search.
-        // Great coding complexcity.
-        /*
-        float l = 0f, r = 1f;
-        while(r - l >= eps)
-        {
-            float mid = (r+l) * 0.5f;
-            if(Calc.Intersect(new Segment(A.from, A.Interpolate(mid)), B)) r = mid;
-            else l = mid;
-        }
-        return A.Interpolate(l);
-        */
-        
         if(Parallel(A.dir, B.dir))
         {
             if(A.Overlap(B.from)) return B.from;
