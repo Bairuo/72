@@ -4,33 +4,34 @@ using UnityEngine;
 
 public class AwardController : MonoBehaviour {
 
-    public GameObject su;
-    public GameObject sd;
-    public GameObject mu;
-    public GameObject md;
+
+    public GameObject RewardTipsController;
+
+
+    void Start()
+    {
+        RewardTipsController = GameObject.Find("RewardTipsController");
+    }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         GameObject gbj = collision.gameObject;
         if (gbj.GetComponent<SpeedUp>())
         {
-            GameObject obj = Object.Instantiate(su, this.gameObject.transform);
-            obj.transform.Translate(0, 0, -1);
+            RewardTipsController.gameObject.GetComponent<RewardTipsController>().SpeedUp(this.gameObject.transform);
         }
         if (gbj.GetComponent<SlowDown>())
         {
-            GameObject obj = Object.Instantiate(sd, this.gameObject.transform);
-            obj.transform.Translate(0, 0, -1);
+            RewardTipsController.gameObject.GetComponent<RewardTipsController>().SpeedDown(this.gameObject.transform);
         }
         if (gbj.GetComponent<MassUp>())
         {
-            GameObject obj = Object.Instantiate(mu, this.gameObject.transform);
-            obj.transform.Translate(0, 0, -1);
+            RewardTipsController.gameObject.GetComponent<RewardTipsController>().WeightUp(this.gameObject.transform);
         }
         if (gbj.GetComponent<MassDown>())
         {
-            GameObject obj = Object.Instantiate(md, this.gameObject.transform);
-            obj.transform.Translate(0, 0, -1);
+            RewardTipsController.gameObject.GetComponent<RewardTipsController>().WeightDown(this.gameObject.transform);
         }
     }
 }
