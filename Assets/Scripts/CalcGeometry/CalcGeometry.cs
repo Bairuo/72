@@ -61,6 +61,11 @@ public class Calc
         return lb;
     }
     
+    public static Vector2 Projection(Vector2 x, Vector2 dir)
+    {
+        return dir.normalized * DotMultiply(x, dir.normalized);
+    }
+    
     public static Vector2 IntersectionPoint(Segment A, Segment B)
     {
         if(Parallel(A.dir, B.dir))

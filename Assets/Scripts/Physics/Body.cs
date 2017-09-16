@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class Body : MonoBehaviour
 {
-    /// Linear drag.
+    /// Linear drag, apply for direct movement.
     public float drag = 0f;
+    
+    /// Side linear drag, apply for side movement.
+    public float sideDrag = 0f;
     
     /// Angular drag.
     public float angularDrag = 0f;
@@ -102,7 +105,13 @@ public class Body : MonoBehaviour
         
         // ============= Drag Velocity Simulation =============
         
-        velocity *= Mathf.Pow(1 - drag, timestep);
+        Quaternion currot = this.gameObject.transform.rotation;
+        Vector2 vForward = Calc.Projection(velocity, currot * Vector2.up);
+        Vector2 vSide = Calc.Projection(velocity, currot * Vector2.right);
+        vForward *= Mathf.Pow(1 - drag, timestep);
+        vSide *= Mathf.Pow(1 - sideDrag, timestep);
+        velocity = vForward + vSide;
+        
         angularVelocity *= Mathf.Pow(1 - angularDrag, timestep);
         
         // ================ Move Simulation ===================
@@ -132,7 +141,6 @@ public class Body : MonoBehaviour
     GameObject[] taggers = new GameObject[15]; // [!]DEBUG REQUEST. REMOVE WHEN NOT DEBUGGING!!!
     // <=| DEBUG SECTION.
     
-    // Call this function when current collider first collides with another.
     public bool CollisionCall(Body ox, float timestep)
     {
         var cx = ox.col;
@@ -201,7 +209,7 @@ public class Body : MonoBehaviour
                 Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rc, f) / this.MOI, rc)) +
                 Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rp, f) / ob.MOI, rp)));
             
-            if(Vector2.Distance(isc[0], isc[1]) > 1.0f || I.magnitude < 100f || Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
+            if(I.magnitude < 100f || Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
             {
                 Vector2 dip = ob.gameObject.transform.position - this.gameObject.transform.position;
                 this.velocity -= dip.normalized * Mathf.Pow(0.2f, timestep);

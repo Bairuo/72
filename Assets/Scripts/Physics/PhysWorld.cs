@@ -24,7 +24,6 @@ public class PhysWorld : MonoBehaviour
                 f(bodies[i], bodies[j]);
             }
         }
-                
     }
     
     void StepPhysicsWorld(float timestep)
@@ -45,7 +44,6 @@ public class PhysWorld : MonoBehaviour
             //     for(int i=0; i<standardStepCount; i++)
             //         y.CollisionCall(x, timestep / standardStepCount);
             // }
-            
         });
         
         
