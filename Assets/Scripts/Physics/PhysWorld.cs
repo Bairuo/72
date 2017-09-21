@@ -55,6 +55,9 @@ public class PhysWorld : MonoBehaviour
     
     void FixedUpdate()
     {
-        StepPhysicsWorld(Time.fixedDeltaTime);
+        if(Client.IsRoomServer())
+        {
+            StepPhysicsWorld(Time.fixedDeltaTime);
+        }
     }
 }

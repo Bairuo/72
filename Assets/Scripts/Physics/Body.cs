@@ -48,12 +48,9 @@ public class Body : MonoBehaviour
     
     void Start()
     {
-        if (this.gameObject.tag == "Player" && Client.IsRoomServer() || this.gameObject.tag != "Player")
-        {
-            PhysWorld.bodies.Add(this);
-        }
-        
         col = this.gameObject.GetComponent<PolygonCollider2D>();
+        
+        PhysWorld.bodies.Add(this);
         
         farDist = 0f;
         foreach(var i in col.points) farDist = Mathf.Max(farDist, i.magnitude);
