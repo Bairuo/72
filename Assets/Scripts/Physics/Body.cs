@@ -48,7 +48,10 @@ public class Body : MonoBehaviour
     
     void Start()
     {
-        PhysWorld.bodies.Add(this);
+        if (this.gameObject.tag == "Player" && Client.IsRoomServer() || this.gameObject.tag != "Player")
+        {
+            PhysWorld.bodies.Add(this);
+        }
         
         col = this.gameObject.GetComponent<PolygonCollider2D>();
         

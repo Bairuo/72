@@ -78,24 +78,6 @@ public class PosManager
     {
         if (playerID != "0") return;
 
-        /*
-        if (players.ContainsKey(playerID)) {
-            if (players[playerID].active == true)
-            {
-                int DataID = playersinfo[playerID].GetDataID();
-                ProtocolBytes unitproto = playersinfo[playerID].GetUnitData(DataID, "UpdateUnitInfo", playerID, players[playerID].transform.position);
-                ProtocolBytes UDPunitproto = playersinfo[playerID].GetUDPUnitData(DataID, "U", playerID, players[playerID].transform.position);
-
-                unitproto.AddFloat(players[playerID].GetComponent<Rigidbody2D>().velocity.x);
-                unitproto.AddFloat(players[playerID].GetComponent<Rigidbody2D>().velocity.y);
-
-                //Client.instance.UDPSend(UDPunitproto);
-                //Client.instance.UDPP2PBroadcast(UDPunitproto);
-                Client.instance.Send(unitproto);
-            }
-
-        }*/
-
         foreach (var item in players)
         {
             if (item.Value != null && item.Value.active == true)
@@ -104,10 +86,10 @@ public class PosManager
                 //ProtocolBytes unitproto = playersinfo[item.Key].GetUnitData(DataID, "UpdateUnitInfo", item.Key, item.Value.transform.position);
                 ProtocolBytes UDPunitproto = playersinfo[item.Key].GetUDPUnitData(DataID, "U", item.Key, item.Value.transform.position);
 
-                //unitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.x);
-                //unitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.y);
-                UDPunitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.x);
-                UDPunitproto.AddFloat(item.Value.GetComponent<Rigidbody2D>().velocity.y);
+                //unitproto.AddFloat(item.Value.GetComponent<Body>().velocity.x);
+                //unitproto.AddFloat(item.Value.GetComponent<Body>().velocity.y);
+                UDPunitproto.AddFloat(item.Value.GetComponent<Body>().velocity.x);
+                UDPunitproto.AddFloat(item.Value.GetComponent<Body>().velocity.y);
 
                 //Client.instance.Send(unitproto);
                 Client.instance.UDPSend(UDPunitproto);
@@ -183,7 +165,7 @@ public class PosManager
             {
                 playersinfo[id].Update(pos);
                 playersinfo[id].LastReceiveID = DataID;
-                //players[id].GetComponent<Rigidbody2D>().velocity = velocity;
+                //players[id].GetComponent<Body>().velocity = velocity;
                 players[id].GetComponent<PlayerController>().fict_velocity = velocity;
                 //Debug.Log(playersinfo[id].fpos);
             }
