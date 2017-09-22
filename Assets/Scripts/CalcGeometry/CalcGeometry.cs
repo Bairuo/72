@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+using System.Runtime.CompilerServices;
 
 /// 计算几何. 按需选用.
 
@@ -13,13 +16,31 @@ public class Calc
     public static bool eq(float a, float b) { return Mathf.Abs(a-b) < eps; }
 
     // ============================ 点和向量 =============================
-
+    
     public static float CrossMultiply(Vector2 a, Vector2 b) { return a.x * b.y - a.y * b.x; }
-    public static float DotMultiply(Vector2 a, Vector2 b) { return a.x * b.x + a.y * b.y; }
+    public static float DotMultiply(Vector2 a, Vector2 b) { return Vector2.Dot(a, b); }
 
     public static bool OnLeftSide(Vector2 a, Vector2 b) { return CrossMultiply(a, b) > eps; }
     public static bool OnRightSide(Vector2 a, Vector2 b) { return CrossMultiply(a, b) < -eps; }
     public static bool Parallel(Vector2 a, Vector2 b) { return eq(CrossMultiply(a, b), 1); }
+    
+    /// Z轴转角. 假设四元数直接代表了z轴的旋转(z = sin(theta))
+    public static float RotationAngleZ(Quaternion q) { return Mathf.Acos(q.w) * Mathf.Sign(q.z) * 2.0f; }
+    
+    /// 对一个二维向量应用Z轴旋转.
+    public static Vector2 ApplyRotationAngle(float angle, Vector2 v)
+    {
+        float cos = Mathf.Cos(angle);
+        float sin = Mathf.Sin(angle);
+        return new Vector2(cos * v.x - sin * v.y, sin * v.x + cos * v.y);
+    }
+    
+    /// 对一个二维向量进行旋转, cos和sin由参数给出.
+    public static Vector2 ApplyRotationAngle(float cos, float sin, Vector2 v)
+    {
+        return new Vector2(cos * v.x - sin * v.y, sin * v.x + cos * v.y);
+    }
+    
     
     public static Quaternion quat90 = Quaternion.Euler(0f, 0f, 90f);
     public static Vector2 Rot90(Vector2 a) { return new Vector2(-a.y, a.x); }
@@ -82,25 +103,25 @@ public class Calc
         return CrossMultiply(g, d2) / K * A.dir + A.from;
     }
     
-    public static int GetIntersectionPoints(PolygonCollider2D c1, PolygonCollider2D c2, ref Vector2[] intersections)
+    public static int GetIntersectionPoints(Vector2[] p1, Transform trs1, Vector2[] p2, Transform trs2, ref Vector2[] intersections)
     {
-        var cp1 = c1.points;
-        var cp2 = c2.points;
-        Vector2 ct1 = c1.gameObject.transform.position;
-        Vector2 ct2 = c2.gameObject.transform.position;
-        var rt1 = c1.gameObject.transform.rotation;
-        var rt2 = c2.gameObject.transform.rotation;
+        Vector2 ct1 = trs1.position;
+        Vector2 ct2 = trs2.position;
+        float rt1 = RotationAngleZ(trs1.rotation);
+        float rt2 = RotationAngleZ(trs2.rotation);
         int intc = 0;
-        var pts1 = c1.GetPath(0);
-        var pts2 = c2.GetPath(0);
-        var cc1 = pts1.Length;
-        var cc2 = pts2.Length;
+        var cc1 = p1.Length;
+        var cc2 = p2.Length;
+        
+        float cos1 = Mathf.Cos(rt1);
+        float sin1 = Mathf.Sin(rt1);
+        float cos2 = Mathf.Cos(rt2);
+        float sin2 = Mathf.Sin(rt2);
         
         for(int i=0; i<cc1; i++)
         {
-            // AABB fast exclusive.
-            Vector2 g1 = (Vector2)(rt1 * pts1[i]) + ct1;
-            Vector2 g2 = (Vector2)(rt1 * pts1[i+1 == cc1 ? 0 : i+1]) + ct1;
+            Vector2 g1 = ApplyRotationAngle(cos1, sin1, p1[i]) + ct1;
+            Vector2 g2 = ApplyRotationAngle(cos1, sin1, p1[i+1 == cc1 ? 0 : i+1]) + ct1;
             Segment seg1 = new Segment(g1, g2);
             float l1 = Mathf.Min(g1.x, g2.x);
             float r1 = Mathf.Max(g1.x, g2.x);
@@ -109,8 +130,9 @@ public class Calc
             
             for(int j=0; j<cc2; j++)
             {
-                Vector2 k1 = (Vector2)(rt2 * pts2[j]) + ct2;
-                Vector2 k2 = (Vector2)(rt2 * pts2[j+1 == cc2 ? 0 : j+1]) + ct2;
+                // AABB 快速排除.
+                Vector2 k1 = ApplyRotationAngle(cos2, sin2, p2[j]) + ct2;
+                Vector2 k2 = ApplyRotationAngle(cos2, sin2, p2[j+1 == cc2 ? 0 : j+1]) + ct2;
                 Segment seg2 = new Segment(k1, k2);
                 float l2 = Mathf.Min(k1.x, k2.x);
                 if(r1 < l2) continue;
@@ -121,7 +143,7 @@ public class Calc
                 float t2 = Mathf.Max(k1.y, k2.y);
                 if(t2 < b1) continue;
                 
-                // Intersection.
+                // 相交判定.
                 if(Intersect(seg1, seg2))
                 {
                     intersections[intc++] = IntersectionPoint(seg1, seg2);
@@ -131,7 +153,6 @@ public class Calc
         return intc;
     }
 }
-
 
 // ============================== 线段 ===============================
 public struct Segment
@@ -172,7 +193,4 @@ public struct Segment
         return to;
     }
 };
-
-
-
 

@@ -43,8 +43,11 @@ public class Body : MonoBehaviour
     
     [HideInInspector] public PolygonCollider2D col;
     
-    /// Colliders that touches this object in the last physics step.
-    List<Body> collides;
+    /// Points extract from colliders.
+    [HideInInspector] public Vector2[] points;
+    
+    /// From which path of collider shall I extract the collider points.
+    public int pathID;
     
     void Start()
     {
@@ -54,6 +57,8 @@ public class Body : MonoBehaviour
         
         farDist = 0f;
         foreach(var i in col.points) farDist = Mathf.Max(farDist, i.magnitude);
+        
+        points = col.GetPath(pathID);
     }
     
     void OnDestroy()
@@ -132,106 +137,6 @@ public class Body : MonoBehaviour
             this.gameObject.transform.Rotate(0f, 0f, deltadir);
         }
     }
-    
-    int colCount;
-    Vector2[] isc = new Vector2[15]; // intersection points location in world space.
-    
-    // DEBUG SECTION |=>
-    public GameObject taggerSource;
-    GameObject[] taggers = new GameObject[15]; // [!]DEBUG REQUEST. REMOVE WHEN NOT DEBUGGING!!!
-    // <=| DEBUG SECTION.
-    
-    public bool CollisionCall(Body ox, float timestep)
-    {
-        var cx = ox.col;
-        colCount = Calc.GetIntersectionPoints(col, cx, ref isc);
-        
-        // DEBUG SECTION |=>
-        
-        if(taggers[0] == null)
-        {
-            taggerSource = Resources.Load("Physics/nromal-arrow") as GameObject;
-            var col = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
-            for(int i = taggers.Length - 1; i >= 0; i--)
-            {
-                taggers[i] = Instantiate(taggerSource, Vector2.one * 99999f, new Quaternion(0f, 0f, 0f, 1f));
-                taggers[i].name = this.gameObject.name + ":" + i;
-                Destroy(taggers[i].GetComponent<ItemTagger>());
-                taggers[i].GetComponent<SpriteRenderer>().color = col;
-            }
-        }
-        
-        for(int i=0; i<colCount; i++)
-        {
-            taggers[i].transform.position = isc[i];
-        }
-        
-        if(colCount >= 2)
-        {
-            taggers[0].transform.rotation = 
-            taggers[1].transform.rotation = 
-                Quaternion.Euler(0f, 0f, Calc.Angle(Vector2.up, Calc.Rot90(new Segment(isc[0], isc[1]).dir.normalized)));
-        }
-        
-        for(int i = colCount; i < taggers.Length; i++) taggers[i].transform.position = Vector2.one * 99999f;
-        
-        // <=| DEBUG SECTION.
-        
-        if(colCount == 0) return false;
-        
-        // ============ Collision React ==============
-        // Consider forces applied to itself.
-        // Not affect the other collider.
-        var ob = cx.gameObject.GetComponent<Body>();
-        if(ob != null)
-        {
-            // Coefficient of Restitution.
-            // defined as - deltaV before / deltaV after.
-            // determined by material properties (like hardness).
-            float e = this.hardness * ob.hardness;
-            if(e < 0f) e = 0f;
-            // intersection line.
-            Segment L = new Segment(isc[0], isc[1]);
-            // collision point. Center of intersection line.
-            Vector2 mid = L.Interpolate(0.5f);
-            // relative position of collision point to mass center.
-            Vector2 rc = mid - (Vector2)this.gameObject.transform.position;
-            Vector2 rp = mid - (Vector2)ob.gameObject.transform.position;
-            // relative velocity.
-            Vector2 rv = velocity - ob.velocity + Calc.Rot90(rc) * this.angularVelocity - Calc.Rot90(rp) * ob.angularVelocity;
-            // normal of collision. Whatever direction is.
-            Vector2 f = Calc.Rot90(L.dir.normalized);
-            if(Calc.DotMultiply(f, rc) < 0f) f = -f;
-            // Impulse.
-            Vector2 I = f;
-            I *= - (1f + e) * Calc.DotMultiply(rv, f) / (
-                (1f / this.mass + 1f / ob.mass) +
-                Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rc, f) / this.MOI, rc)) +
-                Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rp, f) / ob.MOI, rp)));
-            
-            if(I.magnitude < 100f || Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
-            {
-                Vector2 dip = ob.gameObject.transform.position - this.gameObject.transform.position;
-                this.velocity -= dip.normalized * Mathf.Pow(0.2f, timestep);
-                this.angularVelocity *= Mathf.Pow(0.1f, timestep);
-                ob.velocity += dip.normalized * Mathf.Pow(0.2f, timestep);
-                ob.angularVelocity *= Mathf.Pow(0.1f, timestep);
-            }
-            else
-            {
-                this.velocity += I / this.mass;
-                this.angularVelocity += Calc.CrossMultiply(rc, I) / this.MOI;
-                this.angularVelocity = Calc.RangeCut(this.angularVelocity, -2.0f * Mathf.PI, 2.0f * Mathf.PI);
-                
-                ob.velocity += -I / ob.mass;
-                ob.angularVelocity += Calc.CrossMultiply(rp, -I) / ob.MOI;
-                ob.angularVelocity = Calc.RangeCut(ob.angularVelocity, -2.0f * Mathf.PI, 2.0f * Mathf.PI);
-            }
-        }
-        
-        return true;
-    }
-    
     
     /// @force relative direction.
     /// @loc RELATIVE location where the force is applied.

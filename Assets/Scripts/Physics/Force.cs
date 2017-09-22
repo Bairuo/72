@@ -11,7 +11,6 @@ public struct Force : TimedPhysEffect
 {
     [SerializeField]
     public Vector2 value;
-    [SerializeField]
     public float timelast{ get; set; }
     public Force(Vector2 dir, float time)
     {
@@ -24,7 +23,6 @@ public struct Torque : TimedPhysEffect
 {
     [SerializeField]
     public float value;
-    [SerializeField]
     public float timelast{ get; set; }
     public Torque(float torq, float time)
     {

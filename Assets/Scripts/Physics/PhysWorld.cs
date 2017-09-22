@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class PhysWorld : MonoBehaviour
 {
-    public int standardStepCount;
+    /// Make the simulation step on anyway.
+    public bool forceApply;
     
+    public int stepCount;
+    
+    // [!]Depreated
     // Increase step count when velocity is higher.
-    public float testTimesPerSpeed;
+    // public float testTimesPerSpeed;
     
     /// A reference pool.
     public static List<Body> bodies = new List<Body>();
@@ -26,6 +30,15 @@ public class PhysWorld : MonoBehaviour
         }
     }
     
+    void FixedUpdate()
+    {
+        if(forceApply || Client.IsRoomServer())
+        {
+            for(int i=0; i<stepCount; i++)
+                StepPhysicsWorld(Time.fixedDeltaTime / stepCount);
+        }
+    }
+    
     void StepPhysicsWorld(float timestep)
     {
         ForeachBody((Body x, Body y) =>
@@ -33,19 +46,9 @@ public class PhysWorld : MonoBehaviour
             if(x.farDist + y.farDist + (x.velocity - y.velocity).magnitude * timestep >=
                 Vector2.Distance(x.gameObject.transform.position, y.gameObject.transform.position))
             {
-                int times = Mathf.FloorToInt((x.velocity - y.velocity).magnitude / testTimesPerSpeed) + standardStepCount;
-                for(int h=0; h<times; h++)
-                    y.CollisionCall(x, timestep / times);
+                CollisionCall(x, y, timestep);
             }
-            
-            // Emmmmmmm this looks better? But not so fast.
-            // if(x.farDist + y.farDist >= Vector2.Distance(x.gameObject.transform.position, y.gameObject.transform.position))
-            // {
-            //     for(int i=0; i<standardStepCount; i++)
-            //         y.CollisionCall(x, timestep / standardStepCount);
-            // }
         });
-        
         
         foreach(var i in bodies)
         {
@@ -53,11 +56,68 @@ public class PhysWorld : MonoBehaviour
         }
     }
     
-    void FixedUpdate()
+    
+    // intersection points location in world space.
+    // not declared to be temporary variable for avoiding GC.
+    static Vector2[] isc = new Vector2[15];
+    static int colCount;
+    
+    /// A "collision call" is to deal with the interactivity of two colliding objects.
+    /// Will change their velocity and angular velocity.
+    public static bool CollisionCall(Body bodyA, Body bodyB, float timestep)
     {
-        if(Client.IsRoomServer())
+        colCount = Calc.GetIntersectionPoints(bodyA.points, bodyA.gameObject.transform, bodyB.points, bodyB.gameObject.transform, ref isc);
+        
+        if(colCount == 0) return false;
+        
+        // ============ Collision React ==============
+        // Consider forces applied to itself.
+        // Not affect the other collider.
+        
+        // Coefficient of Restitution.
+        // defined as - deltaV before / deltaV after.
+        // determined by material properties (like hardness).
+        float e = bodyB.hardness * bodyB.hardness;
+        if(e < 0f) e = 0f;
+        // intersection line.
+        Segment L = new Segment(isc[0], isc[1]);
+        // collision point. Center of intersection line.
+        Vector2 mid = L.Interpolate(0.5f);
+        // relative position of collision point to mass center.
+        Vector2 rc = mid - (Vector2)bodyA.gameObject.transform.position;
+        Vector2 rp = mid - (Vector2)bodyB.gameObject.transform.position;
+        // relative velocity.
+        Vector2 rv = bodyA.velocity - bodyB.velocity + Calc.Rot90(rc) * bodyA.angularVelocity - Calc.Rot90(rp) * bodyB.angularVelocity;
+        // normal of collision. Whatever direction is.
+        Vector2 f = Calc.Rot90(L.dir.normalized);
+        if(Calc.DotMultiply(f, rc) < 0f) f = -f;
+        // Impulse.
+        Vector2 I = f;
+        I *= - (1f + e) * Calc.DotMultiply(rv, f) / (
+            (1f / bodyA.mass + 1f / bodyB.mass) +
+            Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rc, f) / bodyA.MOI, rc)) +
+            Calc.DotMultiply(f, Vector3.Cross((Vector3)(Vector3.Cross((Vector3)rp, f) / bodyB.MOI), rp)));
+        
+        if(I.magnitude < 100f || Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
         {
-            StepPhysicsWorld(Time.fixedDeltaTime);
+            Vector2 dip = bodyB.gameObject.transform.position - bodyA.gameObject.transform.position;
+            bodyA.velocity -= dip.normalized * Mathf.Pow(0.2f, timestep);
+            bodyA.angularVelocity *= Mathf.Pow(0.1f, timestep);
+            bodyB.velocity += dip.normalized * Mathf.Pow(0.2f, timestep);
+            bodyB.angularVelocity *= Mathf.Pow(0.1f, timestep);
         }
+        else
+        {
+            bodyA.velocity += I / bodyA.mass;
+            bodyA.angularVelocity += Calc.CrossMultiply(rc, I) / bodyA.MOI;
+            bodyA.angularVelocity = Calc.RangeCut(bodyA.angularVelocity, -2.0f * Mathf.PI, 2.0f * Mathf.PI);
+            
+            bodyB.velocity += -I / bodyB.mass;
+            bodyB.angularVelocity += Calc.CrossMultiply(rp, -I) / bodyB.MOI;
+            bodyB.angularVelocity = Calc.RangeCut((float)bodyB.angularVelocity, -2.0f * Mathf.PI, 2.0f * Mathf.PI);
+        }
+        
+        return true;
     }
+    
 }
