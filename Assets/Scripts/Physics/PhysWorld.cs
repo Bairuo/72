@@ -43,8 +43,24 @@ public class PhysWorld : MonoBehaviour
     {
         ForeachBody((Body x, Body y) =>
         {
-            if(x.farDist + y.farDist + (x.velocity - y.velocity).magnitude * timestep >=
-                Vector2.Distance(x.gameObject.transform.position, y.gameObject.transform.position))
+            if(x.freezed && y.freezed) return;
+            
+            // Fast exclusive.
+            float rads = x.farDist + y.farDist;
+            Vector2 relv = x.velocity - y.velocity;
+            Segment l = new Segment(x.transform.position, (Vector2)x.transform.position + relv);
+            Segment left = new Segment(l.from + Calc.Rot90(l.dir).normalized, l.to + Calc.Rot90(l.dir).normalized);
+            Segment right = new Segment(l.from - Calc.Rot90(l.dir).normalized, l.to - Calc.Rot90(l.dir).normalized);
+            Vector2 tar = y.transform.position;
+            if(
+                Vector2.Distance(l.from, tar) <= rads || 
+                Vector2.Distance(l.to, tar) <= rads || 
+                (   (left.Overlap(left.Projection(tar)) && left.ProjectionHeight(tar) <= y.farDist) ||
+                    Vector2.Distance(left.from, tar) <= rads ||
+                    Vector2.Distance(left.to, tar) <= rads) ||
+                (   (right.Overlap(right.Projection(tar)) && right.ProjectionHeight(tar) <= y.farDist) ||
+                    Vector2.Distance(right.from, tar) <= rads ||
+                    Vector2.Distance(right.to, tar) <= rads))
             {
                 CollisionCall(x, y, timestep);
             }

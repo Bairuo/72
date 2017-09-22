@@ -134,14 +134,11 @@ public class Calc
                 Vector2 k1 = ApplyRotationAngle(cos2, sin2, p2[j]) + ct2;
                 Vector2 k2 = ApplyRotationAngle(cos2, sin2, p2[j+1 == cc2 ? 0 : j+1]) + ct2;
                 Segment seg2 = new Segment(k1, k2);
-                float l2 = Mathf.Min(k1.x, k2.x);
-                if(r1 < l2) continue;
-                float r2 = Mathf.Max(k1.x, k2.x);
-                if(r2 < l1) continue;
-                float b2 = Mathf.Min(k1.y, k2.y);
-                if(t1 < b2) continue;
-                float t2 = Mathf.Max(k1.y, k2.y);
-                if(t2 < b1) continue;
+                if(r1 < Mathf.Min(k1.x, k2.x) ||
+                    Mathf.Max(k1.x, k2.x) < l1 ||
+                    t1 < Mathf.Min(k1.y, k2.y) ||
+                    Mathf.Max(k1.y, k2.y) < b1)
+                    continue;
                 
                 // 相交判定.
                 if(Intersect(seg1, seg2))
@@ -191,6 +188,11 @@ public struct Segment
         if(Overlap(g)) return g;
         if(Calc.FromTo(g, from).magnitude < Calc.FromTo(g, to).magnitude) return from;
         return to;
+    }
+    
+    public float ProjectionHeight(Vector2 p) // 点到直线的距离.
+    {
+        return Mathf.Abs(Calc.CrossMultiply(Calc.FromTo(p, from), Calc.FromTo(p, to)) / len / 2f);
     }
 };
 
