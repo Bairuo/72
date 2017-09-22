@@ -48,6 +48,7 @@ public class Calc
     public static Vector2 FromTo(Vector2 a, Vector2 b) { return b - a; }
     
     public static float RangeCut(float a, float bottom, float top) { return a > top ? top : a < bottom ? bottom : a; }
+    public static float RelativeCut(float curv, float topv) { return (curv - topv) / topv; }
     
     public static bool Parallel(Segment a, Segment b)
     {

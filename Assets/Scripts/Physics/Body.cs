@@ -49,6 +49,17 @@ public class Body : MonoBehaviour
     /// From which path of collider shall I extract the collider points.
     public int pathID;
     
+    /// Count seconds from the last collision of this object.
+    /// Special rules of collision taken into account is described in function TriggerCollision below.
+    /// This has a special use in the specific game design.
+    /// This design which should be not taken into a part of extension.
+    public float collideCounter;
+    public void TriggerCollision() { collideCounter = 0f; }
+    
+// ============================================================================================
+// ============================================================================================
+// ============================================================================================
+    
     void Start()
     {
         col = this.gameObject.GetComponent<PolygonCollider2D>();
@@ -68,7 +79,7 @@ public class Body : MonoBehaviour
     
     void Update()
     {
-        
+        collideCounter += Time.deltaTime;
     }
     
     void FixedUpdate()
@@ -76,7 +87,9 @@ public class Body : MonoBehaviour
         
     }
     
-    float Cutoff(float curv, float topv) { return (curv - topv) / topv; }
+// ============================================================================================
+// ============================================================================================
+// ============================================================================================
     
     public void StepMovement(float timestep)
     {
@@ -87,7 +100,7 @@ public class Body : MonoBehaviour
         for(int i = forces.Count - 1; i >= 0; i--)
         {
             Force cf = forces[i];
-            sf.value += cf.value * Cutoff(cf.timelast, timestep);
+            sf.value += cf.value * Calc.RelativeCut(cf.timelast, timestep);
             cf.timelast -= timestep;
             forces[i] = cf;
         }
@@ -96,7 +109,7 @@ public class Body : MonoBehaviour
         for(int i = torques.Count - 1; i >= 0; i--)
         {
             Torque cq = torques[i];
-            sq.value += cq.value * Cutoff(cq.timelast, timestep);
+            sq.value += cq.value * Calc.RelativeCut(cq.timelast, timestep);
             cq.timelast -= timestep;
             torques[i] = cq;
         }

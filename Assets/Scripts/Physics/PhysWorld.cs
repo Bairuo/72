@@ -47,8 +47,8 @@ public class PhysWorld : MonoBehaviour
             
             // Fast exclusive.
             float rads = x.farDist + y.farDist;
-            Vector2 relv = x.velocity - y.velocity;
-            Segment l = new Segment(x.transform.position, (Vector2)x.transform.position + relv);
+            Vector2 reld = (x.velocity - y.velocity) * timestep;
+            Segment l = new Segment(x.transform.position, (Vector2)x.transform.position + reld);
             Segment left = new Segment(l.from + Calc.Rot90(l.dir).normalized, l.to + Calc.Rot90(l.dir).normalized);
             Segment right = new Segment(l.from - Calc.Rot90(l.dir).normalized, l.to - Calc.Rot90(l.dir).normalized);
             Vector2 tar = y.transform.position;
@@ -89,6 +89,8 @@ public class PhysWorld : MonoBehaviour
         // ============ Collision React ==============
         // Consider forces applied to itself.
         // Not affect the other collider.
+        bodyA.TriggerCollision();
+        bodyB.TriggerCollision();
         
         // Coefficient of Restitution.
         // defined as - deltaV before / deltaV after.
