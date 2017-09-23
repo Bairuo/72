@@ -16,7 +16,8 @@ public class PhysWorld : MonoBehaviour
     /// A reference pool.
     public static List<Body> bodies = new List<Body>();
     
-    delegate void FuncDealCollision(Body x, Body y);
+    public delegate void FuncCollisionCallback(Body other, CollisionInfo info);
+    public static Dictionary<Body, FuncCollisionCallback> collisionCallback = new Dictionary<Body, FuncCollisionCallback>();
     
     void ForeachBody(FuncDealCollision f)
     {
@@ -39,6 +40,7 @@ public class PhysWorld : MonoBehaviour
         }
     }
     
+    delegate void FuncDealCollision(Body x, Body y);
     void StepPhysicsWorld(float timestep)
     {
         ForeachBody((Body x, Body y) =>
@@ -86,11 +88,9 @@ public class PhysWorld : MonoBehaviour
         
         if(colCount == 0) return false;
         
-        // ============ Collision React ==============
+        // ====================== Collision React ========================
         // Consider forces applied to itself.
         // Not affect the other collider.
-        bodyA.TriggerCollision();
-        bodyB.TriggerCollision();
         
         // Coefficient of Restitution.
         // defined as - deltaV before / deltaV after.
@@ -116,6 +116,7 @@ public class PhysWorld : MonoBehaviour
             Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rc, f) / bodyA.MOI, rc)) +
             Calc.DotMultiply(f, Vector3.Cross((Vector3)(Vector3.Cross((Vector3)rp, f) / bodyB.MOI), rp)));
         
+        bool overlap = false;
         if(I.magnitude < 100f || Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
         {
             Vector2 dip = bodyB.gameObject.transform.position - bodyA.gameObject.transform.position;
@@ -123,6 +124,7 @@ public class PhysWorld : MonoBehaviour
             bodyA.angularVelocity *= Mathf.Pow(0.1f, timestep);
             bodyB.velocity += dip.normalized * Mathf.Pow(0.2f, timestep);
             bodyB.angularVelocity *= Mathf.Pow(0.1f, timestep);
+            overlap = true;
         }
         else
         {
@@ -133,6 +135,19 @@ public class PhysWorld : MonoBehaviour
             bodyB.velocity += -I / bodyB.mass;
             bodyB.angularVelocity += Calc.CrossMultiply(rp, -I) / bodyB.MOI;
             bodyB.angularVelocity = Calc.RangeCut((float)bodyB.angularVelocity, -2.0f * Mathf.PI, 2.0f * Mathf.PI);
+        }
+        
+        // ======================= Collision Callback =========================
+        if(collisionCallback.ContainsKey(bodyA))
+        {
+            CollisionInfo info = new CollisionInfo(I, overlap);
+            collisionCallback[bodyA](bodyB, info);
+        }
+        
+        if(collisionCallback.ContainsKey(bodyB))
+        {
+            CollisionInfo info = new CollisionInfo(-I, overlap);
+            collisionCallback[bodyB](bodyA, info);
         }
         
         return true;

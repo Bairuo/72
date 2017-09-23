@@ -49,13 +49,6 @@ public class Body : MonoBehaviour
     /// From which path of collider shall I extract the collider points.
     public int pathID;
     
-    /// Count seconds from the last collision of this object.
-    /// Special rules of collision taken into account is described in function TriggerCollision below.
-    /// This has a special use in the specific game design.
-    /// This design which should be not taken into a part of extension.
-    public float collideCounter;
-    public void TriggerCollision() { collideCounter = 0f; }
-    
 // ============================================================================================
 // ============================================================================================
 // ============================================================================================
@@ -79,7 +72,6 @@ public class Body : MonoBehaviour
     
     void Update()
     {
-        collideCounter += Time.deltaTime;
     }
     
     void FixedUpdate()
