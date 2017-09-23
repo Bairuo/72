@@ -28,9 +28,12 @@ public class ColliderInfo : MonoBehaviour
         if(PhysWorld.collisionCallback.ContainsKey(body))
         {
             Debug.Log("WARNING: override callback for collider info. There must be at most one callback function for each Body.");
+            PhysWorld.collisionCallback[body] = CollisionCallback;
         }
-        
-        PhysWorld.collisionCallback.Add(body, CollisionCallback);
+        else
+        {
+            PhysWorld.collisionCallback.Add(body, CollisionCallback);
+        }
     }
     
     void OnDestroy()
