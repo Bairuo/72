@@ -48,21 +48,7 @@ public class PhysWorld : MonoBehaviour
             if(x.freezed && y.freezed) return;
             
             // Fast exclusive.
-            float rads = x.farDist + y.farDist;
-            Vector2 reld = (x.velocity - y.velocity) * timestep;
-            Segment l = new Segment(x.transform.position, (Vector2)x.transform.position + reld);
-            Segment left = new Segment(l.from + Calc.Rot90(l.dir).normalized, l.to + Calc.Rot90(l.dir).normalized);
-            Segment right = new Segment(l.from - Calc.Rot90(l.dir).normalized, l.to - Calc.Rot90(l.dir).normalized);
-            Vector2 tar = y.transform.position;
-            if(
-                Vector2.Distance(l.from, tar) <= rads || 
-                Vector2.Distance(l.to, tar) <= rads || 
-                (   (left.Overlap(left.Projection(tar)) && left.ProjectionHeight(tar) <= y.farDist) ||
-                    Vector2.Distance(left.from, tar) <= rads ||
-                    Vector2.Distance(left.to, tar) <= rads) ||
-                (   (right.Overlap(right.Projection(tar)) && right.ProjectionHeight(tar) <= y.farDist) ||
-                    Vector2.Distance(right.from, tar) <= rads ||
-                    Vector2.Distance(right.to, tar) <= rads))
+            if(x.farDist + y.farDist >= Vector2.Distance(x.gameObject.transform.position, y.gameObject.transform.position))
             {
                 CollisionCall(x, y, timestep);
             }
@@ -134,22 +120,22 @@ public class PhysWorld : MonoBehaviour
             
             bodyB.velocity += -I / bodyB.mass;
             bodyB.angularVelocity += Calc.CrossMultiply(rp, -I) / bodyB.MOI;
-            bodyB.angularVelocity = Calc.RangeCut((float)bodyB.angularVelocity, -2.0f * Mathf.PI, 2.0f * Mathf.PI);
+            bodyB.angularVelocity = Calc.RangeCut(bodyB.angularVelocity, -2.0f * Mathf.PI, 2.0f * Mathf.PI);
         }
         
         // ======================= Collision Callback =========================
+        // Callbacks are called AFTER the simulation of collision.
+        // To disable the collision and take an other logic, reverse applying the logic before.
         if(collisionCallback.ContainsKey(bodyA))
         {
             CollisionInfo info = new CollisionInfo(I, overlap);
             collisionCallback[bodyA](bodyB, info);
         }
-        
         if(collisionCallback.ContainsKey(bodyB))
         {
             CollisionInfo info = new CollisionInfo(-I, overlap);
             collisionCallback[bodyB](bodyA, info);
         }
-        
         return true;
     }
     

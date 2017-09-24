@@ -24,7 +24,7 @@ public class Calc
     public static bool OnRightSide(Vector2 a, Vector2 b) { return CrossMultiply(a, b) < -eps; }
     public static bool Parallel(Vector2 a, Vector2 b) { return eq(CrossMultiply(a, b), 1); }
     
-    /// Z轴转角. 假设四元数直接代表了z轴的旋转(z = sin(theta))
+    /// Z轴转角. 假设四元数直接代表了z轴的旋转(z = sin(theta/2))
     public static float RotationAngleZ(Quaternion q) { return Mathf.Acos(q.w) * Mathf.Sign(q.z) * 2.0f; }
     
     /// 对一个二维向量应用Z轴旋转.
