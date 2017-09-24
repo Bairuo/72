@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour {
     private float InitialMass = 1;
     public float brakeAngle = 60;
     public float ImpactForce = 4;
+    float RotateCoe = 5;
+    float ForceCoe = 0.25f;
 
     // 记录属性
     public int ImpactTimes = 0;
@@ -50,7 +52,8 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
         camera = GameObject.FindGameObjectWithTag("MainCamera");
         fog = GameObject.FindGameObjectWithTag("fog");
-        InitialMass = GetComponent<Rigidbody2D>().mass;
+        InitialMass = GetComponent<Body>().mass;
+ 
         if (PlayerID == Client.instance.playerid)
         {
             fog.transform.SetParent(transform);
@@ -124,9 +127,9 @@ public class PlayerController : MonoBehaviour {
     // 根据速度自动旋转
     void LateUpdate()
     {
-        Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
-
-        if (Client.IsRoomServer()) velocity = GetComponent<Rigidbody2D>().velocity;
+        Vector2 velocity = GetComponent<Body>().velocity;
+        
+        if (Client.IsRoomServer()) velocity = GetComponent<Body>().velocity;
         else velocity = fict_velocity;
 
         float angle;
@@ -141,7 +144,7 @@ public class PlayerController : MonoBehaviour {
 
         if (velocity != velocity_zero)
         {
-            now_angle = Mathf.Lerp(now_angle, angle, 4 * Time.deltaTime);
+            now_angle = Mathf.Lerp(now_angle, angle, RotateCoe * Time.deltaTime);
             transform.rotation = Quaternion.identity;
             transform.Rotate(rotate_axis, now_angle);
         }
@@ -161,13 +164,13 @@ public class PlayerController : MonoBehaviour {
 
         if (collision.tag == "Player" && Client.IsRoomServer())
         {
-            Vector2 velocity1 = GetComponent<Rigidbody2D>().velocity;
-            Vector2 velocity2 = collision.gameObject.GetComponent<Rigidbody2D>().velocity;
+            Vector2 velocity1 = GetComponent<Body>().velocity;
+            Vector2 velocity2 = collision.gameObject.GetComponent<Body>().velocity;
 
 
             if (velocity1.magnitude > velocity2.magnitude)
             {
-                collision.gameObject.GetComponent<Rigidbody2D>().velocity += velocity1 * ImpactForce;
+                collision.gameObject.GetComponent<Body>().velocity += velocity1 * ImpactForce;
 
                 if (velocity1.magnitude > 15)
                 {
@@ -189,7 +192,7 @@ public class PlayerController : MonoBehaviour {
         float distance = Vector2.Distance(transform.position, ClickPos);
         
         // 加速
-        Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
+        Vector2 velocity = GetComponent<Body>().velocity;
         Vector2 SpeedForce = (Vector2)(ClickPos - transform.position);
         float turnangle = Vector2.Angle(velocity, SpeedForce);
 
@@ -201,10 +204,10 @@ public class PlayerController : MonoBehaviour {
 
         if (turnangle > brakeAngle)
         {
-            GetComponent<Rigidbody2D>().velocity *= brake;
+            GetComponent<Body>().velocity *= brake;
         }
         //Debug.Log(SpeedForce);
-        GetComponent<Rigidbody2D>().AddForce(SpeedForce * speed * speedK);
+        GetComponent<Body>().velocity += SpeedForce * speed * speedK * ForceCoe;
     }
     public void Dealth()
     {
@@ -389,11 +392,11 @@ public class PlayerController : MonoBehaviour {
     {
         MassLevel = masslevel;
         float massK = CalcMassConstant(MassLevel);
-        GetComponent<Rigidbody2D>().mass = InitialMass * massK;
+        GetComponent<Body>().mass = InitialMass * massK;
     }
     public void RealChangeMass(float mass)
     {
-        GetComponent<Rigidbody2D>().mass = mass;
+        GetComponent<Body>().mass = mass;
     }
     public void RealChangeBrake(float brake)
     {
