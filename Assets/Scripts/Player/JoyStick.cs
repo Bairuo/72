@@ -5,13 +5,21 @@ public class JoyStick : MonoBehaviour {
     public RectTransform rectT_Viewport;
     public RectTransform rectT_Joy;//将获取坐标作为摇杆键值
     public int r_;
-    public Vector2 vec2
+    public Vector2 direction
     {
         get
         {
             return rectT_Joy.anchoredPosition.normalized;
         }
     }
+    public Vector2 location
+    {
+        get
+        {
+            return rectT_Joy.anchoredPosition;
+        }
+    }
+    
     void Start()
     {
         r_ = (int)rectT_Viewport.sizeDelta.x / 2;
@@ -23,4 +31,11 @@ public class JoyStick : MonoBehaviour {
             rect_.anchoredPosition = rect_.anchoredPosition.normalized * r_;
         }
     }
+    
+    void Update()
+    {
+        // Debug.Log("dir" + direction);
+        // Debug.Log("loc" + location);
+    }
+    
 }

@@ -5,13 +5,13 @@ using UnityEngine;
 public class Body : MonoBehaviour
 {
     /// Linear drag, apply for direct movement.
-    public float drag = 0f;
+    [Range(0f, 1f)] public float drag = 0f;
     
     /// Side linear drag, apply for side movement.
-    public float sideDrag = 0f;
+    [Range(0f, 1f)] public float sideDrag = 0f;
     
     /// Angular drag.
-    public float angularDrag = 0f;
+    [Range(0f, 1f)] public float angularDrag = 0f;
     
     /// Velocity.
     public Vector2 velocity = new Vector2(0f, 0f);
@@ -33,7 +33,20 @@ public class Body : MonoBehaviour
     /// A force that should be applied if two objects overlapped.
     public float seperationForce;
     
-    public bool freezed = false;
+    /// freezing.
+    public bool freezedX = false;
+    public bool freezedY = false;
+    public bool freezedRotation = false;
+    public bool freezedTranslation
+    {
+        get{ return freezedX && freezedY; }
+        set{ freezedX = freezedY = value; }
+    }
+    public bool freezedAll
+    {
+        get{ return freezedTranslation && freezedRotation; }
+        set{ freezedTranslation = freezedRotation = value; }
+    }
     
     /// The max distance from collider polygon and object's center.
     [HideInInspector] public float farDist;
@@ -49,12 +62,18 @@ public class Body : MonoBehaviour
     /// From which path of collider shall I extract the collider points.
     public int pathID;
     
+    /// callback functions are defined here.
+    public delegate void CollisionCallbackType(Body other, Vector2 impulse);
+    public CollisionCallbackType collisionCallback;
+    
 // ============================================================================================
 // ============================================================================================
 // ============================================================================================
     
     void Start()
     {
+        collisionCallback += (Body _, Vector2 __) => { }; // Invoking a delegate must not empty.
+        
         col = this.gameObject.GetComponent<PolygonCollider2D>();
         
         PhysWorld.bodies.Add(this);
@@ -131,16 +150,12 @@ public class Body : MonoBehaviour
         if((deltadir > 0 && angularVelocity < 0) || (deltadir < 0 && angularVelocity > 0))
             deltadir = 0f;
         
-        if(freezed)
-        {
-            velocity = Vector2.zero;
-            angularVelocity = 0f;
-        }
-        else
-        {
-            this.gameObject.transform.position = (Vector2)this.gameObject.transform.position + deltapos;
-            this.gameObject.transform.Rotate(0f, 0f, deltadir);
-        }
+        if(freezedX) deltapos.x = 0f;
+        if(freezedY) deltapos.y = 0f;
+        if(freezedRotation) deltadir = 0f;
+        
+        this.gameObject.transform.position = (Vector2)this.gameObject.transform.position + deltapos;
+        this.gameObject.transform.Rotate(0f, 0f, deltadir);
     }
     
     /// @force relative direction.

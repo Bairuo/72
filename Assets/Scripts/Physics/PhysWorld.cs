@@ -16,9 +16,6 @@ public class PhysWorld : MonoBehaviour
     /// A reference pool.
     public static List<Body> bodies = new List<Body>();
     
-    public delegate void FuncCollisionCallback(Body other, CollisionInfo info);
-    public static Dictionary<Body, FuncCollisionCallback> collisionCallback = new Dictionary<Body, FuncCollisionCallback>();
-    
     void ForeachBody(FuncDealCollision f)
     {
         
@@ -45,8 +42,7 @@ public class PhysWorld : MonoBehaviour
     {
         ForeachBody((Body x, Body y) =>
         {
-            if(x.freezed && y.freezed) return;
-            
+            if(x.freezedAll && y.freezedAll) return;
             // Fast exclusive.
             if(x.farDist + y.farDist >= Vector2.Distance(x.gameObject.transform.position, y.gameObject.transform.position))
             {
@@ -126,16 +122,9 @@ public class PhysWorld : MonoBehaviour
         // ======================= Collision Callback =========================
         // Callbacks are called AFTER the simulation of collision.
         // To disable the collision and take an other logic, reverse applying the logic before.
-        if(collisionCallback.ContainsKey(bodyA))
-        {
-            CollisionInfo info = new CollisionInfo(I, overlap);
-            collisionCallback[bodyA](bodyB, info);
-        }
-        if(collisionCallback.ContainsKey(bodyB))
-        {
-            CollisionInfo info = new CollisionInfo(-I, overlap);
-            collisionCallback[bodyB](bodyA, info);
-        }
+        bodyA.collisionCallback(bodyB, I);
+        bodyB.collisionCallback(bodyA, -I);
+        
         return true;
     }
     
