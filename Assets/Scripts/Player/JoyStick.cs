@@ -7,17 +7,11 @@ public class JoyStick : MonoBehaviour {
     public int r_;
     public Vector2 direction
     {
-        get
-        {
-            return rectT_Joy.anchoredPosition.normalized;
-        }
+        get { return rectT_Joy.anchoredPosition.normalized; }
     }
     public Vector2 location
     {
-        get
-        {
-            return rectT_Joy.anchoredPosition;
-        }
+        get { return rectT_Joy.anchoredPosition; }
     }
     
     void Start()
@@ -27,7 +21,8 @@ public class JoyStick : MonoBehaviour {
     public void On_Move(RectTransform rect_)
     {
         if (rect_.anchoredPosition.magnitude > r_)
-        {//将摇杆限制在 半径 r_ 以内
+        {
+            //将摇杆限制在 半径 r_ 以内.
             rect_.anchoredPosition = rect_.anchoredPosition.normalized * r_;
         }
     }

@@ -48,17 +48,26 @@ public class Calc
     public static Vector2 FromTo(Vector2 a, Vector2 b) { return b - a; }
     
     public static float RangeCut(float a, float bottom, float top) { return a > top ? top : a < bottom ? bottom : a; }
-    public static float RelativeCut(float curv, float topv) { return (curv - topv) / topv; }
+    public static float RelativeCut(float curv, float topv) { return Mathf.Min(1.0f, Mathf.Max(0f, (curv - topv) / topv)); }
     
     public static bool Parallel(Segment a, Segment b)
     {
         return Parallel(a.dir, b.dir);
     }
     
-    // 左正右负, 角度.
+    // 左正右负, 弧度.
     public static float Angle(Vector2 from, Vector2 to)
     {
-        return Mathf.Rad2Deg * Mathf.Acos(DotMultiply(from, to) / from.magnitude / to.magnitude) * Mathf.Sign(CrossMultiply(from, to));
+        return Mathf.Acos(DotMultiply(from, to) / from.magnitude / to.magnitude) * Mathf.Sign(CrossMultiply(from, to));
+    }
+    
+    // 左正右负, 弧度.
+    public static float Angle(float from, float to)
+    {
+        float delta = to - from;
+        if(-Mathf.PI < delta && delta <= Mathf.PI) return delta;
+        else if(delta <= -Mathf.PI) return 2f * Mathf.PI + delta;
+        else return delta - 2f * Mathf.PI;
     }
     
     public static Vector2 Reflection(Vector2 dir, Vector2 normal)

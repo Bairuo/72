@@ -33,7 +33,9 @@ public class Body : MonoBehaviour
     /// A force that should be applied if two objects overlapped.
     public float seperationForce;
     
-    /// freezing.
+    /// Freezing.
+    /// Velocity will not change by this script as well
+    ///   if those freezing options are enabled.
     public bool freezedX = false;
     public bool freezedY = false;
     public bool freezedRotation = false;
@@ -102,11 +104,10 @@ public class Body : MonoBehaviour
 // ============================================================================================
 // ============================================================================================
     
-    public void StepMovement(float timestep)
+    public void StepTranslation(float timestep)
     {
-        // ============== Acceleration Control ================
+        // ===================== Accelleration ========================
         
-        Torque sq = new Torque();
         Force sf = new Force();
         for(int i = forces.Count - 1; i >= 0; i--)
         {
@@ -116,7 +117,38 @@ public class Body : MonoBehaviour
             forces[i] = cf;
         }
         forces.RemoveAll((Force x) => { return x.timelast <= 0f; });
+        Vector2 acce = this.gameObject.transform.rotation * sf.value / mass;
         
+        // Velocity relative to world.
+        velocity += acce * timestep;
+        if(freezedX) velocity.x = 0f;
+        if(freezedY) velocity.y = 0f;
+        
+        // ========================== Drag ============================
+        
+        Quaternion currot = this.gameObject.transform.rotation;
+        Vector2 vForward = Calc.Projection(velocity, currot * Vector2.up);
+        Vector2 vSide = Calc.Projection(velocity, currot * Vector2.right);
+        vForward *= Mathf.Pow(1 - drag, timestep);
+        vSide *= Mathf.Pow(1 - sideDrag, timestep);
+        velocity = vForward + vSide;
+        if(freezedX) velocity.x = 0f;
+        if(freezedY) velocity.y = 0f;
+        
+        // ==================== Move Simulation =======================
+        
+        Vector2 deltapos = velocity * timestep - 0.5f * acce * timestep * timestep;
+        
+        this.gameObject.transform.position = (Vector2)this.gameObject.transform.position + deltapos;
+    }
+    
+    public void StepRotation(float timestep)
+    {
+        if(freezedRotation) return; // [!]notice: the angular velocity are now not changing inside as well.
+        
+        // ===================== Accelleration ========================
+        
+        Torque sq = new Torque();
         for(int i = torques.Count - 1; i >= 0; i--)
         {
             Torque cq = torques[i];
@@ -126,46 +158,37 @@ public class Body : MonoBehaviour
         }
         torques.RemoveAll((Torque x) => { return x.timelast <= 0f; });
         
-        Vector2 acce = this.gameObject.transform.rotation * sf.value / mass;
         float angacce = sq.value / MOI;
-        
-        velocity += acce * timestep;
         angularVelocity += angacce * timestep;
         
-        // ============= Drag Velocity Simulation =============
-        
-        Quaternion currot = this.gameObject.transform.rotation;
-        Vector2 vForward = Calc.Projection(velocity, currot * Vector2.up);
-        Vector2 vSide = Calc.Projection(velocity, currot * Vector2.right);
-        vForward *= Mathf.Pow(1 - drag, timestep);
-        vSide *= Mathf.Pow(1 - sideDrag, timestep);
-        velocity = vForward + vSide;
+        // ========================== Drag ============================
         
         angularVelocity *= Mathf.Pow(1 - angularDrag, timestep);
         
-        // ================ Move Simulation ===================
+        // ==================== Move Simulation =======================
         
-        Vector2 deltapos = velocity * timestep - 0.5f * acce * timestep * timestep;
         float deltadir = angularVelocity - 0.5f * angacce * timestep * timestep;
         if((deltadir > 0 && angularVelocity < 0) || (deltadir < 0 && angularVelocity > 0))
             deltadir = 0f;
         
-        if(freezedX) deltapos.x = 0f;
-        if(freezedY) deltapos.y = 0f;
         if(freezedRotation) deltadir = 0f;
-        
-        this.gameObject.transform.position = (Vector2)this.gameObject.transform.position + deltapos;
         this.gameObject.transform.Rotate(0f, 0f, deltadir);
+        
     }
     
-    /// @force relative direction.
+    public void StepMovement(float timestep)
+    {
+        StepTranslation(timestep);
+        StepRotation(timestep);
+    }
+    
+    /// @force RELATIVE direction.
     /// @loc RELATIVE location where the force is applied.
     /// @time time the force applied.
+    /// The force that applied will change direction with game object's rotation.
     public void AddForce(Vector2 force, Vector2 loc, float time)
     {
-        Quaternion qx = this.gameObject.transform.rotation;
-        Vector2 rotedForce = qx * force;
-        forces.Add(new Force(rotedForce, time));
+        forces.Add(new Force(force, time));
         torques.Add(new Torque(Calc.CrossMultiply(loc, force), time));
     }
     
