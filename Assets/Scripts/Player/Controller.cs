@@ -10,6 +10,9 @@ public class Controller : MonoBehaviour
     
     public float maxAngularVelocity;
     
+    // Controller will not reply for joystick movement which locations are less than this number.
+    public float controlLimit;
+    
     void Start()
     {
         if(localJoyStick == null) localJoyStick = GameObject.Find("JoyStick").GetComponent<JoyStick>();
@@ -33,15 +36,19 @@ public class Controller : MonoBehaviour
     
     void Update()
     {
-        Vector2 dir = localJoyStick.direction;
-        
-        if(Calc.eq(dir.x, 0f) && Calc.eq(dir.y, 0f) || localJoyStick.location.magnitude < 10f)
+        // This filed requires synchronization from clients.
+        DirectionControl(localJoyStick.location);
+    }
+    
+    void DirectionControl(Vector2 targetDirection)
+    {
+        if(targetDirection.magnitude < controlLimit)
         {
             // do nothing if there's no action from the joystick.
             return;
         }
         
-        float dira = Calc.Angle(Vector2.up, dir);
+        float dira = Calc.Angle(Vector2.up, targetDirection);
         float cura = Calc.RotationAngleZ(body.gameObject.transform.rotation);
         
         float deltadir = Calc.Angle(cura, dira);
