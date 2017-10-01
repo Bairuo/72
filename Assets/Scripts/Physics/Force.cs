@@ -7,7 +7,7 @@ public interface TimedPhysEffect
     float timelast{ get; set; }
 }
 
-public struct Force : TimedPhysEffect
+public class Force : TimedPhysEffect
 {
     [SerializeField]
     public Vector2 value;
@@ -17,9 +17,14 @@ public struct Force : TimedPhysEffect
         value = dir;
         timelast = time;
     }
+    public Force()
+    {
+        value = Vector2.zero;
+        timelast = 0f;
+    }
 }
 
-public struct Torque : TimedPhysEffect
+public class Torque : TimedPhysEffect
 {
     [SerializeField]
     public float value;
@@ -28,5 +33,9 @@ public struct Torque : TimedPhysEffect
     {
         value = torq;
         timelast = time;
+    }
+    public Torque()
+    {
+        value = timelast = 0f;
     }
 }

@@ -1,13 +1,18 @@
 // Created by DK 2017/9/27
 
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 /// Provides a sustained thrust.
 public class Thrust : MonoBehaviour
 {
     public Body body;
-    public float thrust;
+    
+    public float baseThrust;
+    public Modifier thrustModifier = new Modifier();
+    public float thrust { get{ return thrustModifier.GetValue(baseThrust); } }
+    
+    ForceToken token;
     
     void Start()
     {
@@ -19,6 +24,16 @@ public class Thrust : MonoBehaviour
             return;
         }
         
-        body.AddForce(Vector2.up * thrust, Vector2.zero, 1e8f); // !!!
+        token = body.AddForce(Vector2.up * thrust, Vector2.zero, 1e8f);
+    }
+    
+    void OnDestroy()
+    {
+        body.RemoveForce(token);
+    }
+    
+    void FixedUpdate()
+    {
+        token.forceToken.Value.value = Vector2.up * thrust;
     }
 }

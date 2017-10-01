@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
         camera = GameObject.FindGameObjectWithTag("MainCamera");
         fog = GameObject.FindGameObjectWithTag("fog");
-        InitialMass = GetComponent<Body>().mass;
+        InitialMass = GetComponent<Body>().baseMass;
  
         if (PlayerID == Client.instance.playerid)
         {
@@ -392,11 +392,11 @@ public class PlayerController : MonoBehaviour {
     {
         MassLevel = masslevel;
         float massK = CalcMassConstant(MassLevel);
-        GetComponent<Body>().mass = InitialMass * massK;
+        GetComponent<Body>().baseMass = InitialMass * massK;
     }
     public void RealChangeMass(float mass)
     {
-        GetComponent<Body>().mass = mass;
+        GetComponent<Body>().baseMass = mass;
     }
     public void RealChangeBrake(float brake)
     {

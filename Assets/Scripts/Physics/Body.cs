@@ -1,17 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.ObjectModel;
 
 public class Body : MonoBehaviour
 {
     /// Linear drag, apply for direct movement.
-    [Range(0f, 1f)] public float drag = 0f;
+    [Range(0f, 1f)] public float baseDrag = 0f;
+    public Modifier dragModifier = new Modifier();
+    public float drag { get{ return dragModifier.GetValue(baseDrag); } }
     
     /// Side linear drag, apply for side movement.
-    [Range(0f, 1f)] public float sideDrag = 0f;
+    [Range(0f, 1f)] public float baseSideDrag = 0f;
+    public Modifier sideDragModifier = new Modifier();
+    public float sideDrag { get{ return sideDragModifier.GetValue(baseSideDrag); } }
     
     /// Angular drag.
-    [Range(0f, 1f)] public float angularDrag = 0f;
+    [Range(0f, 1f)] public float baseAngularDrag = 0f;
+    public Modifier angularDragModifier = new Modifier();
+    public float angularDrag{ get{ return angularDragModifier.GetValue(baseAngularDrag); } }
     
     /// Velocity.
     public Vector2 velocity = new Vector2(0f, 0f);
@@ -19,16 +26,22 @@ public class Body : MonoBehaviour
     /// Angular velocity in radians. Positive counter-clockwise.
     public float angularVelocity = 0f;
     
-    public float mass;
+    public float baseMass;
+    public Modifier massModifier = new Modifier();
+    public float mass { get{ return massModifier.GetValue(baseMass); } }
     
     /// Moment of inertia, which defines by delta(AngluarVelocity) = delta(t) * MOI.
-    public float MOI;
+    public float baseMOI;
+    public Modifier MOIModifier = new Modifier();
+    public float MOI{ get{ return MOIModifier.GetValue(baseMOI); } }
     
     /// Hardness defines the Coefficient of Restitution in collision.
     /// The formula is COR = 1 - (1 - this.hardness) * (1 - other.hardness).
     /// When a hardness is larger than 1, the COR will be greater than 1 so that
     ///   the collision generates energy for colliders.
-    public float hardness;
+    public float baseHardness;
+    public Modifier hardnessModifier = new Modifier();
+    public float hardness { get{ return hardnessModifier.GetValue(baseHardness); } }
     
     /// A force that should be applied if two objects overlapped.
     public float seperationForce;
@@ -53,8 +66,8 @@ public class Body : MonoBehaviour
     /// The max distance from collider polygon and object's center.
     [HideInInspector] public float farDist;
     
-    List<Force> forces = new List<Force>();
-    List<Torque> torques = new List<Torque>();
+    LinkedList<Force> forces = new LinkedList<Force>();
+    LinkedList<Torque> torques = new LinkedList<Torque>();
     
     [HideInInspector] public PolygonCollider2D col;
     
@@ -109,14 +122,18 @@ public class Body : MonoBehaviour
         // ===================== Accelleration ========================
         
         Force sf = new Force();
-        for(int i = forces.Count - 1; i >= 0; i--)
+        foreach(Force i in forces)
         {
-            Force cf = forces[i];
-            sf.value += cf.value * Calc.RelativeCut(cf.timelast, timestep);
-            cf.timelast -= timestep;
-            forces[i] = cf;
+            sf.value += i.value * Calc.RelativeCut(i.timelast, timestep);
+            i.timelast -= timestep;
         }
-        forces.RemoveAll((Force x) => { return x.timelast <= 0f; });
+        var x = forces.First;
+        while(x != null)
+        {
+            var y = x.Next;
+            if(x.Value.timelast <= 0f) forces.Remove(x);
+            x = y; 
+        }
         Vector2 acce = this.gameObject.transform.rotation * sf.value / mass;
         
         // Velocity relative to world.
@@ -144,26 +161,31 @@ public class Body : MonoBehaviour
     
     public void StepRotation(float timestep)
     {
-        if(freezedRotation) return; // [!]notice: the angular velocity are now not changing inside as well.
-        
         // ===================== Accelleration ========================
         
         Torque sq = new Torque();
-        for(int i = torques.Count - 1; i >= 0; i--)
+        foreach(var i in torques)
         {
-            Torque cq = torques[i];
-            sq.value += cq.value * Calc.RelativeCut(cq.timelast, timestep);
-            cq.timelast -= timestep;
-            torques[i] = cq;
+            sq.value += i.value * Calc.RelativeCut(i.timelast, timestep);
+            i.timelast -= timestep;
         }
-        torques.RemoveAll((Torque x) => { return x.timelast <= 0f; });
-        
+        var x = torques.First;
+        while(x != null)
+        {
+            var y = x.Next;
+            if(x.Value.timelast <= 0f) torques.Remove(x);
+            x = y; 
+        }
         float angacce = sq.value / MOI;
         angularVelocity += angacce * timestep;
+        
+        if(freezedRotation) angularVelocity = 0f;
         
         // ========================== Drag ============================
         
         angularVelocity *= Mathf.Pow(1 - angularDrag, timestep);
+        
+        if(freezedRotation) angularVelocity = 0f;
         
         // ==================== Move Simulation =======================
         
@@ -186,18 +208,51 @@ public class Body : MonoBehaviour
     /// @loc RELATIVE location where the force is applied.
     /// @time time the force applied.
     /// The force that applied will change direction with game object's rotation.
-    public void AddForce(Vector2 force, Vector2 loc, float time)
+    public ForceToken AddForce(Vector2 force, Vector2 loc, float time)
     {
-        forces.Add(new Force(force, time));
-        torques.Add(new Torque(Calc.CrossMultiply(loc, force), time));
+        return new ForceToken(
+            forces.AddFirst(new Force(force, time)), 
+            torques.AddFirst(new Torque(Calc.CrossMultiply(loc, force), time)));
+    }
+    
+    public bool RemoveForce(ForceToken token)
+    {
+        forces.Remove(token.forceToken);
+        torques.Remove(token.torqueToken);
+        return true;
     }
     
     /// @torque
     /// @ time time the torque applied.
-    public void AddTorque(float torque, float time)
+    public TorqueToken AddTorque(float torque, float time)
     {
-        torques.Add(new Torque(torque, time));
+        return new TorqueToken(torques.AddFirst(new Torque(torque, time)));
+    }
+    
+    public bool RemoveTorque(TorqueToken token)
+    {
+        torques.Remove(token.token);
+        return true;
     }
 }
 
 
+public class ForceToken
+{
+    public LinkedListNode<Force> forceToken;
+    public LinkedListNode<Torque> torqueToken;
+    public ForceToken(LinkedListNode<Force> _FT, LinkedListNode<Torque> _TT)
+    {
+        forceToken = _FT;
+        torqueToken = _TT;
+    }
+}
+
+public class TorqueToken
+{
+    public LinkedListNode<Torque> token;
+    public TorqueToken(LinkedListNode<Torque> _T)
+    {
+        token = _T;
+    }
+}

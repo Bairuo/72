@@ -77,8 +77,8 @@ public class PhysWorld : MonoBehaviour
         // Coefficient of Restitution.
         // defined as - deltaV before / deltaV after.
         // determined by material properties (like hardness).
-        float e = bodyB.hardness * bodyB.hardness;
-        if(e < 0f) e = 0f;
+        float e = 1 - (1f - bodyA.hardness) * (1f - bodyB.hardness);
+        
         // intersection line.
         Segment L = new Segment(isc[0], isc[1]);
         // collision point. Center of intersection line.
@@ -98,7 +98,6 @@ public class PhysWorld : MonoBehaviour
             Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rc, f) / bodyA.MOI, rc)) +
             Calc.DotMultiply(f, Vector3.Cross((Vector3)(Vector3.Cross((Vector3)rp, f) / bodyB.MOI), rp)));
         
-        bool overlap = false;
         if(I.magnitude < 100f || Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
         {
             Vector2 dip = bodyB.gameObject.transform.position - bodyA.gameObject.transform.position;
@@ -106,7 +105,6 @@ public class PhysWorld : MonoBehaviour
             bodyA.angularVelocity *= Mathf.Pow(0.1f, timestep);
             bodyB.velocity += dip.normalized * Mathf.Pow(0.2f, timestep);
             bodyB.angularVelocity *= Mathf.Pow(0.1f, timestep);
-            overlap = true;
         }
         else
         {

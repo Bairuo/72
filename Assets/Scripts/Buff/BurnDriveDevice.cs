@@ -8,8 +8,14 @@ public class BurnDriveDevice : MonoBehaviour
 {
     public Body body;
     
-    public float force;
+    public float massAdd;
+    public float massMult;
+    
+    public float thrustAdd;
+    public float thrustMult;
+    
     public float applyTime;
+    
     public float cooldown;
     
     void Start()
@@ -49,7 +55,13 @@ public class BurnDriveDevice : MonoBehaviour
     
     void BurnDriveApply()
     {
-        body.AddForce(Vector2.up * force, Vector2.zero, applyTime);
+        Burndrive c = this.gameObject.AddComponent<Burndrive>();
+        c.massAdd = massAdd;
+        c.massMult = massMult;
+        c.thrustAdd = thrustAdd;
+        c.thrustMult = thrustMult;
+        c.time = applyTime;
+        
         t += cooldown;
     }
 }

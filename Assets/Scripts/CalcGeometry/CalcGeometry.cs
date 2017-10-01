@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 using System.Runtime.CompilerServices;
 
@@ -78,6 +79,7 @@ public class Calc
     }
     
     // 相交. 考虑端点. 不计线段端点则删掉 eq(..., 0) 的所有判断.
+    // 注意包围盒(AABB快速排除)排除了共线的情况.
     public static bool Intersect(Segment A, Segment B)
     {
         Vector2 dia = FromTo(A.from, A.to);
@@ -153,7 +155,13 @@ public class Calc
                 // 相交判定.
                 if(Intersect(seg1, seg2))
                 {
+                    try{
                     intersections[intc++] = IntersectionPoint(seg1, seg2);
+                    }
+                    catch(Exception)
+                    {
+                        Debug.Log(trs1.gameObject + " -- " + trs2.gameObject);
+                    }
                 }
             }
         }
