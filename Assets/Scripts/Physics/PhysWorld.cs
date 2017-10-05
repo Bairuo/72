@@ -120,8 +120,8 @@ public class PhysWorld : MonoBehaviour
         // ======================= Collision Callback =========================
         // Callbacks are called AFTER the simulation of collision.
         // To disable the collision and take an other logic, reverse applying the logic before.
-        bodyA.collisionCallback(bodyB, I);
-        bodyB.collisionCallback(bodyA, -I);
+        bodyA.collisionCallbacks(bodyB, I);
+        bodyB.collisionCallbacks(bodyA, -I);
         
         return true;
     }

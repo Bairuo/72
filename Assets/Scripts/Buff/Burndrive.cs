@@ -18,8 +18,8 @@ public class Burndrive : Buff
     
     protected override void Begin()
     {
-        massToken = this.gameObject.GetComponent<Body>().massModifier.Add(massAdd, massMult);
-        thrustToken = this.gameObject.GetComponent<Thrust>().thrustModifier.Add(thrustAdd, thrustMult);
+        massToken = this.gameObject.GetComponent<Body>().massModifier.Add(massAdd, massMult, 0f);
+        thrustToken = this.gameObject.GetComponent<Thrust>().thrustModifier.Add(thrustAdd, thrustMult, 0f);
     }
     
     protected override void End()

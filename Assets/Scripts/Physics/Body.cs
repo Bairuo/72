@@ -7,17 +7,17 @@ public class Body : MonoBehaviour
 {
     /// Linear drag, apply for direct movement.
     [Range(0f, 1f)] public float baseDrag = 0f;
-    public Modifier dragModifier = new Modifier();
+    public readonly Modifier dragModifier = new Modifier();
     public float drag { get{ return dragModifier.GetValue(baseDrag); } }
     
     /// Side linear drag, apply for side movement.
     [Range(0f, 1f)] public float baseSideDrag = 0f;
-    public Modifier sideDragModifier = new Modifier();
+    public readonly Modifier sideDragModifier = new Modifier();
     public float sideDrag { get{ return sideDragModifier.GetValue(baseSideDrag); } }
     
     /// Angular drag.
     [Range(0f, 1f)] public float baseAngularDrag = 0f;
-    public Modifier angularDragModifier = new Modifier();
+    public readonly Modifier angularDragModifier = new Modifier();
     public float angularDrag{ get{ return angularDragModifier.GetValue(baseAngularDrag); } }
     
     /// Velocity.
@@ -27,12 +27,12 @@ public class Body : MonoBehaviour
     public float angularVelocity = 0f;
     
     public float baseMass;
-    public Modifier massModifier = new Modifier();
+    public readonly Modifier massModifier = new Modifier();
     public float mass { get{ return massModifier.GetValue(baseMass); } }
     
     /// Moment of inertia, which defines by delta(AngluarVelocity) = delta(t) * MOI.
     public float baseMOI;
-    public Modifier MOIModifier = new Modifier();
+    public readonly Modifier MOIModifier = new Modifier();
     public float MOI{ get{ return MOIModifier.GetValue(baseMOI); } }
     
     /// Hardness defines the Coefficient of Restitution in collision.
@@ -40,7 +40,7 @@ public class Body : MonoBehaviour
     /// When a hardness is larger than 1, the COR will be greater than 1 so that
     ///   the collision generates energy for colliders.
     public float baseHardness;
-    public Modifier hardnessModifier = new Modifier();
+    public readonly Modifier hardnessModifier = new Modifier();
     public float hardness { get{ return hardnessModifier.GetValue(baseHardness); } }
     
     /// A force that should be applied if two objects overlapped.
@@ -79,7 +79,7 @@ public class Body : MonoBehaviour
     
     /// callback functions are defined here.
     public delegate void CollisionCallbackType(Body other, Vector2 impulse);
-    public CollisionCallbackType collisionCallback;
+    public CollisionCallbackType collisionCallbacks;
     
 // ============================================================================================
 // ============================================================================================
@@ -87,7 +87,7 @@ public class Body : MonoBehaviour
     
     void Start()
     {
-        collisionCallback += (Body _, Vector2 __) => { }; // Invoking a delegate must not empty.
+        collisionCallbacks += (Body _, Vector2 __) => { }; // Invoking a delegate must not empty.
         
         col = this.gameObject.GetComponent<PolygonCollider2D>();
         
