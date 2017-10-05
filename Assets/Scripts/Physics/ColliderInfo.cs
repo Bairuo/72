@@ -26,7 +26,7 @@ public class ColliderInfo : MonoBehaviour
             return;
         }
         
-        body.collisionCallback += CollisionCallback;
+        body.collisionCallbacks += CollisionCallback;
     }
     
     void CollisionCallback(Body other, Vector2 impulse)
@@ -36,19 +36,11 @@ public class ColliderInfo : MonoBehaviour
     
     void OnDestroy()
     {
-        body.collisionCallback -= CollisionCallback;
+        body.collisionCallbacks -= CollisionCallback;
     }
     
     void FixedUpdate()
     {
         timeAfterLastCollision += Time.fixedDeltaTime;
     }
-    
-    
-    void CollisionCallback(Body op, CollisionInfo info)
-    {
-        timeAfterLastCollision = 0f;
-    }
-    
-    
 }   

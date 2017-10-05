@@ -4,8 +4,32 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    public float baseDefence;
+    public float defenceRatio; // per 1.0 baseDefence, the formula is shown in property *health*.
+    public readonly Modifier defenceModifier = new Modifier();
+    public float defence{ get{ return defenceModifier.GetValue(baseDefence); } }
+    public float damageRatio{ get{ return 1f - Mathf.Exp(-1f / defenceRatio / defence); } }
+    
     public float maxHealth;
-    public float health;
+    public float currentHealth;
+    public float health
+    {
+        get{ return currentHealth; }
+        set
+        {
+            float delta = value - currentHealth;
+            if(delta >= 0f)
+            {
+                currentHealth += delta;
+                if(currentHealth > maxHealth) currentHealth = maxHealth;
+            }
+            else
+            {
+                currentHealth += delta * damageRatio;
+                if(currentHealth < 0f) currentHealth = 0f;
+            }
+        }
+    }
     
     Body body;
     
