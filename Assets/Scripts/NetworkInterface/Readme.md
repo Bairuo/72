@@ -1,4 +1,4 @@
-#使用说明
+# 使用说明
 
 需挂载NetObject组件到所有包含同步变量组件的前面
 
@@ -8,7 +8,7 @@
 
 * 协议发送频率66ms/次以下为宜（平均发送时间间隔≥66ms）
 
-##1自定义协议
+## 1自定义协议
 
 ```
     void foo()
@@ -44,4 +44,4 @@
 
 ```
 
-##2自动同步变量SynInt, SynFloat, SynBool, SynString
+## 2自动同步变量SynInt, SynFloat, SynBool, SynString
