@@ -8,7 +8,9 @@
 
 * 协议发送频率66ms/次以下为宜（平均发送时间间隔≥66ms）
 
-## 1自定义协议
+* 尽量在变量改变时才发送协议
+
+## 1.自定义协议
 
 ```
     void foo()
@@ -18,7 +20,7 @@
         ProtocolBytes proto = netObject.GetObjectProtocol();     // 初始协议必须使用netObject的方法获取
         
         netObject.AddOnceListener(注册名, CallBack);
-        proto.AddString(CallBackName);                           // 协议名与注册名一致
+        proto.AddString(注册名);                           // 协议名与注册名一致
         
         // 自定加入变量顺序和类型
         proto.AddInt...
@@ -26,11 +28,11 @@
         
         ...
         
+        // 发送
         netObject.Send(proto);
     }
     
-    // 回调函数
-    
+    // 其他客户端接收到协议后的处理
     public void CallBack(ProtocolBase protocol)
     {
         string name = proto.GetProtoName();
@@ -44,4 +46,35 @@
 
 ```
 
-## 2自动同步变量SynInt, SynFloat, SynBool, SynString
+```
+    class A
+    {
+        NetObject NetObject;
+    
+        void Start()
+        {
+            netObject = GetComponent<NetObject>();
+            
+            netObject.AddListener(注册名, CallBack);
+        }
+        
+        // 触发同步的事件
+        void foo()
+        {
+            ProtocolBytes proto = netObject.GetObjectProtocol();
+            
+            proto.AddString(注册名);
+            
+            // 同例1
+        }
+        
+        // 其他客户端接收到协议后的处理
+        public void CallBack(ProtocolBase protocol)
+        {
+            // 同例1
+        }
+        
+    }
+```
+
+## 2.自动同步变量SynInt, SynFloat, SynBool, SynString
