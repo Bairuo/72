@@ -9,8 +9,7 @@ public interface TimedPhysEffect
 
 public class Force : TimedPhysEffect
 {
-    [SerializeField]
-    public Vector2 value;
+    [SerializeField] public Vector2 value;
     public float timelast{ get; set; }
     public Force(Vector2 dir, float time)
     {
@@ -26,8 +25,7 @@ public class Force : TimedPhysEffect
 
 public class Torque : TimedPhysEffect
 {
-    [SerializeField]
-    public float value;
+    [SerializeField] public float value;
     public float timelast{ get; set; }
     public Torque(float torq, float time)
     {
