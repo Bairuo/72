@@ -90,7 +90,7 @@ public class Client
             return instance.playerid == "0";
         }
     }
-
+    
     public bool Connect(string host, int port)
     {
         try
