@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
-
+// 此类拟改名
 public class PosManager
 {
     public GameObject prefab;
@@ -46,8 +46,10 @@ public class PosManager
     public void Close()
     {
         Client.instance.DelListener("UpdateUnitInfo", UpdateUnitInfo);
-        Client.instance.DelListener("U", UpdateUnitInfo);
+        Client.instance.DelListener("U", UpdateUnitInfo);   // UDP位置同步
+        Client.instance.DelListener("C", PlayerClick);      // UDP玩家点击
         Client.instance.DelListener("SafyAreaInfo", SafyAreaInfo);
+        Client.instance.DelListener("TaggerGenerate", TaggerGenerate);
         Client.instance.DelListener("PropGenerate", PropGenerate);
 
         players.Clear();
