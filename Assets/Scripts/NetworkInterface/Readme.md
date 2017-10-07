@@ -35,7 +35,8 @@
     // 其他客户端接收到协议后的处理
     public void CallBack(ProtocolBase protocol)
     {
-        string name = proto.GetProtoName();
+        //使用不带参的GetInt等必须要先调用GetName()
+        string name = proto.GetName();
         
         // 自定义的顺序和类型
         int a = proto.GetInt();

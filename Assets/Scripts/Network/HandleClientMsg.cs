@@ -80,8 +80,8 @@ public class HandleClientMsg{
         int start = 0;
         string name = proto.GetString(start, ref start);
         int PortalID = proto.GetInt(start, ref start);
-        float x = proto.Getfloat(start, ref start);
-        float y = proto.Getfloat(start, ref start);
+        float x = proto.GetFloat(start, ref start);
+        float y = proto.GetFloat(start, ref start);
 
         UnityEngine.Vector2 pos = new UnityEngine.Vector2(x, y);
         PortalController.SetAnother(PortalID, pos);
@@ -102,8 +102,8 @@ public class HandleClientMsg{
         int start = 0;
         string name = proto.GetString(start, ref start);
         string id = proto.GetString(start, ref start);
-        float x = proto.Getfloat(start, ref start);
-        float y = proto.Getfloat(start, ref start);
+        float x = proto.GetFloat(start, ref start);
+        float y = proto.GetFloat(start, ref start);
 
         GenerateController.instance.CreatePlayer(x, y, id);
     }
@@ -116,9 +116,9 @@ public class HandleClientMsg{
         int start = 0;
         string name = proto.GetString(start, ref start);
         string id = proto.GetString(start, ref start);
-        float x = proto.Getfloat(start, ref start);
-        float y = proto.Getfloat(start, ref start);
-        float z = proto.Getfloat(start, ref start);
+        float x = proto.GetFloat(start, ref start);
+        float y = proto.GetFloat(start, ref start);
+        float z = proto.GetFloat(start, ref start);
 
         Client.instance.posmanager.ChangePosition(id, x, y, z);
     }
@@ -148,7 +148,7 @@ public class HandleClientMsg{
         int start = 0;
         string name = proto.GetString(start, ref start);
         string id = proto.GetString(start, ref start);
-        float mass = proto.Getfloat(start, ref start);
+        float mass = proto.GetFloat(start, ref start);
 
         Client.instance.posmanager.ChangeMass(id, mass);
     }
@@ -158,7 +158,7 @@ public class HandleClientMsg{
         int start = 0;
         string name = proto.GetString(start, ref start);
         string id = proto.GetString(start, ref start);
-        float brake = proto.Getfloat(start, ref start);
+        float brake = proto.GetFloat(start, ref start);
 
         Client.instance.posmanager.ChangeSpeed(id, brake);
     }
@@ -168,7 +168,7 @@ public class HandleClientMsg{
         int start = 0;
         string name = proto.GetString(start, ref start);
         string id = proto.GetString(start, ref start);
-        float speed = proto.Getfloat(start, ref start);
+        float speed = proto.GetFloat(start, ref start);
 
         Client.instance.posmanager.ChangeSpeed(id, speed);
     }
@@ -178,7 +178,7 @@ public class HandleClientMsg{
         int start = 0;
         string name = proto.GetString(start, ref start);
         string id = proto.GetString(start, ref start);
-        float health = proto.Getfloat(start, ref start);
+        float health = proto.GetFloat(start, ref start);
 
         Client.instance.posmanager.ChangeHealth(id, health);
     }

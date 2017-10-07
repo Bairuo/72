@@ -22,4 +22,10 @@ public class Synable : MonoBehaviour{
         return new byte[] { };
     }
 
+    // 解码
+    public virtual ProtocolBytes Decode(ProtocolBytes proto)
+    {
+        return new ProtocolBytes();
+    }
+
 }

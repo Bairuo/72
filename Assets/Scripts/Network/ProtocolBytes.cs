@@ -2,10 +2,19 @@
 using System.Collections;
 using System.Linq;
 
+/****************
+ * 
+ * 作者：Bairuo
+ * 最后修改时间：2017.10.6
+ * 
+ * 
+ * 
+ ****************/
 public class ProtocolBytes : ProtocolBase {
     //消息长度，消息内容
     //协议名称长度，协议名称，协议内容
     public byte[] Bytes;
+    int start;
 
     public override ProtocolBase Decode(byte[] readbuff, int start, int length)
     {
@@ -22,7 +31,24 @@ public class ProtocolBytes : ProtocolBase {
     
     public override string GetName()
     {
-        return GetString(0);
+        start = 0;
+        return GetString(start);
+    }
+    public string GetString()
+    {
+        return GetString(start, ref start);
+    }
+    public int GetInt()
+    {
+        return GetInt(start, ref start);
+    }
+    public bool GetBool()
+    {
+        return GetBool(start, ref start);
+    }
+    public float GetFloat()
+    {
+        return GetFloat(start, ref start);
     }
     public override string GetDesc()
     {
@@ -36,6 +62,32 @@ public class ProtocolBytes : ProtocolBase {
         return str;
     }
 
+    public int GetLength()
+    {
+        return Bytes.Length;
+    }
+    public ProtocolBytes GetSonProtocol(int start, int length)
+    {
+        ProtocolBytes proto = new ProtocolBytes();
+        if (length == 0) return proto;
+
+        byte[] rest = new byte[length];
+
+        for (int i = 0; i < length; i++)
+        {
+            rest[i] = Bytes[i + start];
+        }
+
+        
+        proto.AddByte(rest);
+        return proto;
+    }
+    public ProtocolBytes GetRestProtocol(int start)
+    {
+        int newLength = Bytes.Length - start;
+        return GetSonProtocol(start, newLength);
+    }
+
     public void AddString(string str)
     {
         Int32 len = str.Length;
@@ -47,6 +99,38 @@ public class ProtocolBytes : ProtocolBase {
         else
             Bytes = Bytes.Concat(lenBytes).Concat(strBytes).ToArray();
     }
+    public void AddInt(int num)
+    {
+        byte[] numBytes = BitConverter.GetBytes(num);
+        if (Bytes == null)
+            Bytes = numBytes;
+        else
+            Bytes = Bytes.Concat(numBytes).ToArray();
+    }
+    public void AddBool(bool num)
+    {
+        byte[] numBytes = BitConverter.GetBytes(num);
+        if (Bytes == null)
+            Bytes = numBytes;
+        else
+            Bytes = Bytes.Concat(numBytes).ToArray();
+    }
+    public void AddFloat(float num)
+    {
+        byte[] numBytes = BitConverter.GetBytes(num);
+        if (Bytes == null)
+            Bytes = numBytes;
+        else
+            Bytes = Bytes.Concat(numBytes).ToArray();
+    }
+    public void AddByte(byte[] bytes)
+    {
+        if (Bytes == null)
+            Bytes = bytes;
+        else
+            Bytes = Bytes.Concat(bytes).ToArray();
+    }
+
     public string GetString(int start, ref int end)
     {
         if (Bytes == null)
@@ -66,49 +150,6 @@ public class ProtocolBytes : ProtocolBase {
         int end = 0;
         return GetString(start, ref end);
     }
-
-    public void AddInt(int num)
-    {
-        byte[] numBytes = BitConverter.GetBytes(num);
-        if (Bytes == null)
-            Bytes = numBytes;
-        else
-            Bytes = Bytes.Concat(numBytes).ToArray();
-    }
-    public void AddBool(bool num)
-    {
-        byte[] numBytes = BitConverter.GetBytes(num);
-        if (Bytes == null)
-            Bytes = numBytes;
-        else
-            Bytes = Bytes.Concat(numBytes).ToArray();
-    }
-
-    public void AddByte(byte[] bytes)
-    {
-        if (Bytes == null)
-            Bytes = bytes;
-        else
-            Bytes = Bytes.Concat(bytes).ToArray();
-    }
-
-    public ProtocolBytes GetRestProtocol(int start)
-    {
-        byte[] rest;
-        int newLength = Bytes.Length - start;
-        rest = new byte[newLength];
-
-        for (int i = 0; i < newLength; i++)
-        {
-            rest[i] = Bytes[i + start];
-        }
-
-        ProtocolBytes proto = new ProtocolBytes();
-        proto.AddByte(rest);
-        return proto;
-
-    }
-    
     public int GetInt(int start, ref int end)
     {
         if (Bytes == null)
@@ -132,15 +173,7 @@ public class ProtocolBytes : ProtocolBase {
         int end = 0;
         return GetInt(start, ref end);
     }
-    public void AddFloat(float num)
-    {
-        byte[] numBytes = BitConverter.GetBytes(num);
-        if (Bytes == null)
-            Bytes = numBytes;
-        else
-            Bytes = Bytes.Concat(numBytes).ToArray();
-    }
-    public float Getfloat(int start, ref int end)
+    public float GetFloat(int start, ref int end)
     {
         if (Bytes == null)
             return 0;
@@ -149,9 +182,9 @@ public class ProtocolBytes : ProtocolBase {
         end = start + sizeof(float);
         return BitConverter.ToSingle(Bytes, start);
     }
-    public float Getfloat(int start)
+    public float GetFloat(int start)
     {
         int end = 0;
-        return Getfloat(start, ref end);
+        return GetFloat(start, ref end);
     }
 }

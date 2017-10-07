@@ -23,9 +23,10 @@ public class NetObject : MonoBehaviour {
     public ProtocolBytes Protocol;
     ProtocolBytes UserProtocol;
     Dictionary<string, Synable> SynVars = new Dictionary<string, Synable>();
-    List<Synable> Changes = new List<Synable>();
+    List<Synable> Changes;
 
     public delegate void Delegate(ProtocolBase protocol);
+
     private Dictionary<string, Delegate> EventDict = new Dictionary<string, Delegate>();
     private Dictionary<string, Delegate> OnceDict = new Dictionary<string, Delegate>();
 
@@ -39,8 +40,6 @@ public class NetObject : MonoBehaviour {
     {
         ProtocolBytes proto = (ProtocolBytes)protocol;
         string name = proto.GetName();
-
-
     }
 
     public void VarRegister(string id, Synable a)
@@ -48,25 +47,49 @@ public class NetObject : MonoBehaviour {
         SynVars.Add(id, a);
     }
 
-    public void ChangeVar(Synable a)
-    {
-        Changes.Add(a);
-    }
-
-    void GetNewProtocol()
-    {
-        Protocol = new ProtocolBytes();
-        Protocol.AddString(SynSystem.VarFlag + NetID);
-    }
-
-    public void Send()
+    public void AddProtocolInt(Synable synVar, int date)
     {
         lock (Protocol)
         {
-            Client.instance.Send(Protocol);
-            GetNewProtocol();
+            if (Protocol == null) InitSystemProtocol();
+        }
+        
+
+        lock (Protocol)
+        {
+            Protocol.AddInt(date);
+            Changes.Add(synVar);
         }
     }
+
+    public void AddProtocolFloat(Synable synVar, float date)
+    {
+
+    }
+
+    // 有问题呀这个List是发送端的
+    // 咦用户自定义协议同理？？？？
+    void InitSystemProtocol()
+    {
+        Protocol = new ProtocolBytes();
+        Protocol.AddString(NetID);
+        // Changes = new List<Synable>();
+    }
+
+    //public ProtocolBytes Decode(ProtocolBytes proto)
+    //{
+        
+    //    return Protocol.Encode();
+    //}
+
+    //public void Send()
+    //{
+    //    lock (Protocol)
+    //    {
+    //        Client.instance.Send(Protocol);
+    //        GetNewProtocol();
+    //    }
+    //}
 
     // 用户自行构造协议和定义顺序
     // 初始协议必须由GetObjectProtocol获得
@@ -79,8 +102,6 @@ public class NetObject : MonoBehaviour {
 
         return UserProtocol;
     }
-
-
     public void Send(ProtocolBase protocol)
     {
         Client.instance.Send(protocol);
@@ -105,7 +126,6 @@ public class NetObject : MonoBehaviour {
             return;
         }
     }
-
     public void AddListener(string name, Delegate cb)
     {
         if (EventDict.ContainsKey(name))
@@ -117,7 +137,6 @@ public class NetObject : MonoBehaviour {
             EventDict[name] = cb;
         }
     }
-
     public void AddOnceListener(string name, Delegate cb)
     {
         if (OnceDict.ContainsKey(name))
@@ -129,7 +148,6 @@ public class NetObject : MonoBehaviour {
             OnceDict[name] = cb;
         }
     }
-
     public void DelListener(string name, Delegate cb)
     {
         if (EventDict.ContainsKey(name))
@@ -148,8 +166,6 @@ public class NetObject : MonoBehaviour {
                 OnceDict.Remove(name);
         }
     }
-
-
 }
 
 /* 关于网络物体创建与ID分配的记录 */
