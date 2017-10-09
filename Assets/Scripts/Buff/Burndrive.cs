@@ -24,6 +24,7 @@ public class Burndrive : Buff
     
     protected override void End()
     {
+        if(massToken == null || thrustToken == null) return;
         this.gameObject.GetComponent<Body>().massModifier.Remove(massToken);
         this.gameObject.GetComponent<Thrust>().thrustModifier.Remove(thrustToken);
     }
