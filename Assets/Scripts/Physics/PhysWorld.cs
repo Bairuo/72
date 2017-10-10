@@ -101,9 +101,9 @@ public class PhysWorld : MonoBehaviour
         if(I.magnitude < 100f || Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
         {
             Vector2 dip = bodyB.gameObject.transform.position - bodyA.gameObject.transform.position;
-            bodyA.velocity -= dip.normalized * Mathf.Pow(0.2f, timestep);
+            bodyA.velocity -= dip.normalized * Mathf.Pow(0.2f, -timestep);
             bodyA.angularVelocity *= Mathf.Pow(0.1f, timestep);
-            bodyB.velocity += dip.normalized * Mathf.Pow(0.2f, timestep);
+            bodyB.velocity += dip.normalized * Mathf.Pow(0.2f, -timestep);
             bodyB.angularVelocity *= Mathf.Pow(0.1f, timestep);
         }
         else
