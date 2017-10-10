@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 public class BuffSpeedUp : Buff
 {
-    public const float massBonusMult = 1.1f;
-    public const float speedBonusMult = 1.2f;
+    public const float massBonusMult = 1.2f;
+    public const float speedBonusMult = 1.4f;
     
     LinkedListNode<SubModifier> massToken;
     LinkedListNode<SubModifier> speedToken;

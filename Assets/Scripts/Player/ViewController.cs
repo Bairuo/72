@@ -29,45 +29,39 @@ public class ViewController : MonoBehaviour
         }
     }
     
-    /// The multiple of velocity direction to move the target position.
-    /// Linear multiple.
-    public float multLinear;
-    /// Square multiple.
-    public float multSqr;
+    /// Speed limit of camera *relative* to the target point.
+    public float maxSpeed;
     
-    /// The multiply that move close to the target point per second.
-    [Range(0f, 1f)] public float multMove;
+    public float decelerationDistance;
     
-    /// The multiple of speed limit of camera depends on attachment's speed.
-    public float multSpeedLimit;
-    
-    /// The instance distance of moving to target point per second.
-    /// Depreated.
-    // public float flatMove;
-    
+    /// Serialize for moniting inside the inspector.
     [SerializeField] Vector2 targetPos;
-    void Update()
+    [SerializeField] float relativeSpeed;
+    void FixedUpdate()
     {
         // Lock the rotation of the camera.
         this.gameObject.transform.rotation = new Quaternion(0f, 0f, 0f, 1f);
         
-        // Get the target position of camera, tracking the attachment,
-        //   add a forward amount depends on velocity.
-        Vector2 curv = body.velocity;
-        float speed = curv.magnitude;
-        float extDist = speed * multLinear + speed * speed * multSqr;
-        Vector2 curdir = attachment.transform.rotation * Vector2.up;
-        Vector2 curpos = attachment.transform.position;
+        // target position camera moving to.
+        targetPos = attachment.transform.position + attachment.transform.rotation * Vector2.up * body.velocity.magnitude;
         
-        targetPos = curdir * extDist + curpos;
+        // Set the position of camera.
+        // The camera is chasing the target point.
+        Vector2 targetDir = targetPos - (Vector2)this.gameObject.transform.position;
+        float distance = targetDir.magnitude;
         
-        // move the camera to the target point with a consequentive speed.
-        Vector2 campos = this.gameObject.transform.position;
-        float depth = this.gameObject.transform.position.z;
-        Vector2 deltaPos = targetPos - campos;
-        float speedLimit = multSpeedLimit * curv.magnitude;
-        if(deltaPos.magnitude > speedLimit * Time.deltaTime) deltaPos = deltaPos.normalized * speedLimit * Time.deltaTime;
-        this.gameObject.transform.position = new Vector3(deltaPos.x + campos.x, deltaPos.y + campos.y, depth);
+        
+        if(targetDir.magnitude < 0.001f)
+        {
+            this.gameObject.transform.position = targetPos;
+        }
+        else
+        {
+            Vector2 deltaPos = targetDir.normalized * Mathf.Min(1.0f, distance / decelerationDistance) * maxSpeed * Time.fixedDeltaTime;
+            
+            // Do not use Translate(...), it is relative position.
+            this.gameObject.transform.position = this.gameObject.transform.position + (Vector3)deltaPos;
+        }
     }
     
 }

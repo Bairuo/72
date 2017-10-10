@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// A real item is created by this GameObject.
+/// a prefab is logged inside this object.
+/// Deliver the prefab information (name or id) in the ObjectGenerator for synchronization.
 public class ItemTagger : MonoBehaviour
 {
 	public float lifetime;
 	public float flashdelay;
+	
+	public GameObject prefebToCreate = null;
 	
 	SpriteRenderer rd;
 	float mxalpha;
@@ -16,9 +21,7 @@ public class ItemTagger : MonoBehaviour
 		rd = this.gameObject.GetComponent<SpriteRenderer>();
 		t = lifetime;
 		mxalpha = GetAlpha(rd);
-		
 	}
-	
 	
 	void Update()
 	{
@@ -35,6 +38,10 @@ public class ItemTagger : MonoBehaviour
 	
 	void Cancel()
 	{
+		if(prefebToCreate != null)
+		{
+			Instantiate(prefebToCreate, this.gameObject.transform.position, this.gameObject.transform.rotation);
+		}
 		Destroy(this.gameObject);
 	}
 	

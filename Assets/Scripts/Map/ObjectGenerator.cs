@@ -142,6 +142,7 @@ public class ObjectGenerator : MonoBehaviour
 		{
 			var a = GameObject.Instantiate(taggerSource);
 			a.transform.position = loc;
+			a.GetComponent<ItemTagger>().prefebToCreate = taggerSource;
 		}
 	}
 	

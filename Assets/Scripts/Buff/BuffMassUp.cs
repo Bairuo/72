@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class BuffMassUp : Buff
 {
-    public const float bonus = 4f;
+    public const float bonus = 8f;
     
     LinkedListNode<SubModifier> token;
     
