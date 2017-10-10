@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Buff : MonoBehaviour
+public abstract class Buff : MonoBehaviour
 {
     float t;
     
@@ -13,10 +13,23 @@ public class Buff : MonoBehaviour
     
     bool applied = false;
     
+    GameObject dataset
+    {
+        get
+        {
+            return GameObject.FindGameObjectWithTag("BuffDataset");
+        }
+    }
+    
     void FixedUpdate()
     {
         if(!applied)
         {
+            if(dataset != null)
+            {
+                DatasetAdapt(dataset.GetComponent<BuffDataset>());
+            }
+            
             Begin();
             applied = true;
         }
@@ -31,9 +44,12 @@ public class Buff : MonoBehaviour
         End();
     }
     
+    /// this function will run if a dataset is found.
+    protected virtual void DatasetAdapt(BuffDataset x){ }
+    
     protected virtual void Begin() { }
     protected virtual void End() { }
     protected virtual void Process() { }
-    protected virtual float timeLimit { get{ return 0f; } }
+    protected abstract float timeLimit{ get; }
 }
 

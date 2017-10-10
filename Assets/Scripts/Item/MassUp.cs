@@ -19,6 +19,9 @@ public class MassUp : MonoBehaviour {
         /// Try something interesting , may remove or re-design.
         if(collision.gameObject.tag == "Player")
         {
+            // do nothing if there are 4 same buffers exist.
+            if(collision.gameObject.GetComponents<BuffMassUp>().Length >= 4) return;
+            
             collision.gameObject.AddComponent<BuffMassUp>();
             Destroy(this.gameObject);
         }

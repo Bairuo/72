@@ -1,10 +1,18 @@
 using System.Collections.Generic;
+using UnityEngine;
+
 
 public class BuffMassUp : Buff
 {
-    public const float bonus = 8f;
+    /// Value might be changed if BuffDataset exists.
+    public float bonus = 8f;
     
     LinkedListNode<SubModifier> token;
+    
+    protected override void DatasetAdapt(BuffDataset x)
+    {
+        bonus = x.massupMassAdd;
+    }
     
     protected override void Begin()
     {
