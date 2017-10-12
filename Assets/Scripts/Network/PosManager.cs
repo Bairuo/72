@@ -59,12 +59,15 @@ public class PosManager
         lastSendTime = float.MinValue;
         isInit = false;
     }
-    public void Init(string id) 
+    public void Init(string id)
     {
         if (isInit) return;
         isInit = true;
 
         playerID = id;
+
+        // 原应将SynSystem设计为静态构造
+        if (!SynSystem.IsUse) new SynSystem();
 
 
         // 重要协议注册， 位置同步，玩家点击操作，安全区信息，物体创建

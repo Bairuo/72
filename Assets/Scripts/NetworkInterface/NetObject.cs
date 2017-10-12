@@ -64,7 +64,16 @@ public class NetObject : MonoBehaviour {
 
     public void AddProtocolFloat(Synable synVar, float date)
     {
+        lock (Protocol)
+        {
+            if (Protocol == null) InitSystemProtocol();
+        }
 
+        lock (Protocol)
+        {
+            Protocol.AddFloat(date);
+            Changes.Add(synVar);
+        }
     }
 
     // 有问题呀这个List是发送端的

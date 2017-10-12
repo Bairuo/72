@@ -8,71 +8,60 @@
 
 * 协议发送频率66ms/次以下为宜（平均发送时间间隔≥66ms）
 
-* 尽量在变量改变时才发送协议
+* 尽量在变量改变时才发送消息
 
 ## 1.自定义协议
 
-```
-    void foo()
-    {
-        NetObject netObject = GetComponent<NetObject>();
-        
-        ProtocolBytes proto = netObject.GetObjectProtocol();     // 初始协议必须使用netObject的方法获取
-        
-        netObject.AddOnceListener(注册名, CallBack);
-        proto.AddString(注册名);                           // 协议名与注册名一致
-        
-        // 自定加入变量顺序和类型
-        proto.AddInt...
-        proto.AddFloat...
-        
-        ...
-        
-        // 发送
-        netObject.Send(proto);
-    }
-    
-    // 其他客户端接收到协议后的处理
-    public void CallBack(ProtocolBase protocol)
-    {
-        //使用不带参的GetInt等必须要先调用GetName()
-        string name = proto.GetName();
-        
-        // 自定义的顺序和类型
-        int a = proto.GetInt();
-        int b = proto.GetFloat();
-        
-        ...
-    }
-
-```
 
 ```
     class A
     {
         NetObject NetObject;
+        float Health;
+        int Damage;
     
         void Start()
         {
             netObject = GetComponent<NetObject>();
             
+            // 应保证所有的回调都已提前注册
+            // 建议在Start里面完成
             netObject.AddListener(注册名, CallBack);
         }
         
-        // 触发同步的事件
+        // 有属性发生改变，需要发送协议到其它客户端完成同步
         void foo()
         {
             ProtocolBytes proto = netObject.GetObjectProtocol();
             
-            proto.AddString(注册名);
+            // 需首先加入协议名，与注册名保持一致
+            proto.AddName(注册名);
             
-            // 同例1
+            // 自定加入变量顺序和类型
+            proto.AddInt...
+            proto.AddFloat...
+            proto.AddString...
+            
+            ...
+            
+            // 发送
+            netObject.Send(proto);
+            
         }
         
         // 其他客户端接收到协议后的处理
         public void CallBack(ProtocolBase protocol)
         {
-            // 同例1
+            //使用不带参的GetInt等必须要先调用GetName()
+            string name = proto.GetName();
+        
+            // 自定义的顺序和类型
+            int a = proto.GetInt();
+            int b = proto.GetFloat();
+            string c = proto.GetString();
+            
+            ...
+
         }
         
     }

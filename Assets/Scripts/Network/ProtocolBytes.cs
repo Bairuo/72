@@ -29,6 +29,7 @@ public class ProtocolBytes : ProtocolBase {
         return Bytes;
     }
     
+    
     public override string GetName()
     {
         start = 0;
@@ -88,6 +89,10 @@ public class ProtocolBytes : ProtocolBase {
         return GetSonProtocol(start, newLength);
     }
 
+    public void AddName(string str)
+    {
+        AddString(str);
+    }
     public void AddString(string str)
     {
         Int32 len = str.Length;
