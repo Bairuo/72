@@ -1,12 +1,20 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public class BuffSpeedUp : Buff
 {
-    public const float massBonusMult = 1.1f;
-    public const float speedBonusMult = 1.2f;
+    /// Values might be changed if BUffDataset exists.
+    public float massBonusMult = 1.2f;
+    public float speedBonusMult = 1.5f;
     
     LinkedListNode<SubModifier> massToken;
     LinkedListNode<SubModifier> speedToken;
+    
+    protected override void DatasetAdapt(BuffDataset x)
+    {
+        massBonusMult = x.speedupMassMult;
+        speedBonusMult = x.speedupThrustMult;
+    }
     
     protected override void Begin()
     {
