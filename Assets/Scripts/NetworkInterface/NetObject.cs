@@ -5,18 +5,19 @@ using UnityEngine;
 public class NetObject : MonoBehaviour {
     //  网络物体必须创造器动态创建
     // NetID一经赋值不得修改
+    string _NetID;
     public string NetID
     {
         get
         {
-            return NetID;
+            return _NetID;
         }
         private set
         {
-            if (NetID == null)
+            if (_NetID == null)
             {
-                NetID = value;
-                SynSystem.Register(NetID, this);
+                _NetID = value;
+                SynSystem.Register(_NetID, this);
             }
         }
     }  
@@ -32,6 +33,7 @@ public class NetObject : MonoBehaviour {
 
     public void ObjectRegister(string id)
     {
+        //Debug.Log(id);
         NetID = id;
         //Client.instance.AddListener(SynSystem.VarFlag + id, CallNetObject);
     }
