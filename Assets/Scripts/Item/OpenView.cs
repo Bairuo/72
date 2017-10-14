@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OpenView : MonoBehaviour {
+public class OpenView : MonoBehaviour
+{
     public float time;
-    private void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D x)
     {
-        if (collision.gameObject.tag == "Player"  && collision.gameObject.GetComponent<PlayerController>().IsMine())
-        {
-            GameObject.FindWithTag("fog").GetComponent<FogController>().MakeVisible(time);
-        }
-        Destroy(this.gameObject);
+        GameObject.Find("fog").GetComponent<FogController>().MakeVisible(time);
     }
+    
 }

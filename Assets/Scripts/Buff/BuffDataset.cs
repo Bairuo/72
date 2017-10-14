@@ -10,4 +10,6 @@ public class BuffDataset : MonoBehaviour
     
     public float speedupMassMult;
     public float speedupThrustMult;
+    
+    public float invulnerableTime;
 }
