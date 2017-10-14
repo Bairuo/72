@@ -112,7 +112,7 @@ public class PosManager
         string protoName = proto.GetString(start, ref start);
         float radius = proto.GetFloat(start, ref start);
 
-        SaftyArea.instance.radius = radius;
+        if (SaftyArea.instance != null) SaftyArea.instance.radius = radius;
     }
 
     public void PlayerClick(ProtocolBase protoBase)
