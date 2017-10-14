@@ -23,35 +23,24 @@ public class ColliderInfo : MonoBehaviour
         {
             Debug.Log("WARNING: collider info component must be attached to a Body component.");
             Destroy(this);
+            return;
         }
         
-        if(PhysWorld.collisionCallback.ContainsKey(body))
-        {
-            Debug.Log("WARNING: override callback for collider info. There must be at most one callback function for each Body.");
-            PhysWorld.collisionCallback[body] = CollisionCallback;
-        }
-        else
-        {
-            PhysWorld.collisionCallback.Add(body, CollisionCallback);
-        }
+        body.collisionCallbacks += CollisionCallback;
+    }
+    
+    void CollisionCallback(Body other, Vector2 impulse)
+    {
+        timeAfterLastCollision = 0f;
     }
     
     void OnDestroy()
     {
-        if(PhysWorld.collisionCallback.ContainsKey(body))
-            PhysWorld.collisionCallback.Remove(body);
+        body.collisionCallbacks -= CollisionCallback;
     }
     
     void FixedUpdate()
     {
         timeAfterLastCollision += Time.fixedDeltaTime;
     }
-    
-    
-    void CollisionCallback(Body op, CollisionInfo info)
-    {
-        timeAfterLastCollision = 0f;
-    }
-    
-    
 }   

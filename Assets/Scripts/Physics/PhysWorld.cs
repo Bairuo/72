@@ -16,9 +16,6 @@ public class PhysWorld : MonoBehaviour
     /// A reference pool.
     public static List<Body> bodies = new List<Body>();
     
-    public delegate void FuncCollisionCallback(Body other, CollisionInfo info);
-    public static Dictionary<Body, FuncCollisionCallback> collisionCallback = new Dictionary<Body, FuncCollisionCallback>();
-    
     void ForeachBody(FuncDealCollision f)
     {
         
@@ -45,8 +42,7 @@ public class PhysWorld : MonoBehaviour
     {
         ForeachBody((Body x, Body y) =>
         {
-            if(x.freezed && y.freezed) return;
-            
+            if(x.freezedAll && y.freezedAll) return;
             // Fast exclusive.
             if(x.farDist + y.farDist >= Vector2.Distance(x.gameObject.transform.position, y.gameObject.transform.position))
             {
@@ -81,8 +77,8 @@ public class PhysWorld : MonoBehaviour
         // Coefficient of Restitution.
         // defined as - deltaV before / deltaV after.
         // determined by material properties (like hardness).
-        float e = bodyB.hardness * bodyB.hardness;
-        if(e < 0f) e = 0f;
+        float e = 1 - (1f - bodyA.hardness) * (1f - bodyB.hardness);
+        
         // intersection line.
         Segment L = new Segment(isc[0], isc[1]);
         // collision point. Center of intersection line.
@@ -102,15 +98,13 @@ public class PhysWorld : MonoBehaviour
             Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rc, f) / bodyA.MOI, rc)) +
             Calc.DotMultiply(f, Vector3.Cross((Vector3)(Vector3.Cross((Vector3)rp, f) / bodyB.MOI), rp)));
         
-        bool overlap = false;
         if(I.magnitude < 100f || Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
         {
             Vector2 dip = bodyB.gameObject.transform.position - bodyA.gameObject.transform.position;
-            bodyA.velocity -= dip.normalized * Mathf.Pow(0.2f, timestep);
+            bodyA.velocity -= dip.normalized * Mathf.Pow(0.2f, -timestep);
             bodyA.angularVelocity *= Mathf.Pow(0.1f, timestep);
-            bodyB.velocity += dip.normalized * Mathf.Pow(0.2f, timestep);
+            bodyB.velocity += dip.normalized * Mathf.Pow(0.2f, -timestep);
             bodyB.angularVelocity *= Mathf.Pow(0.1f, timestep);
-            overlap = true;
         }
         else
         {
@@ -126,16 +120,9 @@ public class PhysWorld : MonoBehaviour
         // ======================= Collision Callback =========================
         // Callbacks are called AFTER the simulation of collision.
         // To disable the collision and take an other logic, reverse applying the logic before.
-        if(collisionCallback.ContainsKey(bodyA))
-        {
-            CollisionInfo info = new CollisionInfo(I, overlap);
-            collisionCallback[bodyA](bodyB, info);
-        }
-        if(collisionCallback.ContainsKey(bodyB))
-        {
-            CollisionInfo info = new CollisionInfo(-I, overlap);
-            collisionCallback[bodyB](bodyA, info);
-        }
+        bodyA.collisionCallbacks(bodyB, I);
+        bodyB.collisionCallbacks(bodyA, -I);
+        
         return true;
     }
     
