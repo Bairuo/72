@@ -45,12 +45,7 @@ public class SaftyArea : MonoBehaviour
 		{
 			if(Vector2.Distance(i.transform.position, this.gameObject.transform.position) >= radius)
 			{
-				var ctr = i.GetComponent<PlayerController>();
-				if((ctr.status & InvBit) == 0)
-				{
-					float h = ctr.health;
-					ctr.ChangeHealth(h - Time.deltaTime * damagePerSec);
-				}
+				i.GetComponent<Unit>().health -= Time.deltaTime * damagePerSec;
 			}
 		}
 	}

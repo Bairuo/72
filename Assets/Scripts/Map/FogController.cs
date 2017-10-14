@@ -14,8 +14,11 @@ public class FogController : MonoBehaviour
 	SpriteRenderer rd;
 	Material mat;
 	
+	public GameObject attachment;
+	
 	void Start()
 	{
+		if(attachment == null) attachment = this.gameObject;
 		rd = this.gameObject.GetComponent<SpriteRenderer>();
 		mat = rd.material;
 		begina = GetAlpha(rd);
@@ -52,6 +55,7 @@ public class FogController : MonoBehaviour
 			SetAlpha(rd, ((rec - t) / rec) * begina);
 		}
 		
+		this.gameObject.transform.position = attachment.gameObject.transform.position;
 	}
 	
 	float GetAlpha(SpriteRenderer rd)

@@ -28,6 +28,7 @@ public class Boss : MonoBehaviour
     
     void Update()
     {
+        t += Time.deltaTime;
         if(t > exitTime) Destroy(this.gameObject);
     }
     

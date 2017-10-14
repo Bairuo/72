@@ -34,7 +34,7 @@ public class Controller : MonoBehaviour
         body.freezedRotation = true;
     }
     
-    void Update()
+    void FixedUpdate()
     {
         // This filed requires synchronization from clients.
         DirectionControl(localJoyStick.location);
@@ -52,10 +52,10 @@ public class Controller : MonoBehaviour
         float cura = Calc.RotationAngleZ(body.gameObject.transform.rotation);
         
         float deltadir = Calc.Angle(cura, dira);
-        deltadir = Mathf.Sign(deltadir) * Mathf.Min(Mathf.Abs(deltadir), maxAngularVelocity * Time.deltaTime);
+        deltadir = Mathf.Sign(deltadir) * Mathf.Min(Mathf.Abs(deltadir), maxAngularVelocity * Time.fixedDeltaTime);
         
         body.gameObject.transform.rotation = Quaternion.Euler(0f, 0f, (cura + deltadir) * Mathf.Rad2Deg);
-        body.angularVelocity = deltadir / Time.deltaTime;
+        body.angularVelocity = deltadir / Time.fixedDeltaTime;
     }
     
 }

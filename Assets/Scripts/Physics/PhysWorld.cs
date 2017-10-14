@@ -98,24 +98,16 @@ public class PhysWorld : MonoBehaviour
             Calc.DotMultiply(f, Vector3.Cross(Vector3.Cross((Vector3)rc, f) / bodyA.MOI, rc)) +
             Calc.DotMultiply(f, Vector3.Cross((Vector3)(Vector3.Cross((Vector3)rp, f) / bodyB.MOI), rp)));
         
-        if(I.magnitude < 100f || Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
+        if(Calc.DotMultiply(rc, I) > 0f) // seperate two objects for no reason.
         {
-            Vector2 dip = bodyB.gameObject.transform.position - bodyA.gameObject.transform.position;
-            bodyA.velocity -= dip.normalized * Mathf.Pow(0.2f, -timestep);
-            bodyA.angularVelocity *= Mathf.Pow(0.1f, timestep);
-            bodyB.velocity += dip.normalized * Mathf.Pow(0.2f, -timestep);
-            bodyB.angularVelocity *= Mathf.Pow(0.1f, timestep);
+            I = -I * 0.001f; // Not so scientific.
         }
-        else
-        {
-            bodyA.velocity += I / bodyA.mass;
-            bodyA.angularVelocity += Calc.CrossMultiply(rc, I) / bodyA.MOI;
-            bodyA.angularVelocity = Calc.RangeCut(bodyA.angularVelocity, -2.0f * Mathf.PI, 2.0f * Mathf.PI);
-            
-            bodyB.velocity += -I / bodyB.mass;
-            bodyB.angularVelocity += Calc.CrossMultiply(rp, -I) / bodyB.MOI;
-            bodyB.angularVelocity = Calc.RangeCut(bodyB.angularVelocity, -2.0f * Mathf.PI, 2.0f * Mathf.PI);
-        }
+        
+        bodyA.velocity += I / bodyA.mass;
+        bodyA.angularVelocity += Calc.CrossMultiply(rc, I) / bodyA.MOI;
+        
+        bodyB.velocity += -I / bodyB.mass;
+        bodyB.angularVelocity += Calc.CrossMultiply(rp, -I) / bodyB.MOI;
         
         // ======================= Collision Callback =========================
         // Callbacks are called AFTER the simulation of collision.
