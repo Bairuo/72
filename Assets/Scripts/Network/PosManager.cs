@@ -101,7 +101,7 @@ public class PosManager
             }
         }
 
-        Client.instance.SendSafyAreaInfo(SaftyArea.instance.radius);
+        if (SaftyArea.instance != null) Client.instance.SendSafyAreaInfo(SaftyArea.instance.radius);
         
     }
 

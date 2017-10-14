@@ -69,6 +69,7 @@ public class NetSceneController : MonoBehaviour {
     public void EnterGame()
     {
         Application.LoadLevel("MainGame");
+        //Application.LoadLevel("NetInterfaceEx");
     }
 
     public void StartServer()
