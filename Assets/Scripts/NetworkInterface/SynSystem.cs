@@ -53,7 +53,6 @@ public class SynSystem
     // 协议：变量1 + 变量2 + 变量3
     public static void CallSynUser(ProtocolBase protocol)
     {
-        Debug.Log("System work");
         ProtocolBytes proto = (ProtocolBytes)protocol;
         int start = 0;
 

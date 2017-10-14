@@ -60,14 +60,13 @@ public class ExController : MonoBehaviour {
     public void CallBack(ProtocolBase protocol)
     {
         ProtocolBytes proto = (ProtocolBytes)protocol;
-        // 使用不带参的GetInt等必须要先调用GetName()
-        string name = proto.GetName();
+        int start = 0;
 
         // 自定义的顺序和类型
-        Damage = proto.GetInt();
-        Health = proto.GetFloat();
+        Damage = proto.GetInt(start, ref start);
+        Health = proto.GetFloat(start, ref start);
 
-        Debug.Log(Damage);
-        Debug.Log(Health);
+        Debug.Log("Change Damage " + Damage);
+        Debug.Log("Change Health " + Health);
     }
 }
