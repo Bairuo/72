@@ -582,7 +582,7 @@ public class Client
     {
         if (protocol == null) return;
         string name = protocol.GetName();
-        Debug.Log("Receive Name " + name);
+
         if (eventDict.ContainsKey(name))
         {
             eventDict[name](protocol);

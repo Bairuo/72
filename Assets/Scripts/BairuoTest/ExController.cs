@@ -17,9 +17,6 @@ public class ExController : MonoBehaviour {
         // 建议在Start里面完成
         NetObject.AddListener("Example", CallBack);
 
-        Debug.Log("Debug test");
-
-        //foo();
 	}
 
     // Update is called once per frame
@@ -62,11 +59,12 @@ public class ExController : MonoBehaviour {
         ProtocolBytes proto = (ProtocolBytes)protocol;
         int start = 0;
 
+        // 获取（去掉）协议名
+        string name = proto.GetString(start, ref start);
+
         // 自定义的顺序和类型
         Damage = proto.GetInt(start, ref start);
         Health = proto.GetFloat(start, ref start);
 
-        Debug.Log("Change Damage " + Damage);
-        Debug.Log("Change Health " + Health);
     }
 }
