@@ -59,12 +59,15 @@ public class PosManager
         lastSendTime = float.MinValue;
         isInit = false;
     }
-    public void Init(string id) 
+    public void Init(string id)
     {
         if (isInit) return;
         isInit = true;
 
         playerID = id;
+
+        // 原应将SynSystem设计为静态构造
+        if (!SynSystem.IsUse) new SynSystem();
 
 
         // 重要协议注册， 位置同步，玩家点击操作，安全区信息，物体创建
@@ -107,7 +110,7 @@ public class PosManager
         ProtocolBytes proto = (ProtocolBytes)protocol;
         int start = 0;
         string protoName = proto.GetString(start, ref start);
-        float radius = proto.Getfloat(start, ref start);
+        float radius = proto.GetFloat(start, ref start);
 
         SaftyArea.instance.radius = radius;
     }
@@ -118,9 +121,9 @@ public class PosManager
         int start = 0;
         string name = proto.GetString(start, ref start);
         string id = proto.GetString(start, ref start);
-        float x = proto.Getfloat(start, ref start);
-        float y = proto.Getfloat(start, ref start);
-        float z = proto.Getfloat(start, ref start);
+        float x = proto.GetFloat(start, ref start);
+        float y = proto.GetFloat(start, ref start);
+        float z = proto.GetFloat(start, ref start);
 
         PlayerClick(id, x, y, z);
     }
@@ -132,12 +135,12 @@ public class PosManager
         string protoName = proto.GetString(start, ref start);
         int DataID = proto.GetInt(start, ref start);
         string id = proto.GetString(start, ref start);
-        float x = proto.Getfloat(start, ref start);
-        float y = proto.Getfloat(start, ref start);
-        float z = proto.Getfloat(start, ref start);
+        float x = proto.GetFloat(start, ref start);
+        float y = proto.GetFloat(start, ref start);
+        float z = proto.GetFloat(start, ref start);
 
-        float velocity_x = proto.Getfloat(start, ref start);
-        float velocity_y = proto.Getfloat(start, ref start);
+        float velocity_x = proto.GetFloat(start, ref start);
+        float velocity_y = proto.GetFloat(start, ref start);
 
         Vector3 pos = new Vector3(x, y, z);
         Vector2 velocity = new Vector2(velocity_x, velocity_y);
@@ -181,8 +184,8 @@ public class PosManager
         int start = 0;
         string name = proto.GetString(start, ref start);
         string tag = proto.GetString(start, ref start);
-        float x = proto.Getfloat(start, ref start);
-        float y = proto.Getfloat(start, ref start);
+        float x = proto.GetFloat(start, ref start);
+        float y = proto.GetFloat(start, ref start);
 
         TaggerGenerate(tag, new UnityEngine.Vector2(x, y));
     }
@@ -193,8 +196,8 @@ public class PosManager
         string name = proto.GetString(start, ref start);
         string tag = proto.GetString(start, ref start);
         int id = proto.GetInt(start, ref start);
-        float x = proto.Getfloat(start, ref start);
-        float y = proto.Getfloat(start, ref start);
+        float x = proto.GetFloat(start, ref start);
+        float y = proto.GetFloat(start, ref start);
 
         PropGenerate(tag, id, new UnityEngine.Vector2(x, y));
     }

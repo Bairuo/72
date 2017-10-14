@@ -173,9 +173,9 @@ public class ServerNet
         {
             // 位置同步相关重要协议重组
             string playerID = protocol.GetString(start, ref start);
-            float cx = protocol.Getfloat(start, ref start);
-            float cy = protocol.Getfloat(start, ref start);
-            float cz = protocol.Getfloat(start, ref start);
+            float cx = protocol.GetFloat(start, ref start);
+            float cy = protocol.GetFloat(start, ref start);
+            float cz = protocol.GetFloat(start, ref start);
 
             ProtocolBytes CRecombine = new ProtocolBytes();
             CRecombine.AddString(protoName);
@@ -197,12 +197,12 @@ public class ServerNet
         int DataID = protocol.GetInt(start, ref start);
         string id = protocol.GetString(start, ref start);
 
-        float x = protocol.Getfloat(start, ref start);
-        float y = protocol.Getfloat(start, ref start);
-        float z = protocol.Getfloat(start, ref start);
+        float x = protocol.GetFloat(start, ref start);
+        float y = protocol.GetFloat(start, ref start);
+        float z = protocol.GetFloat(start, ref start);
 
-        float velocity_x = protocol.Getfloat(start, ref start);
-        float velocity_y = protocol.Getfloat(start, ref start);
+        float velocity_x = protocol.GetFloat(start, ref start);
+        float velocity_y = protocol.GetFloat(start, ref start);
 
         ProtocolBytes Recombine = new ProtocolBytes();
         Recombine.AddString(protoName);

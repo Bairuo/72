@@ -9,17 +9,18 @@ public class SynInt : Synable {
     {
        get
        {
-           return Date;
+           return _Date;
        }
        set
        {
-           Date = value;
+           _Date = value;
            if (NetObject.Protocol != null)
            {
-               NetObject.Protocol.AddInt(Date);
+               NetObject.AddProtocolInt(this, _Date);
            }
        }
     }
+    int _Date;
 
     public SynInt(int date)
     {
@@ -29,5 +30,12 @@ public class SynInt : Synable {
     public override byte[] Encode()
     {
         return BitConverter.GetBytes(Date);
+    }
+
+    public override ProtocolBytes Decode(ProtocolBytes proto)
+    {
+        int start = 0;
+        _Date = proto.GetInt(start, ref start);
+        return proto.GetRestProtocol(start);
     }
 }
