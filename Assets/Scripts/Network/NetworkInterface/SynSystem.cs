@@ -58,7 +58,9 @@ public class SynSystem
 
         string name = proto.GetString(start, ref start);
         string id = proto.GetString(start, ref start);
-
+        
+        Debug.Log(name + " " + id);
+        
         ProtocolBytes objProtocol = proto.GetRestProtocol(start);
 
         if (NetObjects.ContainsKey(id))

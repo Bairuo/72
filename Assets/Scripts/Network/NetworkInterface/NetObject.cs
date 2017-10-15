@@ -5,7 +5,7 @@ using UnityEngine;
 public class NetObject : MonoBehaviour {
     //  网络物体必须创造器动态创建
     // NetID一经赋值不得修改
-    string _NetID;
+    [SerializeField] string _NetID;
     public string NetID
     {
         get

@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Controller : MonoBehaviour
+public class Controller : NetworkBehaviour
 {
     public JoyStick localJoyStick;
     public Body body;
@@ -13,8 +13,12 @@ public class Controller : MonoBehaviour
     // Controller will not reply for joystick movement which locations are less than this number.
     public float controlLimit;
     
-    void Start()
+    // Each controller has a unique Name in a scene (on a server or a client).
+    protected override string networkName{ get{ return this.gameObject.name + "Controller"; } }
+    
+    protected override void Start()
     {
+        base.Start();
         if(localJoyStick == null) localJoyStick = GameObject.Find("JoyStick").GetComponent<JoyStick>();
         if(localJoyStick == null)
         {
@@ -37,7 +41,28 @@ public class Controller : MonoBehaviour
     void FixedUpdate()
     {
         // This filed requires synchronization from clients.
-        DirectionControl(localJoyStick.location);
+        
+        // Server directly use localJoystick.
+        if(Client.IsRoomServer())
+        {
+            DirectionControl(localJoyStick.location);
+            Debug.Log("Server control." + networkName);
+        }
+        else
+        {
+            // Clients sends messages to server to synchronize.
+            Send(localJoyStick.location);
+            Debug.Log("Client control." + networkName);
+        }
+    }
+    
+    
+    GameObject[] players;
+    public override void NetworkCallback()
+    {
+        Vector2 loc = GetVec2();
+        Debug.Log("Server receive message : " + loc + " | " + networkName);
+        DirectionControl(loc);
     }
     
     void DirectionControl(Vector2 targetDirection)
