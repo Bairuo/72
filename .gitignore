@@ -40,4 +40,5 @@ sysinfo.txt
 *.x86_64
 /x_Data/
 
-
+# Executeable
+*.exe
