@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class ExControllerTest : ExNetworkBehaviour
 {
-    public float Health = 10;
-    public int Damage = 10;
     float lastTime = 0;
     
     public override string protocolName{ get{ return "Test!"; } }
@@ -20,27 +18,19 @@ public class ExControllerTest : ExNetworkBehaviour
         if (Time.time - lastTime > 0.65f)
         {
             lastTime = Time.time;
-            if (!Client.IsRoomServer())
-            {
-                foo();
-            }
+            SendToServer("Client " + Client.instance.playerid + " Send To server.");
+            SendToClient("Server " + Client.instance.playerid + " Send to server.");
         }
-
-    }
-
-
-    public void foo()
-    {
-        Damage++;
-        
-        Send(Damage, Health);
     }
     
-    
-    protected override void Recieve()
+    protected override void ServerReceive(string from)
     {
-        Damage = GetInt();
-        Health = GetFloat();
+        Debug.LogError(GetString() + " :: from " + from);
+    }
+    
+    protected override void ClientReceive(string from)
+    {
+        Debug.LogError(GetString() + " :: from " + from);
     }
     
 }

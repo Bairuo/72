@@ -91,6 +91,11 @@ public class Client
         }
     }
     
+    public static bool IsNamedServer(string id)
+    {
+        return id == "0";
+    }
+    
     public bool Connect(string host, int port)
     {
         try

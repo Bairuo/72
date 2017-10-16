@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class NetSceneController : MonoBehaviour {
     public Text IPInput;
@@ -65,11 +66,12 @@ public class NetSceneController : MonoBehaviour {
             
         }
     }
-
+    
+    public string gameSceneName;
+    
     public void EnterGame()
     {
-        //Application.LoadLevel("MainGame");
-        Application.LoadLevel("NetInterfaceEx");
+        SceneManager.LoadScene(gameSceneName);
     }
 
     public void StartServer()

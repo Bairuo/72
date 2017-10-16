@@ -17,6 +17,7 @@ public class ExNetworkBehaviour : MonoBehaviour
     {
         ProtocolBytes proto = NetObject.GetObjectProtocol();
         proto.AddName(protocolName);
+        proto.AddName(Client.instance.playerid);
         
         foreach(var i in info)
         {
@@ -48,8 +49,22 @@ public class ExNetworkBehaviour : MonoBehaviour
             }
             else Debug.LogError("Try to send a variable that is not supported.");
         }
+        
         NetObject.Send(proto);
     }
+    
+    protected void SendToServer(params object[] info)
+    {
+        if(Client.IsRoomServer()) return;
+        Send(info);
+    }
+    
+    protected void SendToClient(params object[] info)
+    {
+        if(!Client.IsRoomServer()) return;
+        Send(info);
+    }
+    
     
     ProtocolBytes proto;
     int start;
@@ -62,20 +77,39 @@ public class ExNetworkBehaviour : MonoBehaviour
     protected Vector3 GetVec3() { return new Vector3(GetFloat(), GetFloat(), GetFloat()); }
     protected Quaternion GetQuat() { return new Quaternion(GetFloat(), GetFloat(), GetFloat(), GetFloat()); }
     
-    
     void NetCallback(ProtocolBase protocol)
     {
         proto = (ProtocolBytes)protocol;
         start = 0;
         
-        string name = proto.GetString(start, ref start);
+        string name = GetString();
+        string from = GetString();
         
-        Recieve();
+        Receive(from);
+        
+        if(Client.IsRoomServer() && !Client.IsNamedServer(from))
+            ServerReceive(from);
+        
+        if(Client.IsNamedServer(from))
+            ClientReceive(from);
     }
     
-    protected virtual void Recieve()
+    /// Receive information for whatever sended it.
+    protected virtual void Receive(string fromPlayer)
+    {
+        // do nithing...
+    }
+    
+    /// Only receive inforamtion from client.
+    protected virtual void ServerReceive(string fromPlayer)
     {
         // do nothing...
+    }
+    
+    /// Only receive information from server.
+    protected virtual void ClientReceive(string fromPlayer)
+    {
+        // dod nothing...
     }
     
 }
