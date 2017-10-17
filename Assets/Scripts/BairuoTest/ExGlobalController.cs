@@ -25,7 +25,7 @@ public class ExGlobalController : ExNetworkBehaviour
         {
             if(Client.IsRoomServer())
             {
-                (Component.FindObjectOfType(typeof(ExGameObjectCreator)) as ExGameObjectCreator).GlobalGameObjectCreate(
+                Component.FindObjectOfType<ExGameObjectCreator>().GlobalGameObjectCreate(
                     "Player/XPlayer",
                     "Player-" + Client.instance.playerid,
                     new Vector2(0f, 0f),
