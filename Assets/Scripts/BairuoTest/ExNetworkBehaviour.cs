@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class ExNetworkBehaviour : MonoBehaviour
 {
-    NetObject netObject;
+    public readonly NetObject netObject = new NetObject();
+    
+    protected virtual void Start()
+    {
+        // netObject = GetComponent<NetObject>();
+    }
+    
     
     public delegate void ServerReceiver(params object[] info);
     public delegate void ClientReceiver(params object[] info);
@@ -20,14 +26,14 @@ public class ExNetworkBehaviour : MonoBehaviour
         public ClientReceiver clientReceiver;
         public ServerSender serverSender;
         public ClientSender clientSender;
-        public TypeCode[] types;
+        public Type[] types;
         public ProtocolEntry(
             string n = "DEFAULT",
             ServerReceiver sr = null,
             ClientReceiver cr = null,
             ServerSender ss = null,
             ClientSender cs = null,
-            TypeCode[] tp = null)
+            Type[] tp = null)
         {
             protocolName = n;
             serverReceiver = sr;
@@ -35,6 +41,10 @@ public class ExNetworkBehaviour : MonoBehaviour
             serverSender = ss;
             clientSender = cs;
             types = tp;
+        }
+        public override string ToString()
+        {
+            return "" + protocolName + " | " + serverReceiver + " | " + clientReceiver + " | " + serverSender + " | " + clientSender;
         }
     }
     
@@ -53,7 +63,7 @@ public class ExNetworkBehaviour : MonoBehaviour
         }
         for(int i=0; i<info.Length; i++)
         {
-            if(Type.GetTypeCode(info[i].GetType()) != protocols[protocolName].types[i])
+            if(info[i].GetType() != protocols[protocolName].types[i])
             {
                 Debug.LogError("The info array and protocol are not corresponding.");
                 return;
@@ -88,15 +98,18 @@ public class ExNetworkBehaviour : MonoBehaviour
                 proto.AddFloat(v.z);
                 proto.AddFloat(v.w);
             }
+            else if(i is Color)
+            {
+                Color v = (Color)i;
+                proto.AddFloat(v.r);
+                proto.AddFloat(v.g);
+                proto.AddFloat(v.b);
+                proto.AddFloat(v.a);
+            }
             else Debug.LogError("Try to send a variable that is not supported.");
         }
         
         netObject.Send(proto);
-    }
-    
-    protected virtual void Start()
-    {
-        netObject = GetComponent<NetObject>();
     }
     
     public void AddProtocol(
@@ -108,22 +121,39 @@ public class ExNetworkBehaviour : MonoBehaviour
     
     public void AddProtocol(
         string name,
-        ServerSender serverSender = null, ClientSender clientSender = null,
+        ServerSender toClient = null, ClientSender toServer = null,
         ServerReceiver serverReceiver = null, ClientReceiver clientReceiver = null,
         params object[] tp)
     {
-        var types = new TypeCode[tp.Length];
+        var types = new Type[tp.Length];
         for(int i=0; i<types.Length; i++)
         {
-            TypeCode tpc = Type.GetTypeCode(tp[i].GetType());
-            if(tpc != TypeCode.String && tpc != TypeCode.Int32  && tpc != TypeCode.Boolean && tpc != TypeCode.Single)
+            Type tpc;
+            
+            if(tp[i] is Type)
+            {
+                tpc = tp[i] as Type;
+            }
+            else if(tp[i].GetType() == typeof(string) ||
+                tp[i].GetType() == typeof(int) ||
+                tp[i].GetType() == typeof(bool) ||
+                tp[i].GetType() == typeof(float) ||
+                tp[i].GetType() == typeof(Vector2) ||
+                tp[i].GetType() == typeof(Vector3) ||
+                tp[i].GetType() == typeof(Quaternion) ||
+                tp[i].GetType() == typeof(Color))
+            {
+                tpc = tp[i].GetType();
+            }
+            else
             {
                 Debug.LogError("Type not supported! " + "Adding protocol " + name);
                 return;
             }
             types[i] = tpc;
         }
-        protocols.Add(name, new ProtocolEntry(name, serverReceiver, clientReceiver, serverSender, clientSender, types));
+        
+        protocols.Add(name, new ProtocolEntry(name, serverReceiver, clientReceiver, toClient, toServer, types));
         netObject.AddListener(name, Callback);
     }
     
@@ -133,20 +163,50 @@ public class ExNetworkBehaviour : MonoBehaviour
         int start = 0;
         string protoName = v.GetString(start, ref start);
         string oppositePlayerID = v.GetString(start, ref start);
-        TypeCode[] types = protocols[protoName].types;
+        Type[] types = protocols[protoName].types;
         object[] info = new object[types.Length];
         for(int i=0; i<types.Length; i++)
         {
-            switch(types[i])
+            if(types[i] == typeof(int)) { info[i] = v.GetInt(start, ref start); continue; }
+            if(types[i] == typeof(float)) { info[i] = v.GetFloat(start, ref start); continue; }
+            if(types[i] == typeof(string)) { info[i] = v.GetString(start, ref start); continue; }
+            if(types[i] == typeof(bool)) { info[i] = v.GetBool(start, ref start); continue; }
+            if(types[i] == typeof(Vector2)) 
             {
-                case TypeCode.Int32 : info[i] = v.GetInt(start, ref start); break;
-                case TypeCode.String : info[i] = v.GetString(start, ref start); break;
-                case TypeCode.Single : info[i] = v.GetFloat(start, ref start); break;
-                case TypeCode.Boolean : info[i] = v.GetBool(start, ref start); break;
-                default:
-                    Debug.LogError("Unknown type in protocol data!");
-                break;
+                info[i] = new Vector2(
+                    v.GetFloat(start, ref start),
+                    v.GetFloat(start, ref start));
+                continue;
             }
+            if(types[i] == typeof(Vector3))
+            {
+                info[i] = new Vector3(
+                    v.GetFloat(start, ref start),
+                    v.GetFloat(start, ref start),
+                    v.GetFloat(start, ref start));
+                continue;
+            }
+            if(types[i] == typeof(Color))
+            {
+                info[i] = new Color(
+                    v.GetFloat(start, ref start),
+                    v.GetFloat(start, ref start),
+                    v.GetFloat(start, ref start),
+                    v.GetFloat(start, ref start));
+                continue;
+            }
+            if(types[i] == typeof(Quaternion))
+            {
+                info[i] = new Quaternion(
+                    v.GetFloat(start, ref start),
+                    v.GetFloat(start, ref start),
+                    v.GetFloat(start, ref start),
+                    v.GetFloat(start, ref start));
+                continue;
+            }
+            
+            Debug.LogError("Unknown type in protocol data!");
+            break;
         }
         if(Client.IsRoomServer()) protocols[protoName].serverReceiver(info);
         if(!Client.IsRoomServer() && Client.IsNamedServer(oppositePlayerID)) protocols[protoName].clientReceiver(info);

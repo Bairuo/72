@@ -9,7 +9,7 @@ public class ExControllerTest : ExNetworkBehaviour
 	protected override void Start()
     {
         base.Start();
-        AddProtocol("Tex", SendToClient, SendToServer, Receive, Receive, "");
+        AddProtocol("Tex", SendToClient, SendToServer, Receive, Receive, typeof(string));
 	}
 
     void Update()
@@ -24,17 +24,17 @@ public class ExControllerTest : ExNetworkBehaviour
     
     object[] SendToServer()
     {
-        return new object[]{"Server sended info, id : " + Client.instance.playerid};
+        return new object[]{"Client sended info, id : " + Client.instance.playerid};
     }
     
     object[] SendToClient()
     {
-        return new object[]{"Client sended info, id : " + Client.instance.playerid};
+        return new object[]{"Server sended info, id : " + Client.instance.playerid};
     }
     
     void Receive(object[] info)
     {
-        Debug.LogError("Receive from " + (info[0] as string));
+        Debug.LogError("Receive info : " + (info[0] as string));
     }
     
     

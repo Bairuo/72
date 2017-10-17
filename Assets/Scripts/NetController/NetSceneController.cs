@@ -43,12 +43,7 @@ public class NetSceneController : MonoBehaviour {
                 else
                 {
                     sInformation.text = "服务器IP：" + Network.player.ipAddress + "\n" + "准备玩家：" + Client.instance.prepareNum + "/" + Client.instance.roomnum + " 全部准备或人数达到4时开始游戏！";
-                    //sInformation.text = "准备玩家：" + Client.instance.prepareNum + "/" + Client.instance.roomnum + " 全部准备或人数达到4时开始游戏！";
                 }
-
-                //else if (Client.instance.roomnum == 1) sInformation.text = "服务器IP:" + Network.player.ipAddress + ", 等待玩家接入";
-                //else if (Client.instance.roomnum == 2) sInformation.text = "服务器IP:" + Network.player.ipAddress + ", 已接入玩家：1";
-                //else if (Client.instance.roomnum == 3) sInformation.text = "服务器IP:" + Network.player.ipAddress + ", 已接入玩家：2, 即将开始游戏";
             }
             else
             {
@@ -58,20 +53,18 @@ public class NetSceneController : MonoBehaviour {
                 {
                     cInformation.text = "准备玩家：" + Client.instance.prepareNum + "/" + Client.instance.roomnum + " 全部准备或人数达到4时开始游戏！";
                 }
-
-                //else if (Client.instance.roomnum == 2) cInformation.text = "成功连接, 当前玩家:2";
-                //else if (Client.instance.roomnum == 3) cInformation.text = "成功连接, 当前玩家:3, 即将开始游戏";
             }
             
             
         }
     }
     
-    public string gameSceneName;
+    public string[] gameSceneName;
+    public int nextSceneID;
     
     public void EnterGame()
     {
-        SceneManager.LoadScene(gameSceneName);
+        SceneManager.LoadScene(gameSceneName[nextSceneID]);
     }
 
     public void StartServer()
