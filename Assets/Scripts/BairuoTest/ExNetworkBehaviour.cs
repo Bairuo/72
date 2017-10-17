@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class ExNetworkBehaviour : MonoBehaviour
 {
+    public static int globalID = 0;
+    
     public NetObject netObject = new NetObject();
+    
+    public ExNetworkBehaviour()
+    {
+        netObject.NetID = globalID++.ToString();
+    }
     
     protected virtual void Awake()
     {
-        // netObject = GetComponent<NetObject>();
-        // netObject = new NetObject();
+        Debug.LogErrorFormat("ExNetworkBehaviour with object {0} get netID {1}.", this.gameObject.name, netObject.NetID);
     }
-    
     
     public delegate void ServerReceiver(params object[] info);
     public delegate void ClientReceiver(params object[] info);

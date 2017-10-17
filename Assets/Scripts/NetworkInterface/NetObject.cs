@@ -6,14 +6,14 @@ public class NetObject
 {
     //  网络物体必须创造器动态创建
     // NetID一经赋值不得修改
-    string _NetID;
+    [SerializeField] string _NetID;
     public string NetID
     {
         get
         {
             return _NetID;
         }
-        private set
+        set
         {
             if (_NetID == null)
             {
@@ -31,7 +31,16 @@ public class NetObject
 
     private Dictionary<string, Delegate> EventDict = new Dictionary<string, Delegate>();
     private Dictionary<string, Delegate> OnceDict = new Dictionary<string, Delegate>();
-
+    
+    public NetObject()
+    {
+        // do nothing...
+    }
+    public NetObject(string id)
+    {
+        NetID = id;
+    }
+    
     public void ObjectRegister(string id)
     {
         //Debug.Log(id);

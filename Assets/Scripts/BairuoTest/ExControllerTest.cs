@@ -8,6 +8,7 @@ public class ExControllerTest : ExNetworkBehaviour
     
 	protected override void Awake()
     {
+        base.Awake();
         AddProtocol("Tex", SendToClient, SendToServer, Receive, Receive, typeof(string));
 	}
 
