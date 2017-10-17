@@ -13,7 +13,7 @@ public class ExGameController : MonoBehaviour {
         // 非固定物体的id分配需要通过类似ExController中的协议发送来实现
         // 由构造器将id发送到另一个构造器同一id再创建
         GameObject Ex = GameObject.Instantiate(ExPrefab, pos, Quaternion.identity);
-        Ex.GetComponent<ExNetworkBehaviour>().netObject.ObjectRegister("1");
+	Ex.GetComponent<ExNetworkBehaviour>().netObject.ObjectRegister("1");
 	}
 	
 	// Update is called once per frame

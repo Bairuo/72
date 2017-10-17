@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class ExNetworkBehaviour : MonoBehaviour
 {
-    public readonly NetObject netObject = new NetObject();
+    public NetObject netObject = new NetObject();
     
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         // netObject = GetComponent<NetObject>();
+        // netObject = new NetObject();
     }
     
     

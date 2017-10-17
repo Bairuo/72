@@ -6,10 +6,8 @@ public class ExGameObjectCreator : ExNetworkBehaviour
 {
     bool prepared = false;
     
-    protected override void Start()
+    protected void Start()
     {
-        base.Start();
-        
         // Protocol GameObjectCreate ...
         // string : Prefab path.
         // string : playerid.

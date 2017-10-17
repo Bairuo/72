@@ -6,15 +6,14 @@ public class ExControllerTest : ExNetworkBehaviour
 {
     float lastTime = 0;
     
-	protected override void Start()
+	protected override void Awake()
     {
-        base.Start();
         AddProtocol("Tex", SendToClient, SendToServer, Receive, Receive, typeof(string));
 	}
 
     void Update()
     {
-        if (Time.time - lastTime > 0.65f)
+        if (Time.time - lastTime > 1f)
         {
             lastTime = Time.time;
             

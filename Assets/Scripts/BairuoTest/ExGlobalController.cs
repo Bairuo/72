@@ -6,11 +6,9 @@ public class ExGlobalController : ExNetworkBehaviour
 {
     bool prepared = false;
     
-    protected override void Start()
+    protected void Start()
     {
         Client.instance.posmanager.Init(Client.instance.playerid);
-        
-        base.Start();
         
         AddProtocol("CreatePlayerRequest", null, SendCreatePlayerRequest, ReceiveCreatePlayerRequest, null, typeof(string));
         
