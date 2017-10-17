@@ -91,7 +91,7 @@ public class ExNetworkBehaviour : MonoBehaviour
             }
             else if(i is Vector3)
             {
-                Vector3 v = (Vector2)i;
+                Vector3 v = (Vector3)i;
                 proto.AddFloat(v.x);
                 proto.AddFloat(v.y);
                 proto.AddFloat(v.z);
