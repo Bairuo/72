@@ -6,11 +6,10 @@ public class ExControllerTest : ExNetworkBehaviour
 {
     float lastTime = 0;
     
-    public override string protocolName{ get{ return "Test!"; } }
-    
 	protected override void Start()
     {
         base.Start();
+        AddProtocol("Tex", SendToClient, SendToServer, Receive, Receive, "");
 	}
 
     void Update()
@@ -18,19 +17,27 @@ public class ExControllerTest : ExNetworkBehaviour
         if (Time.time - lastTime > 0.65f)
         {
             lastTime = Time.time;
-            SendToServer("Client " + Client.instance.playerid + " Send To server.");
-            SendToClient("Server " + Client.instance.playerid + " Send to server.");
+            
+            Send("Tex"); // will pull info from Senders.
         }
     }
     
-    protected override void ServerReceive(string from)
+    object[] SendToServer()
     {
-        Debug.LogError(GetString() + " :: from " + from);
+        return new object[]{"Server sended info, id : " + Client.instance.playerid};
     }
     
-    protected override void ClientReceive(string from)
+    object[] SendToClient()
     {
-        Debug.LogError(GetString() + " :: from " + from);
+        return new object[]{"Client sended info, id : " + Client.instance.playerid};
     }
+    
+    void Receive(object[] info)
+    {
+        Debug.LogError("Receive from " + (info[0] as string));
+    }
+    
+    
+    
     
 }
