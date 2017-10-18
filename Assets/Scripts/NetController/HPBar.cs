@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class hpbar1 : MonoBehaviour
+public class HPBar : MonoBehaviour
 {
     public Image front;
     public GameObject speedLevelController;
@@ -24,6 +24,7 @@ public class hpbar1 : MonoBehaviour
             {
                 foreach(GameObject obj in objs)
                 {
+                    Debug.Log(obj.name);
                     if(obj.GetComponent<ExNetworkBehaviour>().netObject.NetID == "Player-" + Client.instance.playerid)
                     {
                         host = obj.GetComponent<Unit>();
@@ -39,8 +40,6 @@ public class hpbar1 : MonoBehaviour
             
             int A = host.gameObject.GetComponents<BuffMassUp>().Length;
             int B = host.gameObject.GetComponents<BuffSpeedUp>().Length;
-            
-            
             massLevelController.GetComponent<LevelController>().level = A;
             speedLevelController.GetComponent<LevelController>().level = B;
         }

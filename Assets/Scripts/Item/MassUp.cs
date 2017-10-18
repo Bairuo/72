@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MassUp : MonoBehaviour
+public class MassUp : ExNetworkBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -11,7 +11,7 @@ public class MassUp : MonoBehaviour
         /// Try something interesting , may remove or re-design.
         if(collision.gameObject.tag == "Player")
         {
-            collision.gameObject.AddComponent<BuffMassUp>();
+            ExComponentGenerator.instance.CreateComponentAt("BuffMassUp", collision.gameObject);
             Destroy(this.gameObject);
         }
     }

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 /// Defines the rules of item generation.
 public class ExComponentGenerator : ExNetworkBehaviour
 {
+    public static ExComponentGenerator instance;
+    
     public static Dictionary<string, Type> componentTypes = null;
     
     protected override void Start()
@@ -13,11 +15,17 @@ public class ExComponentGenerator : ExNetworkBehaviour
         base.Start();
         
         /// Multiple ItemGenerator may exist, this shall be inited only once.
-        if(componentTypes == null)
+        if(instance == null)
         {
+            instance = this;
             componentTypes = new Dictionary<string, Type>();
             componentTypes.Add("BuffMassUp", typeof(BuffMassUp));
             componentTypes.Add("BuffSpeedUp", typeof(BuffSpeedUp));
+        }
+        else
+        {
+            Destroy(this);
+            return;
         }
         
         AddProtocol("AddComponent", ComponentSend, null, null, ComponentReceive,
@@ -28,18 +36,9 @@ public class ExComponentGenerator : ExNetworkBehaviour
     //                     Game Logic Section
     // ==============================================================
     
-    float tt = 2f;
     void Update()
     {
-        // DEBUG SECTION =>
-        if(tt <= 0f)
-        {
-            var a = GameObject.FindGameObjectWithTag("Player");
-            CreateComponentAt("BuffMassUp", a); 
-            tt+=4f;
-        }
-        tt -= Time.deltaTime;
-        // <= DEBUG SECTION.
+        // do nothing...
     }
     
     // ==============================================================

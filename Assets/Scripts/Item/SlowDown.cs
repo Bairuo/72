@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlowDown : MonoBehaviour
+public class SlowDown : ExNetworkBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {

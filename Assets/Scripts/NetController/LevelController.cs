@@ -19,6 +19,9 @@ public class LevelController : MonoBehaviour {
     {
         switch (level)
         {
+            case 0:
+                LoadLevel0();
+                break;
             case 1:
                 LoadLevel1();
                 break;
@@ -31,11 +34,19 @@ public class LevelController : MonoBehaviour {
             case 4:
                 LoadLevel4();
                 break;
-
+            
         }
                 
 	}
-
+    
+    public void LoadLevel0()
+    {
+        lv1.color = new Color(1, 1, 1, 0.2f);
+        lv2.color = new Color(1, 1, 1, 0.2f);
+        lv3.color = new Color(1, 1, 1, 0.2f);
+        lv4.color = new Color(1, 1, 1, 0.2f);
+    }
+    
     public void LoadLevel1()
     {
         lv1.color = new Color(1, 1, 1, 0.8f);
