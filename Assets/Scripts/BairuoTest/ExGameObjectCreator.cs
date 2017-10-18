@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 public class ExGameObjectCreator : ExNetworkBehaviour
 {
-    bool prepared = false;
-    
-    protected void Start()
+    protected override void Start()
     {
+        base.Start();
+        
         // Protocol GameObjectCreate ...
         // string : Prefab path.
         // string : playerid.
@@ -30,7 +30,6 @@ public class ExGameObjectCreator : ExNetworkBehaviour
     void CreateProcess(object[] info)
     {
         string path = info[0] as string;
-        string id = info[1] as string;
         Vector2 loc = (Vector2)info[2];
         float rot = (float)info[3];
         string netid = info[4] as string;

@@ -15,7 +15,7 @@ public class HandleServerMsg{
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
-        string protoName = proto.GetString(start, ref start);
+        proto.GetString(start, ref start);
         string questid = proto.GetString(start, ref start);
         try
         {

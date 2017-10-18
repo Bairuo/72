@@ -31,7 +31,7 @@ public class FogController : ExLocalAttachment
 	
 	protected virtual void FixedUpdate()
 	{
-		if(!attachmentInited) return;
+		if(attachment == null) return;
 		
 		t -= Time.fixedDeltaTime;
 		

@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class BuffInvulnerable : Buff
 {
-    float bonus = 9999f;
-    
     float duration;
     LinkedListNode<SubModifier> token;
     

@@ -10,7 +10,7 @@ public class HandleClientMsg{
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
-        string protoName = proto.GetString(start, ref start);
+        proto.GetString(start, ref start);
         int num = proto.GetInt(start, ref start);
         Client.instance.prepareNum = num;
     }
@@ -18,7 +18,7 @@ public class HandleClientMsg{
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
-        string protoName = proto.GetString(start, ref start);
+        proto.GetString(start, ref start);
         int num = proto.GetInt(start, ref start);
         Client.instance.roomnum = num;
 
@@ -41,7 +41,7 @@ public class HandleClientMsg{
     {
         ProtocolBytes protol = (ProtocolBytes)protoBase;
         int start = 0;
-        string protoName = protol.GetString(start, ref start);
+        protol.GetString(start, ref start);
         int id = protol.GetInt(start, ref start);
         int roomid = protol.GetInt(start, ref start);
         int conn_id = protol.GetInt(start, ref start);
@@ -55,7 +55,7 @@ public class HandleClientMsg{
     {
         ProtocolBytes protol = (ProtocolBytes)protoBase;
         int start = 0;
-        string protoName = protol.GetString(start, ref start);
+        protol.GetString(start, ref start);
         string ip = protol.GetString(start, ref start);
         int port = protol.GetInt(start, ref start);
 
@@ -68,7 +68,7 @@ public class HandleClientMsg{
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
-        string name = proto.GetString(start, ref start);
+        proto.GetString(start, ref start);
         int PortalID = proto.GetInt(start, ref start);
 
         PortalController.DestroyBoth(PortalID);
@@ -78,7 +78,7 @@ public class HandleClientMsg{
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
-        string name = proto.GetString(start, ref start);
+        proto.GetString(start, ref start);
         int PortalID = proto.GetInt(start, ref start);
         float x = proto.GetFloat(start, ref start);
         float y = proto.GetFloat(start, ref start);
@@ -87,34 +87,13 @@ public class HandleClientMsg{
         PortalController.SetAnother(PortalID, pos);
 
     }
-    public void PlayerDestroy(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-
-        Client.instance.posmanager.PlayerDestroy(id);
-    }
-    public void PlayerGenerate(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-        float x = proto.GetFloat(start, ref start);
-        float y = proto.GetFloat(start, ref start);
-
-        GenerateController.instance.CreatePlayer(x, y, id);
-    }
-
 
     // 改变属性
     public void ChangePosition(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
         int start = 0;
-        string name = proto.GetString(start, ref start);
+        proto.GetString(start, ref start);
         string id = proto.GetString(start, ref start);
         float x = proto.GetFloat(start, ref start);
         float y = proto.GetFloat(start, ref start);
@@ -122,76 +101,5 @@ public class HandleClientMsg{
 
         Client.instance.posmanager.ChangePosition(id, x, y, z);
     }
-    public void ChangeMassLevel(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-        int masslevel = proto.GetInt(start, ref start);
-
-        Client.instance.posmanager.ChangeMassLevel(id, masslevel);
-    }
-    public void ChangeSpeedLevel(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-        int speedlevel = proto.GetInt(start, ref start);
-
-        Client.instance.posmanager.ChangeSpeed(id, speedlevel);
-    }
-    public void ChangeMass(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-        float mass = proto.GetFloat(start, ref start);
-
-        Client.instance.posmanager.ChangeMass(id, mass);
-    }
-    public void ChangeBrake(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-        float brake = proto.GetFloat(start, ref start);
-
-        Client.instance.posmanager.ChangeSpeed(id, brake);
-    }
-    public void ChangeSpeed(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-        float speed = proto.GetFloat(start, ref start);
-
-        Client.instance.posmanager.ChangeSpeed(id, speed);
-    }
-    public void ChangeHealth(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-        float health = proto.GetFloat(start, ref start);
-
-        Client.instance.posmanager.ChangeHealth(id, health);
-    }
-    public void ChangeStatus(ProtocolBase protoBase)
-    {
-        ProtocolBytes proto = (ProtocolBytes)protoBase;
-        int start = 0;
-        string name = proto.GetString(start, ref start);
-        string id = proto.GetString(start, ref start);
-        int status = proto.GetInt(start, ref start);
-
-        Client.instance.posmanager.ChangeStatus(id, status);
-    }
-
 
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class RewardUIController : MonoBehaviour {
     public Sprite[] sprites;
@@ -50,6 +51,6 @@ public class RewardUIController : MonoBehaviour {
 
     public void EnterNetStart()
     {
-        Application.LoadLevel("NetStart");
+        SceneManager.LoadScene("NetStart");
     }
 }

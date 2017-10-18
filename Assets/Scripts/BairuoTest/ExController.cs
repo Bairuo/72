@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExController : MonoBehaviour {
+public class ExController : MonoBehaviour
+{
     NetObject NetObject;
     public float Health = 10;
     public int Damage = 10;
     float lastTime = 0;
-    public bool Test;
-
-	// Use this for initialization
+    
+    
 	void Start () {
         NetObject = GetComponent<NetObject>();
 
@@ -19,8 +19,6 @@ public class ExController : MonoBehaviour {
 
 	}
 
-    // Update is called once per frame
-    int i = 0;
     void Update()
     {
         if (Time.time - lastTime > 0.65f)
@@ -60,7 +58,7 @@ public class ExController : MonoBehaviour {
         int start = 0;
 
         // 获取（去掉）协议名
-        string name = proto.GetString(start, ref start);
+        proto.GetString(start, ref start);
 
         // 自定义的顺序和类型
         Damage = proto.GetInt(start, ref start);

@@ -12,10 +12,7 @@ public class Room{
     public int prepare = 0;
     public bool isFull = false;
     public bool isUse = false;
-
-    enum STATE { Level, Curtain, Fight, Pause };
-    STATE state = STATE.Level;
-
+    
     public void AddPlayer(Conn conn){
         if (num == 0)
         {
@@ -111,6 +108,5 @@ public class Room{
         Owner = -1;
         isFull = false;
         isUse = false;
-        state = STATE.Level;
     }
 }

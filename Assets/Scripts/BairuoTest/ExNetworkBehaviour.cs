@@ -18,9 +18,13 @@ public class ExNetworkBehaviour : MonoBehaviour
         if(initialID != null && initialID != "") netObject.NetID = initialID.ToString();
     }
     
-    protected void Start()
+    protected virtual void Start()
     {    
         Debug.LogFormat("ExNetworkBehaviour execute Start\nwith object {0} get netID {1}.", this.gameObject.name, netObject.NetID);
+        
+        /// This protocol is to destroy the object in *clients*.
+        /// The Destroy() *should* be called at the server.
+        AddProtocol("DefaultDestroying", DestroyingSend, null, null, DestroyingReceive);
         
         prepared = true;
     }
@@ -123,13 +127,6 @@ public class ExNetworkBehaviour : MonoBehaviour
         }
         
         netObject.Send(proto);
-    }
-    
-    public void AddProtocol(
-        ServerSender serverSender = null, ClientSender clientSender = null,
-        ServerReceiver serverReceiver = null, ClientReceiver clientReceiver = null)
-    {
-        AddProtocol("DEFAULT", serverSender, clientSender, serverReceiver, clientReceiver);
     }
     
     public void AddProtocol(
@@ -243,4 +240,21 @@ public class ExNetworkBehaviour : MonoBehaviour
         }
     }
     
+    
+    protected virtual object[] DestroyingSend()
+    {
+        return new object[0];
+    }
+    
+    protected virtual void DestroyingReceive(object[] info)
+    {
+        Destroy(this.gameObject);
+    }
+    
+
+    protected virtual void OnDestroy()
+    {
+        if(Client.IsRoomServer()) Send("DefaultDestroying");
+        netObject.SelfRemove();
+    }
 }

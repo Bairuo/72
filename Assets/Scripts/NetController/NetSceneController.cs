@@ -74,8 +74,8 @@ public class NetSceneController : MonoBehaviour {
             return;
         }
 
-        ServerNet server = new ServerNet();
-        Client client = new Client();
+        new ServerNet(); // Will register in constructor.
+        new Client(); // Will register in constructor.
 
         ServerNet.instance.Start(Network.player.ipAddress, port);
         Client.instance.Connect(Network.player.ipAddress, port);

@@ -16,6 +16,8 @@ public class Controller : ExLocalAttachment
     // Controller will not reply for joystick movement which locations are less than this number.
     public float controlLimit;
     
+    public Vector2 joystickPosition;
+    
     protected override void Begin(GameObject x)
     {
         if(localJoyStick == null) localJoyStick = GameObject.Find("JoyStick").GetComponent<JoyStick>();
@@ -38,8 +40,11 @@ public class Controller : ExLocalAttachment
     void FixedUpdate()
     {
         if(!attachmentInited) return;
-        // This filed requires synchronization from clients.
-        DirectionControl(localJoyStick.location);
+        
+        
+        // This filed requires synchronization from server.
+        if(Client.IsRoomServer()) joystickPosition = localJoyStick.location;
+        DirectionControl(joystickPosition);
     }
     
     void DirectionControl(Vector2 targetDirection)

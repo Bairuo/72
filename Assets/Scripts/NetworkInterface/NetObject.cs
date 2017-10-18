@@ -52,7 +52,7 @@ public class NetObject
     public void CallNetObject(ProtocolBase protocol)
     {
         ProtocolBytes proto = (ProtocolBytes)protocol;
-        string name = proto.GetName();
+        proto.GetName();
     }
 
     public void VarRegister(string id, Synable a)
@@ -187,6 +187,13 @@ public class NetObject
             if (OnceDict[name] == null)
                 OnceDict.Remove(name);
         }
+    }
+    
+    // Remove the rigistration.
+    // Should be called by OnDestroy.
+    public void SelfRemove()
+    {
+        SynSystem.Remove(NetID);
     }
 }
 

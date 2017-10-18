@@ -2,9 +2,7 @@
 using UnityEngine;
 
 public class NetUnitData{
-    //对于玩家来说id是玩家在房间内的id
-    //对于其它物体来说id是创建端的InstanceID
-    string id;
+    
     public Vector3 fpos;
     public Vector3 lpos;
     float lastRecvTime = float.MinValue;
@@ -27,7 +25,6 @@ public class NetUnitData{
 
     public NetUnitData(string _id, GameObject obj)
     {
-        id = _id;
         float x = obj.gameObject.transform.position.x;
         float y = obj.gameObject.transform.position.y;
         float z = obj.gameObject.transform.position.z;
@@ -38,7 +35,7 @@ public class NetUnitData{
         {
             if (Client.instance.playerid != "0")
             {
-                Body r = obj.GetComponent<Body>();
+                // Body r = obj.GetComponent<Body>();
                 //r.constraints = RigidbodyConstraints2D.FreezeAll;
             }
 
@@ -49,7 +46,7 @@ public class NetUnitData{
             //if (id != Client.instance.playerid)
             if (Client.instance.playerid != "0")
             {
-                Body r = obj.GetComponent<Body>();
+                // Body r = obj.GetComponent<Body>();
                 //r.constraints = RigidbodyConstraints2D.FreezeAll;
             }
         }

@@ -118,7 +118,7 @@ public class ServerNet
         IPAddress ipAdr = IPAddress.Parse(host);
         IPEndPoint ipEp = new IPEndPoint(ipAdr, port);
 
-        IPEndPoint UDPipEp = new IPEndPoint(IPAddress.Any, port - 1);
+        // new IPEndPoint(IPAddress.Any, port - 1);
         
         try
         {
@@ -250,10 +250,7 @@ public class ServerNet
                 SendSuccess(conn);
             }
         }
-        catch (Exception e)
-        {
-
-        }
+        catch (Exception) {  }
     }
     private void ReceiveCb(IAsyncResult ar)
     {
@@ -274,10 +271,7 @@ public class ServerNet
 
                 conn.socket.BeginReceive(conn.readBuff, conn.buffCount, conn.BuffRemain(), SocketFlags.None, ReceiveCb, conn);
             }
-            catch (Exception e)
-            {
-
-            }
+            catch (Exception) {  }
         }
 
     }
@@ -379,10 +373,7 @@ public class ServerNet
         {
             conn.socket.BeginSend(sendbuff, 0, sendbuff.Length, SocketFlags.None, null, null);
         }
-        catch(Exception e)
-        {
-
-        }
+        catch(Exception) {  }
     }
     public void Broadcast(ProtocolBase protocol)
     {
@@ -480,7 +471,7 @@ public class ServerNet
 
     public string GetlocalIp()
     {
-        IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
+        IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
         IPAddress ipAddress = ipHostInfo.AddressList[0];
         string ipStr = ipAddress.ToString();
         return ipStr;

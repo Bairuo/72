@@ -59,7 +59,7 @@ public class Unit : MonoBehaviour
     public Modifier sideDragModifier { get{ return body.sideDragModifier; } }
     public float sideDrag { get{ return body.sideDrag; } }
     
-    void Start()
+    protected virtual void Start()
     {
         if(body == null) body = this.gameObject.GetComponent<Body>();
         if(body == null) 
@@ -70,6 +70,13 @@ public class Unit : MonoBehaviour
         }
         
         body.collisionCallbacks += OnCollision;
+        
+        Client.instance.posmanager.PlayerRegister(this.gameObject);
+    }
+    
+    protected virtual void OnDestroy()
+    {
+        // [!] TODO.
     }
     
     void OnCollision(Body other, Vector2 impulse)

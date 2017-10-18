@@ -63,6 +63,7 @@ public class ExGlobalController : ExNetworkBehaviour
             );
         }
         
+        
         Client.instance.Update();
 	}
     

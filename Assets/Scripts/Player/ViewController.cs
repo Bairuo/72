@@ -24,7 +24,7 @@ public class ViewController : ExLocalAttachment
     [SerializeField] Vector2 targetPos;
     void FixedUpdate()
     {
-        if(!attachmentInited) return;
+        if(!attachment) return;
         
         Vector2 curpos = attachment.transform.position;
         Quaternion currot = attachment.transform.rotation;

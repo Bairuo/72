@@ -198,7 +198,7 @@ public class Client
             
             socket.BeginReceive(readBuff, buffCount, BUFFER_SIZE - buffCount, SocketFlags.None, ReceiveCb, readBuff);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             //socket.Close();
             return;

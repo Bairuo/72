@@ -46,7 +46,7 @@ public class ItemTagger : MonoBehaviour
 	void SetAlpha(SpriteRenderer rd, float v)
 	{
 		Color c = rd.color;
-		rd.color = new Color(c.r, c.g, c.b, v);
+		rd.color = new Color(c.r, c.g, c.b, Mathf.Min(mxalpha, v));
 	}
 	
 }

@@ -14,7 +14,7 @@ public class PlayerAudioController : MonoBehaviour
 		{
 			PlayPortalAudio();
 		}
-		else if(col.gameObject.GetComponent<PlayerController>() != null)
+		else if(col.gameObject.GetComponent<Unit>() != null)
 		{
 			PlayCollisionAudio();
 		}
@@ -26,11 +26,11 @@ public class PlayerAudioController : MonoBehaviour
 	
 	void OnColliderEnter2D(Collision2D col)
 	{
-		if(col.gameObject.GetComponent<PortalController>() != null)
+		if(col.gameObject.GetComponent<Unit>() != null)
 		{
 			PlayPortalAudio();
 		}
-		else if(col.gameObject.GetComponent<PlayerController>() != null)
+		else if(col.gameObject.GetComponent<Unit>() != null)
 		{
 			PlayCollisionAudio();
 		}

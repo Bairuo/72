@@ -34,16 +34,14 @@ public class SynSystem
         ProtocolBytes proto = (ProtocolBytes)protocol;
         int start = 0;
 
-        string name = proto.GetString(start, ref start);
+        proto.GetString(start, ref start);
         int n = proto.GetInt(start, ref start);
-        string id = proto.GetString(start, ref start);
+        proto.GetString(start, ref start);
 
-        ProtocolBytes restProto = proto.GetRestProtocol(start);
+        proto.GetRestProtocol(start);
 
         while (n > 0)
         {
-            
-
             n--;
         }
 
@@ -56,7 +54,7 @@ public class SynSystem
         ProtocolBytes proto = (ProtocolBytes)protocol;
         int start = 0;
 
-        string name = proto.GetString(start, ref start);
+        proto.GetString(start, ref start);
         string id = proto.GetString(start, ref start);
 
         ProtocolBytes objProtocol = proto.GetRestProtocol(start);
@@ -87,5 +85,10 @@ public class SynSystem
     public static void Register(string id, NetObject obj)
     {
         lock (NetObjects) NetObjects.Add(id, obj);
+    }
+    
+    public static void Remove(string id)
+    {
+        lock (NetObjects) NetObjects.Remove(id);
     }
 }

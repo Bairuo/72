@@ -3,7 +3,6 @@ using System.Collections;
 
 public class CharactAttribute
 {
-    string id;
     //Remote Creat infomation
     public string prefabname;
     public float x;
@@ -105,7 +104,7 @@ public class CharactAttribute
     {
         ProtocolBytes proto = new ProtocolBytes();
         proto.AddString(protoName);
-        proto.AddString(id); //如果是玩家，id是房间内id，否则是unity创建id
+        // proto.AddString(id); //如果是玩家，id是房间内id，否则是unity创建id
 
         proto.AddString(prefabname);
         proto.AddFloat(x);
