@@ -13,6 +13,8 @@ public class ExNetworkBehaviour : MonoBehaviour
     
     public bool prepared = false;
     
+    static Dictionary<string, ExNetworkBehaviour> networkScripts = new Dictionary<string, ExNetworkBehaviour>();
+    
     protected virtual void Awake()
     {
         if(initialID != null && initialID != "") netObject.NetID = initialID.ToString();
@@ -26,6 +28,7 @@ public class ExNetworkBehaviour : MonoBehaviour
         /// The Destroy() *should* be called at the server.
         AddProtocol("DefaultDestroying", DestroyingSend, null, null, DestroyingReceive);
         
+        networkScripts.Add(netObject.NetID, this);
         prepared = true;
     }
     
@@ -62,6 +65,29 @@ public class ExNetworkBehaviour : MonoBehaviour
         public override string ToString()
         {
             return "" + protocolName + " | " + serverReceiver + " | " + clientReceiver + " | " + serverSender + " | " + clientSender;
+        }
+    }
+    
+    
+    // ======================================================================
+    //                             Send Section
+    // ======================================================================
+    
+    public void Send(string protoName)
+    {
+        bool invoked = false;
+        foreach(var i in protocols)
+        {
+            if(i.Key == protoName)
+            {
+                if(Client.IsRoomServer()) ProtoSend(protoName, i.Value.serverSender());
+                else ProtoSend(protoName, i.Value.clientSender());
+                invoked = true;
+            }
+        }
+        if(!invoked)
+        {
+            Debug.LogError("Protocol not found! " + protoName + " in " + this.gameObject.name);
         }
     }
     
@@ -129,43 +155,9 @@ public class ExNetworkBehaviour : MonoBehaviour
         netObject.Send(proto);
     }
     
-    public void AddProtocol(
-        string name,
-        ServerSender toClient = null, ClientSender toServer = null,
-        ServerReceiver serverReceiver = null, ClientReceiver clientReceiver = null,
-        params object[] tp)
-    {
-        var types = new Type[tp.Length];
-        for(int i=0; i<types.Length; i++)
-        {
-            Type tpc;
-            
-            if(tp[i] is Type)
-            {
-                tpc = tp[i] as Type;
-            }
-            else if(tp[i].GetType() == typeof(string) ||
-                tp[i].GetType() == typeof(int) ||
-                tp[i].GetType() == typeof(bool) ||
-                tp[i].GetType() == typeof(float) ||
-                tp[i].GetType() == typeof(Vector2) ||
-                tp[i].GetType() == typeof(Vector3) ||
-                tp[i].GetType() == typeof(Quaternion) ||
-                tp[i].GetType() == typeof(Color))
-            {
-                tpc = tp[i].GetType();
-            }
-            else
-            {
-                Debug.LogError("Type not supported! " + "Adding protocol " + name);
-                return;
-            }
-            types[i] = tpc;
-        }
-        
-        protocols.Add(name, new ProtocolEntry(name, serverReceiver, clientReceiver, toClient, toServer, types));
-        netObject.AddListener(name, Callback);
-    }
+    // ======================================================================
+    //                           Callback Section
+    // ======================================================================
     
     public void Callback(ProtocolBase protocol)
     {
@@ -222,24 +214,61 @@ public class ExNetworkBehaviour : MonoBehaviour
         if(!Client.IsRoomServer() && Client.IsNamedServer(oppositePlayerID)) protocols[protoName].clientReceiver(info);
     }
     
-    public void Send(string protoName)
+    
+    // ======================================================================
+    //                        Custom Protocal Section
+    // ======================================================================
+    
+    public void AddProtocol(
+        string name,
+        ServerSender toClient = null, ClientSender toServer = null,
+        ServerReceiver serverReceiver = null, ClientReceiver clientReceiver = null,
+        params object[] tp)
     {
-        bool invoked = false;
-        foreach(var i in protocols)
+        var types = new Type[tp.Length];
+        for(int i=0; i<types.Length; i++)
         {
-            if(i.Key == protoName)
+            Type tpc;
+            
+            if(tp[i] is Type)
             {
-                if(Client.IsRoomServer()) ProtoSend(protoName, i.Value.serverSender());
-                else ProtoSend(protoName, i.Value.clientSender());
-                invoked = true;
+                tpc = tp[i] as Type;
             }
+            else if(tp[i].GetType() == typeof(string) ||
+                tp[i].GetType() == typeof(int) ||
+                tp[i].GetType() == typeof(bool) ||
+                tp[i].GetType() == typeof(float) ||
+                tp[i].GetType() == typeof(Vector2) ||
+                tp[i].GetType() == typeof(Vector3) ||
+                tp[i].GetType() == typeof(Quaternion) ||
+                tp[i].GetType() == typeof(Color))
+            {
+                tpc = tp[i].GetType();
+            }
+            else
+            {
+                Debug.LogError("Type not supported! " + "Adding protocol " + name);
+                return;
+            }
+            types[i] = tpc;
         }
-        if(!invoked)
-        {
-            Debug.LogError("Protocol not found! " + protoName + " in " + this.gameObject.name);
-        }
+        
+        protocols.Add(name, new ProtocolEntry(name, serverReceiver, clientReceiver, toClient, toServer, types));
+        netObject.AddListener(name, Callback);
     }
     
+    // ======================================================================
+    //                        Tools Functions Section
+    // ======================================================================
+    
+    public static ExNetworkBehaviour GetNetworkBehaviour(string id)
+    {
+        return networkScripts[id];
+    }
+    
+    // ======================================================================
+    //                           Clean Up Section
+    // ======================================================================
     
     protected virtual object[] DestroyingSend()
     {
@@ -255,6 +284,7 @@ public class ExNetworkBehaviour : MonoBehaviour
     protected virtual void OnDestroy()
     {
         if(Client.IsRoomServer()) Send("DefaultDestroying");
+        networkScripts.Remove(netObject.NetID);
         netObject.SelfRemove();
     }
 }
