@@ -28,11 +28,10 @@ public class ExGameObjectCreator : ExNetworkBehaviour
     
     GameObject LocalCreateGameObject(GameObject prefab, Vector2 loc, float dir, string netid)
     {
-        Debug.LogError("I will create a thing...");
-        return null;
-        GameObject x = Instantiate(prefab, loc, Quaternion.Euler(0f, 0f, dir));
-        NetObject nx = x.GetComponent<NetObject>();
-        nx.ObjectRegister(netid);
+        Debug.LogErrorFormat("I will create a thing...\n Prefab {0} ID {1}", prefab, netid);
+        GameObject x = Instantiate(prefab, loc, Calc.GetQuaternion(dir));
+        ExNetworkBehaviour nx = x.GetComponent<ExNetworkBehaviour>();
+        nx.netObject.NetID = netid;
         return x;
     }
     

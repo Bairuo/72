@@ -3,7 +3,10 @@
 using UnityEngine;
 using System.Collections;
 
-public class Controller : MonoBehaviour
+
+/// [!]WARNING: Network integrated!
+/// Controller will find which Player Object belongs to this client/server.
+public class Controller : ExLocalAttachment
 {
     public JoyStick localJoyStick;
     public Body body;
@@ -13,8 +16,10 @@ public class Controller : MonoBehaviour
     // Controller will not reply for joystick movement which locations are less than this number.
     public float controlLimit;
     
-    void Start()
+    protected override void Begin(GameObject x)
     {
+        Debug.Log("Begin.");
+        
         if(localJoyStick == null) localJoyStick = GameObject.Find("JoyStick").GetComponent<JoyStick>();
         if(localJoyStick == null)
         {
@@ -23,19 +28,19 @@ public class Controller : MonoBehaviour
             return;
         }
         
-        body = this.gameObject.GetComponent<Body>();
+        body = x.GetComponent<Body>();
         if(body == null)
         {
             Debug.Log("WARNING: cannot find a body component for script Controller.");
             Destroy(this);
             return;
         }
-        
-        body.freezedRotation = true;
     }
+    
     
     void FixedUpdate()
     {
+        if(!attachmentInited) return;
         // This filed requires synchronization from clients.
         DirectionControl(localJoyStick.location);
     }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PhysWorld : MonoBehaviour
 {
-    /// Make the simulation step on anyway.
-    public bool forceApply;
+    public bool applyPhysStep;
+    public bool applyCollision;
     
     public int stepCount;
     
@@ -30,7 +30,7 @@ public class PhysWorld : MonoBehaviour
     
     void FixedUpdate()
     {
-        if(forceApply || Client.IsRoomServer())
+        if(applyPhysStep)
         {
             for(int i=0; i<stepCount; i++)
                 StepPhysicsWorld(Time.fixedDeltaTime / stepCount);
@@ -46,7 +46,7 @@ public class PhysWorld : MonoBehaviour
             // Fast exclusive.
             if(x.farDist + y.farDist >= Vector2.Distance(x.gameObject.transform.position, y.gameObject.transform.position))
             {
-                CollisionCall(x, y, timestep);
+                if(applyCollision) CollisionCall(x, y, timestep);
             }
         });
         

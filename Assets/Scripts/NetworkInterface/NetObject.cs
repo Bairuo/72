@@ -11,6 +11,7 @@ public class NetObject
     {
         get
         {
+            if(_NetID == null) Debug.LogError("You must assign a NetID.");
             return _NetID;
         }
         set

@@ -2,20 +2,27 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// Create as a single message receive unit.
+/// Use netObject.NetID to identify.
 public class ExNetworkBehaviour : MonoBehaviour
 {
-    public static int globalID = 0;
+    public string initialID;
     
     public NetObject netObject = new NetObject();
     
-    public ExNetworkBehaviour()
-    {
-        netObject.NetID = globalID++.ToString();
-    }
+    public bool prepared = false;
     
     protected virtual void Awake()
     {
-        Debug.LogErrorFormat("ExNetworkBehaviour with object {0} get netID {1}.", this.gameObject.name, netObject.NetID);
+        if(initialID != null && initialID != "") netObject.NetID = initialID.ToString();
+    }
+    
+    protected void Start()
+    {    
+        Debug.LogErrorFormat("ExNetworkBehaviour execute Start\nwith object {0} get netID {1}.", this.gameObject.name, netObject.NetID);
+        
+        prepared = true;
     }
     
     public delegate void ServerReceiver(params object[] info);

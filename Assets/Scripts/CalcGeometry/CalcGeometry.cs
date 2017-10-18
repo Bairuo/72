@@ -42,6 +42,9 @@ public class Calc
         return new Vector2(cos * v.x - sin * v.y, sin * v.x + cos * v.y);
     }
     
+    public static Vector2 Direction(float angle) { return ApplyRotationAngle(angle, Vector2.up); }
+    
+    public static Quaternion GetQuaternion(float angle) { return Quaternion.Euler(0f, 0f, angle * Mathf.Rad2Deg); }
     
     public static Quaternion quat90 = Quaternion.Euler(0f, 0f, 90f);
     public static Vector2 Rot90(Vector2 a) { return new Vector2(-a.y, a.x); }

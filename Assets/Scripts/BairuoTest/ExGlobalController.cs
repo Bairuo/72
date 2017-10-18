@@ -4,23 +4,18 @@ using UnityEngine;
 
 public class ExGlobalController : ExNetworkBehaviour
 {
-    bool prepared = false;
-    
     protected override void Awake()
     {
-        base.Awake();
         Client.instance.posmanager.Init(Client.instance.playerid);
-        
+        base.Awake();
         AddProtocol("CreatePlayerRequest", null, SendCreatePlayerRequest, ReceiveCreatePlayerRequest, null, typeof(string));
-        
-        prepared = true;
     }
 	
     bool playerInited = false;
     
     void Update()
     {
-        // Create the players at the beginning.
+        // ========================== Players creation =========================
         if(!playerInited)
         {
             if(Client.IsRoomServer())
@@ -28,9 +23,9 @@ public class ExGlobalController : ExNetworkBehaviour
                 Component.FindObjectOfType<ExGameObjectCreator>().GlobalGameObjectCreate(
                     "Player/XPlayer",
                     "Player-" + Client.instance.playerid,
-                    new Vector2(0f, 0f),
-                    0f,
-                    Client.instance.playerid);
+                    Util.RandPos(Vector2.zero, 12f),
+                    Util.RandAngle(),
+                    "Player-" + Client.instance.playerid);
             }
             else
             {
@@ -38,6 +33,21 @@ public class ExGlobalController : ExNetworkBehaviour
             }
             playerInited = true;
         }
+        
+        
+        // ========================== Local scene scripts =============================
+        PhysWorld pw = Component.FindObjectOfType<PhysWorld>();
+        if(Client.IsRoomServer())
+        {
+            pw.applyCollision = true;
+            pw.applyPhysStep = true;
+        }
+        else
+        {
+            pw.applyCollision = false;
+            pw.applyPhysStep = true;
+        }
+        
         
         Client.instance.Update();
 	}
@@ -63,8 +73,8 @@ public class ExGlobalController : ExNetworkBehaviour
         (Component.FindObjectOfType(typeof(ExGameObjectCreator)) as ExGameObjectCreator).GlobalGameObjectCreate(
             "Player/XPlayer",
             "Player-" + id,
-            new Vector2(0f, 0f),
-            0f,
-            id);
+            Util.RandPos(Vector2.zero, 12f),
+            Util.RandAngle(),
+            "Player-" + id);
     }
 }
