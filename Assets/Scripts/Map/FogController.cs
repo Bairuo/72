@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FogController : MonoBehaviour
+public class FogController : ExLocalAttachment
 {
 	public float outerRadius;
 	public float innerRadius;
@@ -16,9 +16,9 @@ public class FogController : MonoBehaviour
 	
 	public GameObject attachment;
 	
-	void Start()
+	protected override void Begin(GameObject x)
 	{
-		if(attachment == null) attachment = this.gameObject;
+		attachment = x;
 		rd = this.gameObject.GetComponent<SpriteRenderer>();
 		mat = rd.material;
 		begina = GetAlpha(rd);
@@ -29,9 +29,11 @@ public class FogController : MonoBehaviour
 		rec = t = time;
 	}
 	
-	void Update()
+	protected virtual void FixedUpdate()
 	{
-		t -= Time.deltaTime;
+		if(!attachmentInited) return;
+		
+		t -= Time.fixedDeltaTime;
 		
 		if(t <= 0f)
 		{

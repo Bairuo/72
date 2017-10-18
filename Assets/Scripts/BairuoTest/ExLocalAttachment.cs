@@ -17,15 +17,18 @@ public class ExLocalAttachment : MonoBehaviour
         // default do nothing...
     }
     
+    // "Player" as default.
+    protected virtual string attachmentTag{ get{ return "Player"; } }
+    
     protected virtual void Update()
     {
         if(!_attachmentInited)
         {
-            GameObject[] x = GameObject.FindGameObjectsWithTag("Player");
+            GameObject[] x = GameObject.FindGameObjectsWithTag(attachmentTag);
             foreach(var i in x)
             {
                 ExNetworkBehaviour n = i.GetComponent<ExNetworkBehaviour>();
-                if(n == null || !n.prepared || n.netObject.NetID != "Player-" + Client.instance.playerid) continue;
+                if(n == null || !n.prepared || n.netObject.NetID != attachmentTag + "-" + Client.instance.playerid) continue;
                 Begin(i); // Will set the gameobject attach to this GamObject.
                 _attachmentInited = true;
             }

@@ -17,19 +17,10 @@ public class ExGameObjectCreator : ExNetworkBehaviour
         prepared = true;
     }
     
-    bool inited = false;
-    void Update()
-    {
-        if(!inited)
-        {
-            inited = true;
-        }
-    }
-    
     GameObject LocalCreateGameObject(GameObject prefab, Vector2 loc, float dir, string netid)
     {
-        Debug.LogErrorFormat("I will create a thing...\n Prefab {0} ID {1}", prefab, netid);
         GameObject x = Instantiate(prefab, loc, Calc.GetQuaternion(dir));
+        x.name = "[Net]" + netid;
         ExNetworkBehaviour nx = x.GetComponent<ExNetworkBehaviour>();
         nx.netObject.NetID = netid;
         return x;

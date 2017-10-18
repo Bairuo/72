@@ -13,6 +13,8 @@ public class ExGlobalController : ExNetworkBehaviour
 	
     bool playerInited = false;
     
+    bool bossCreated = false;
+    
     void Update()
     {
         // ========================== Players creation =========================
@@ -20,6 +22,7 @@ public class ExGlobalController : ExNetworkBehaviour
         {
             if(Client.IsRoomServer())
             {
+                // Create player object for server.
                 Component.FindObjectOfType<ExGameObjectCreator>().GlobalGameObjectCreate(
                     "Player/XPlayer",
                     "Player-" + Client.instance.playerid,
@@ -47,7 +50,18 @@ public class ExGlobalController : ExNetworkBehaviour
             pw.applyCollision = false;
             pw.applyPhysStep = true;
         }
-        
+        // =============================== Boss Create ================================
+        if(!bossCreated)
+        {
+            bossCreated = true;
+            Component.FindObjectOfType<ExGameObjectCreator>().GlobalGameObjectCreate(
+                "Map/boss",
+                "Boss",
+                Vector2.zero,
+                0f,
+                "Boss"
+            );
+        }
         
         Client.instance.Update();
 	}
@@ -60,17 +74,18 @@ public class ExGlobalController : ExNetworkBehaviour
     
     object[] SendCreatePlayerRequest()
     {
-        Debug.LogError("creation request send.");
+        Debug.Log("creation request send.");
         return new object[]{Client.instance.playerid};
     }
     
     void ReceiveCreatePlayerRequest(object[] info)
     {
-        Debug.LogError("creation request receive and applied.");
+        Debug.Log("creation request receive and applied.");
         
         string id = info[0] as string;
         
-        (Component.FindObjectOfType(typeof(ExGameObjectCreator)) as ExGameObjectCreator).GlobalGameObjectCreate(
+        /// Create player object for clients.
+        Component.FindObjectOfType<ExGameObjectCreator>().GlobalGameObjectCreate(
             "Player/XPlayer",
             "Player-" + id,
             Util.RandPos(Vector2.zero, 12f),

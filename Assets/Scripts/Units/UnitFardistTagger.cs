@@ -4,26 +4,15 @@ using UnityEngine;
 
 public class UnitFardistTagger : MonoBehaviour
 {
+	public string attachmentTagName;
 	public GameObject attachment;
 	
 	SpriteRenderer rd;
 	
-	void Start()
+	void Begin(GameObject x)
 	{
-		if(attachment == null)
-		{
-			Debug.LogError("A UnitFardisttagger must have an attachment.");
-			DestroyImmediate(this);
-			return;
-		}
-		
+		attachment = x;
 		rd = this.gameObject.GetComponent<SpriteRenderer>();
-		if(rd == null)
-		{
-			Debug.LogError("A UnitFardistTagger must have a SpriteRenderer mounted to the same objdect.");
-			DestroyImmediate(this);
-			return;
-		}
 	}
 
 	public float beginHidingRadius;
@@ -32,11 +21,14 @@ public class UnitFardistTagger : MonoBehaviour
 	
 	void FixedUpdate()
 	{
-		if(attachment == null)
+		if(!attachment)
 		{
-			Destroy(this);
-			return;
+			 GameObject x = GameObject.FindGameObjectWithTag(attachmentTagName);
+			 if(x != null) Begin(x);
 		}
+		
+		if(!attachment) return;
+		
 		Camera c = Camera.main;
 		Vector2 dir = (attachment.transform.position - c.gameObject.transform.position).normalized;
 		this.gameObject.transform.position = (Vector2)c.gameObject.transform.position + dir * radius;

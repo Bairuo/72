@@ -6,27 +6,16 @@ using UnityEngine;
 /// Mounted on a camera.
 /// Set the attachment gameobject to follow.
 /// And track the speed.
-public class ViewController : MonoBehaviour
+public class ViewController : ExLocalAttachment
 {
     public GameObject attachment;
     
     Body body;
     
-    void Start()
+    protected override void Begin(GameObject x)
     {
-        if(attachment == null)
-        {
-            Debug.Log("WARNING: a viewController should have an attachment object.");
-            Destroy(this);
-            return;
-        }
-        
-        if(body == null) body = attachment.GetComponent<Body>();
-        
-        if(this.gameObject.GetComponent<Camera>() == null)
-        {
-            Debug.Log("WARNING: a view controller should be mounted on a camera.");
-        }
+        attachment = x;
+        body = attachment.GetComponent<Body>();
     }
     
     public float maxSpeed;
@@ -35,6 +24,8 @@ public class ViewController : MonoBehaviour
     [SerializeField] Vector2 targetPos;
     void FixedUpdate()
     {
+        if(!attachmentInited) return;
+        
         Vector2 curpos = attachment.transform.position;
         Quaternion currot = attachment.transform.rotation;
         

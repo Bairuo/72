@@ -11,6 +11,8 @@ public class Boss : MonoBehaviour
     
     public float exitTime;
     
+    /// [!]Notice: this value may not be the same as it on the server.
+    ///     All damage receive operation is invalid if this is a client.
     private void OnCollisionStay2D(Collision2D x)
     {
         var unit = x.collider.gameObject.GetComponent<Unit>(); // get Unit component from *this* colllider.

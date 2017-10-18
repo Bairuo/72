@@ -20,7 +20,7 @@ public class ExNetworkBehaviour : MonoBehaviour
     
     protected void Start()
     {    
-        Debug.LogErrorFormat("ExNetworkBehaviour execute Start\nwith object {0} get netID {1}.", this.gameObject.name, netObject.NetID);
+        Debug.LogFormat("ExNetworkBehaviour execute Start\nwith object {0} get netID {1}.", this.gameObject.name, netObject.NetID);
         
         prepared = true;
     }

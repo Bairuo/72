@@ -18,8 +18,6 @@ public class Controller : ExLocalAttachment
     
     protected override void Begin(GameObject x)
     {
-        Debug.Log("Begin.");
-        
         if(localJoyStick == null) localJoyStick = GameObject.Find("JoyStick").GetComponent<JoyStick>();
         if(localJoyStick == null)
         {
@@ -36,7 +34,6 @@ public class Controller : ExLocalAttachment
             return;
         }
     }
-    
     
     void FixedUpdate()
     {
