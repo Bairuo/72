@@ -16,7 +16,11 @@ public class PosManager
     Dictionary<string, NetUnitData> playersinfo = new Dictionary<string, NetUnitData>();
     Dictionary<string, NetUnitData> blocksinfo = new Dictionary<string, NetUnitData>();
 
-    string playerID = "";
+    // Dictionary<string, float> LastReceiveTime = new Dictionary<string, float>();
+
+    GameObject player;
+
+    // string playerID = "";
     public bool isInit = false;
     public float lastSendTime = float.MinValue;
 
@@ -26,9 +30,6 @@ public class PosManager
         instance = this;
     }
     
-    /// You don't have to send a player.
-    /// objects which has an ExNetworkBehaviour is available.
-    /// ^ DK comment. ^
     public void PlayerRegister(GameObject player)
     {
         string netID = player.GetComponent<ExNetworkBehaviour>().netObject.NetID;
@@ -36,8 +37,6 @@ public class PosManager
 
         lock(players)players.Add(netID, player);
         lock(playersinfo)playersinfo.Add(netID, playerinfo);
-        
-        Debug.Log("Register synchronization: " + player.name);
     }
     public void PlayerLogoff(string netID)
     {
@@ -48,6 +47,7 @@ public class PosManager
     {
         Client.instance.DelListener("UpdateUnitInfo", UpdateUnitInfo);
         Client.instance.DelListener("U", UpdateUnitInfo);   // UDP位置同步
+        //Client.instance.DelListener("C", PlayerClick);      // UDP玩家点击
         Client.instance.DelListener("SafyAreaInfo", SafyAreaInfo);
         Client.instance.DelListener("TaggerGenerate", TaggerGenerate);
         Client.instance.DelListener("PropGenerate", PropGenerate);
@@ -64,12 +64,11 @@ public class PosManager
         if (isInit) return;
         isInit = true;
 
-        playerID = id;
+        // playerID = id;
 
         // 原应将SynSystem设计为静态构造
         if (!SynSystem.IsUse) new SynSystem();
-
-
+        
         // 重要协议注册， 位置同步，玩家点击操作，安全区信息，物体创建
         Client.instance.AddListener("UpdateUnitInfo", UpdateUnitInfo);
         Client.instance.AddListener("U", UpdateUnitInfo);
@@ -77,27 +76,33 @@ public class PosManager
         Client.instance.AddListener("TaggerGenerate", TaggerGenerate);
         Client.instance.AddListener("PropGenerate", PropGenerate);
     }
-    
+
     public void SendPos()
     {
-        if (playerID != "0") return;
-        
+        if (!Client.IsRoomServer()) return;
+
         foreach (var item in players)
         {
             if (item.Value != null && item.Value.activeInHierarchy == true)
             {
                 int DataID = playersinfo[item.Key].GetDataID();
+                //ProtocolBytes unitproto = playersinfo[item.Key].GetUnitData(DataID, "UpdateUnitInfo", item.Key, item.Value.transform.position);
                 ProtocolBytes UDPunitproto = playersinfo[item.Key].GetUDPUnitData(DataID, "U", item.Key, item.Value.transform.position);
+
+                //unitproto.AddFloat(item.Value.GetComponent<Body>().velocity.x);
+                //unitproto.AddFloat(item.Value.GetComponent<Body>().velocity.y);
                 
+
                 UDPunitproto.AddFloat(item.Value.GetComponent<Body>().velocity.x);
                 UDPunitproto.AddFloat(item.Value.GetComponent<Body>().velocity.y);
-                UDPunitproto.AddFloat(Calc.RotationAngleZ(item.Value.gameObject.transform.rotation));
-                
+
+                //Client.instance.Send(unitproto);
                 Client.instance.UDPSend(UDPunitproto);
             }
         }
-        
+
         if (SaftyArea.instance != null) Client.instance.SendSafyAreaInfo(SaftyArea.instance.radius);
+        
     }
 
     public void SafyAreaInfo(ProtocolBase protocol)
@@ -120,29 +125,32 @@ public class PosManager
         float x = proto.GetFloat(start, ref start);
         float y = proto.GetFloat(start, ref start);
         float z = proto.GetFloat(start, ref start);
-        
+
         float velocity_x = proto.GetFloat(start, ref start);
         float velocity_y = proto.GetFloat(start, ref start);
-        
-        float direction = proto.GetFloat(start, ref start);
-        
+
         Vector3 pos = new Vector3(x, y, z);
         Vector2 velocity = new Vector2(velocity_x, velocity_y);
-        
-        UpdateUnitInfo(id, DataID, pos, velocity, direction);
+
+        //Debug.Log(protoName + " DataID:" + DataID + " velocity " + velocity);
+
+        UpdateUnitInfo(id, DataID, pos, velocity);
         
     }
-    public void UpdateUnitInfo(string id, int DataID, Vector3 pos, Vector2 velocity, float direction)
+    public void UpdateUnitInfo(string id, int DataID, Vector3 pos, Vector2 velocity)
     {
+        //Debug.Log(id);
         if (blocksinfo.ContainsKey(id))
         {
             if (Sys.IsOrderRight(blocksinfo[id].LastReceiveID, DataID))
             {
                 blocksinfo[id].Update(pos);
                 blocksinfo[id].LastReceiveID = DataID;
+                //Debug.Log(blocksinfo[id].fpos);
             }
+
         }
-        
+
         if (playersinfo.ContainsKey(id) && players[id] != null)
         {
             if (Sys.IsOrderRight(playersinfo[id].LastReceiveID, DataID))
@@ -150,11 +158,14 @@ public class PosManager
                 playersinfo[id].Update(pos);
                 playersinfo[id].LastReceiveID = DataID;
                 players[id].GetComponent<Body>().velocity = velocity;
-                players[id].transform.rotation = Calc.GetQuaternion(direction);
+
+                //players[id].GetComponent<PlayerController>().fict_velocity = velocity;
+                //Debug.Log(playersinfo[id].fpos);
             }
+
         }
     }
-    
+
     public void TaggerGenerate(ProtocolBase protoBase)
     {
         ProtocolBytes proto = (ProtocolBytes)protoBase;
@@ -178,7 +189,7 @@ public class PosManager
 
         PropGenerate(tag, id, new UnityEngine.Vector2(x, y));
     }
-
+    
     Dictionary<string, ObjectGenerator> Generators = new Dictionary<string, ObjectGenerator>();
     public void TaggerGenerate(string tag, Vector2 loc)
     {
@@ -216,7 +227,6 @@ public class PosManager
             Generator.Generate(id, loc);
         }
     }
-    
     public void ChangePosition(string net_id, float x, float y, float z)
     {
         if (players.ContainsKey(net_id))
