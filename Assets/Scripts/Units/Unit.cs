@@ -71,7 +71,7 @@ public class Unit : MonoBehaviour
         
         body.collisionCallbacks += OnCollision;
         
-        Client.instance.posmanager.PlayerRegister(this.gameObject);
+        // Client.instance.posmanager.PlayerRegister(this.gameObject);
     }
     
     protected virtual void OnDestroy()

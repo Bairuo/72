@@ -35,7 +35,7 @@ public class Boss : MonoBehaviour
     [SerializeField] float t = 0f;
     void Start()
     {
-        Client.instance.posmanager.PlayerRegister(this.gameObject);
+        // Client.instance.posmanager.PlayerRegister(this.gameObject);
     }
     
     

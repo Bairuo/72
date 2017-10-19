@@ -44,6 +44,10 @@ public class Controller : ExLocalAttachment
         
         // This filed requires synchronization from server.
         if(Client.IsRoomServer()) joystickPosition = localJoyStick.location;
+        else
+        {
+            
+        }
         DirectionControl(joystickPosition);
     }
     

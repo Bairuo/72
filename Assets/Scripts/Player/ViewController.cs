@@ -6,17 +6,11 @@ using UnityEngine;
 /// Mounted on a camera.
 /// Set the attachment gameobject to follow.
 /// And track the speed.
-public class ViewController : ExLocalAttachment
+public class ViewController : MonoBehaviour
 {
     public GameObject attachment;
     
     Body body;
-    
-    protected override void Begin(GameObject x)
-    {
-        attachment = x;
-        body = attachment.GetComponent<Body>();
-    }
     
     public float maxSpeed;
     public float speedMult;
@@ -24,6 +18,17 @@ public class ViewController : ExLocalAttachment
     [SerializeField] Vector2 targetPos;
     void FixedUpdate()
     {
+        if(!attachment)
+        {
+            foreach(var i in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                ExNetworkBehaviour netx = i.GetComponent<ExNetworkBehaviour>();
+                if(netx == null || netx.netObject.NetID == null || !ExPlayerController.IsMyPlayer(netx)) continue;
+                attachment = netx.gameObject;
+                body = attachment.GetComponent<Body>();
+            }
+            
+        }
         if(!attachment) return;
         
         Vector2 curpos = attachment.transform.position;
@@ -46,5 +51,6 @@ public class ViewController : ExLocalAttachment
         float depth = this.gameObject.transform.position.z;
         this.gameObject.transform.position = new Vector3(position.x, position.y, depth);
     }
+    
     
 }

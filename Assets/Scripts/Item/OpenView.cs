@@ -12,9 +12,15 @@ public class OpenView : ExNetworkBehaviour
         var netx = x.gameObject.GetComponent<ExNetworkBehaviour>();
         if(netx == null) return;
         string id = netx.netObject.NetID;
-        if(id == null || id != "Player-" + Client.instance.playerid) return;
+        if(id == null || !ExPlayerController.IsPlayer(netx)) return;
         
-        Component.FindObjectOfType<FogController>().MakeVisible(time);
+        if(ExPlayerController.IsMyPlayer(netx))
+        {
+            Component.FindObjectOfType<FogController>().MakeVisible();
+        }
+        string pid = netx.netObject.NetID.Substring("Player-".Length).Substring(0, 1);
+        Component.FindObjectOfType<FogController>().SendMakeVisible(pid);
+        
         Destroy(this.gameObject);
     }
     

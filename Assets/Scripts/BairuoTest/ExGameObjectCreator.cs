@@ -25,8 +25,12 @@ public class ExGameObjectCreator : ExNetworkBehaviour
     {
         GameObject x = Instantiate(prefab, loc, Calc.GetQuaternion(dir));
         x.name = "[Net]" + netid;
-        ExNetworkBehaviour nx = x.GetComponent<ExNetworkBehaviour>();
-        nx.netObject.NetID = netid;
+        ExNetworkBehaviour[] nx = x.GetComponents<ExNetworkBehaviour>();
+        int i = 0;
+        foreach(var n in nx)
+        {
+            n.netObject.NetID = netid + (i += 1);
+        }
         return x;
     }
     

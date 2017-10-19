@@ -22,7 +22,7 @@ public class ExNetworkBehaviour : MonoBehaviour
     
     protected virtual void Start()
     {    
-        Debug.LogFormat("ExNetworkBehaviour execute Start\nwith object {0} get netID {1}.", this.gameObject.name, netObject.NetID);
+        Debug.LogFormat("ExNetworkBehaviour execute Start\nobject {0} component {1} netID {2}.", this.gameObject.name, this, netObject.NetID);
         
         /// This protocol is to destroy the object in *clients*.
         /// The Destroy() *should* be called at the server.
@@ -80,8 +80,14 @@ public class ExNetworkBehaviour : MonoBehaviour
         {
             if(i.Key == protoName)
             {
-                if(Client.IsRoomServer()) ProtoSend(protoName, i.Value.serverSender());
-                else ProtoSend(protoName, i.Value.clientSender());
+                if(Client.IsRoomServer())
+                {
+                    if(i.Value.serverSender != null) ProtoSend(protoName, i.Value.serverSender());
+                }
+                else
+                {
+                    if(i.Value.clientSender != null) ProtoSend(protoName, i.Value.clientSender());
+                }
                 invoked = true;
             }
         }
@@ -210,8 +216,14 @@ public class ExNetworkBehaviour : MonoBehaviour
             Debug.LogError("Unknown type in protocol data!");
             break;
         }
-        if(Client.IsRoomServer()) protocols[protoName].serverReceiver(info);
-        if(!Client.IsRoomServer() && Client.IsNamedServer(oppositePlayerID)) protocols[protoName].clientReceiver(info);
+        if(Client.IsRoomServer())
+        {
+            protocols[protoName].serverReceiver(info);
+        }
+        if(!Client.IsRoomServer() && Client.IsNamedServer(oppositePlayerID))
+        {
+            protocols[protoName].clientReceiver(info);
+        }
     }
     
     

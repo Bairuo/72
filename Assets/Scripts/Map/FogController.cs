@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FogController : ExLocalAttachment
+public class FogController : ExNetworkBehaviour
 {
+	public float visiableTime;
+	
 	public float outerRadius;
 	public float innerRadius;
 	
@@ -16,22 +18,35 @@ public class FogController : ExLocalAttachment
 	
 	public GameObject attachment;
 	
-	protected override void Begin(GameObject x)
+	protected override void Start()
 	{
-		attachment = x;
-		rd = this.gameObject.GetComponent<SpriteRenderer>();
-		mat = rd.material;
-		begina = GetAlpha(rd);
+		base.Start();
+		
+		AddProtocol("OpenView", OpenViewMessage, null, OpenViewReceive, OpenViewReceive, typeof(string));
 	}
 	
-	public void MakeVisible(float time)
+	public void MakeVisible()
 	{
-		rec = t = time;
+		rec = t = visiableTime;
 	}
 	
 	protected virtual void FixedUpdate()
 	{
-		if(attachment == null) return;
+		if(!attachment)
+		{
+			var x = GameObject.FindGameObjectsWithTag("Player");
+			foreach(var i in x)
+			{
+				if(ExPlayerController.IsMyPlayer(i.GetComponent<ExNetworkBehaviour>())) attachment = i;
+			}
+			if(attachment)
+			{
+				rd = this.gameObject.GetComponent<SpriteRenderer>();
+				mat = rd.material;
+				begina = GetAlpha(rd);
+			}
+		}
+		if(!attachment) return;
 		
 		t -= Time.fixedDeltaTime;
 		
@@ -71,4 +86,23 @@ public class FogController : ExLocalAttachment
 		rd.color = new Color(c.r, c.g, c.b, v);
 	}
 	
+	public void SendMakeVisible(string id)
+	{
+		tempMessage = id;
+		Send("OpenView");
+	}
+	
+	string tempMessage;
+	object[] OpenViewMessage()
+	{
+		return new object[]{tempMessage};
+	}
+	void OpenViewReceive(object[] info)
+	{
+		string id = info[0] as string;
+		if(Client.instance.playerid == id)
+		{
+			MakeVisible();
+		}
+	}
 }

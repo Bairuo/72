@@ -24,8 +24,7 @@ public class HPBar : MonoBehaviour
             {
                 foreach(GameObject obj in objs)
                 {
-                    Debug.Log(obj.name);
-                    if(obj.GetComponent<ExNetworkBehaviour>().netObject.NetID == "Player-" + Client.instance.playerid)
+                    if(obj.GetComponent<ExNetworkBehaviour>().netObject.NetID.StartsWith("Player-" + Client.instance.playerid))
                     {
                         host = obj.GetComponent<Unit>();
                         front.fillAmount = host.health / host.maxHealth;

@@ -28,7 +28,7 @@ public class ExLocalAttachment : MonoBehaviour
             foreach(var i in x)
             {
                 ExNetworkBehaviour n = i.GetComponent<ExNetworkBehaviour>();
-                if(n == null || !n.prepared || n.netObject.NetID != attachmentTag + "-" + Client.instance.playerid) continue;
+                if(n == null || !n.prepared || !ExPlayerController.IsMyPlayer(n)) continue;
                 Begin(i); // Will set the gameobject attach to this GamObject.
                 _attachmentInited = true;
             }
