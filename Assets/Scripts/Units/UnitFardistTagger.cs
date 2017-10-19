@@ -27,7 +27,11 @@ public class UnitFardistTagger : MonoBehaviour
 			 if(x != null) Begin(x);
 		}
 		
-		if(!attachment) return;
+		if(!attachment)
+		{
+			this.gameObject.transform.position = new Vector2(99999f, 99999f);
+			return;
+		}
 		
 		Camera c = Camera.main;
 		Vector2 dir = (attachment.transform.position - c.gameObject.transform.position).normalized;

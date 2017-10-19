@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OpenView : MonoBehaviour
+public class OpenView : ExNetworkBehaviour
 {
     public float time;
     void OnTriggerEnter2D(Collider2D x)
     {
         if(!Client.IsRoomServer()) return;
         
-        GameObject.Find("fog").GetComponent<FogController>().MakeVisible(time);
+        var netx = x.gameObject.GetComponent<ExNetworkBehaviour>();
+        if(netx == null) return;
+        string id = netx.netObject.NetID;
+        if(id == null || id != "Player-" + Client.instance.playerid) return;
+        
+        Component.FindObjectOfType<FogController>().MakeVisible(time);
+        Destroy(this.gameObject);
     }
     
 }
