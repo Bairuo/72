@@ -4,8 +4,12 @@ using System.Collections.Generic;
 
 public class ExGameObjectCreator : ExNetworkBehaviour
 {
+    public static ExGameObjectCreator instance;
+    
     protected override void Start()
     {
+        instance = this;
+        
         base.Start();
         
         // Protocol GameObjectCreate ...

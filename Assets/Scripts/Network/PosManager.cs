@@ -47,7 +47,6 @@ public class PosManager
     {
         Client.instance.DelListener("UpdateUnitInfo", UpdateUnitInfo);
         Client.instance.DelListener("U", UpdateUnitInfo);   // UDP位置同步
-        //Client.instance.DelListener("C", PlayerClick);      // UDP玩家点击
         Client.instance.DelListener("SafyAreaInfo", SafyAreaInfo);
         Client.instance.DelListener("TaggerGenerate", TaggerGenerate);
         Client.instance.DelListener("PropGenerate", PropGenerate);

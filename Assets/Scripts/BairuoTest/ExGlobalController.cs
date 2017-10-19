@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class ExGlobalController : ExNetworkBehaviour
 {
+    public static ExGlobalController instance;
+    
     protected override void Awake()
     {
+        instance = this;
         Client.instance.posmanager.Init(Client.instance.playerid);
         base.Awake();
         AddProtocol("CreatePlayerRequest", null, SendCreatePlayerRequest, ReceiveCreatePlayerRequest, null, typeof(string));
@@ -62,7 +65,6 @@ public class ExGlobalController : ExNetworkBehaviour
                 "Boss"
             );
         }
-        
         
         Client.instance.Update();
 	}

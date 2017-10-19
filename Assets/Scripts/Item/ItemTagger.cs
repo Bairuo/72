@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemTagger : MonoBehaviour
+public class ItemTagger : ExNetworkBehaviour
 {
+	public string nameItemToCreate;
+	public string pathItemToCreate;
+	
 	public float lifetime;
 	public float flashdelay;
 	
@@ -11,14 +14,14 @@ public class ItemTagger : MonoBehaviour
 	float mxalpha;
 	float t;
 	
-	void Start()
+	protected override void Start()
 	{
+		base.Start();
+		
 		rd = this.gameObject.GetComponent<SpriteRenderer>();
 		t = lifetime;
 		mxalpha = GetAlpha(rd);
-		
 	}
-	
 	
 	void Update()
 	{
@@ -35,6 +38,9 @@ public class ItemTagger : MonoBehaviour
 	
 	void Cancel()
 	{
+		ExGameObjectCreator.instance.GlobalGameObjectCreate(pathItemToCreate, nameItemToCreate,
+			this.gameObject.transform.position, Calc.RotationAngleZ(this.gameObject.transform.rotation),
+			System.Text.RegularExpressions.Regex.Replace(netObject.NetID, "Tagger", ""));
 		Destroy(this.gameObject);
 	}
 	

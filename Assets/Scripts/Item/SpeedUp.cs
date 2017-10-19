@@ -11,7 +11,7 @@ public class SpeedUp : ExNetworkBehaviour
         /// Try something interesting , may remove or re-design.
         if(collision.gameObject.tag == "Player")
         {
-            ExComponentGenerator.instance.CreateComponentAt("BufSpeedUp", collision.gameObject);
+            ExComponentGenerator.instance.CreateComponentAt("BuffSpeedUp", collision.gameObject);
             Destroy(this.gameObject);
         }
     }

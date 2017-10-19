@@ -27,7 +27,7 @@ public class NetUnitData
             //fang = nang;
         }
         delta = Time.time - lastRecvTime;
-
+        
         lpos = npos;
         lastRecvTime = Time.time;
     }
