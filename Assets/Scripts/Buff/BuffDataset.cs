@@ -12,4 +12,6 @@ public class BuffDataset : MonoBehaviour
     public float speedupThrustMult;
     
     public float invulnerableTime;
+    
+    public float defenceAdd;
 }

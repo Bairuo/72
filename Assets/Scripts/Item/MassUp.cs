@@ -11,6 +11,7 @@ public class MassUp : ExNetworkBehaviour
         /// Try something interesting , may remove or re-design.
         if(collision.gameObject.tag == "Player")
         {
+            if(collision.gameObject.GetComponents<BuffMassUp>().Length >= 4) return;
             ExComponentGenerator.instance.CreateComponentAt("BuffMassUp", collision.gameObject);
             Destroy(this.gameObject);
         }

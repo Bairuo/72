@@ -91,10 +91,18 @@ public class PosManager
                 //unitproto.AddFloat(item.Value.GetComponent<Body>().velocity.x);
                 //unitproto.AddFloat(item.Value.GetComponent<Body>().velocity.y);
                 
-
-                UDPunitproto.AddFloat(item.Value.GetComponent<Body>().velocity.x);
-                UDPunitproto.AddFloat(item.Value.GetComponent<Body>().velocity.y);
-
+                var body = item.Value.GetComponent<Body>();
+                if(body != null)
+                {
+                    UDPunitproto.AddFloat(body.velocity.x);
+                    UDPunitproto.AddFloat(body.velocity.y);
+                }
+                else
+                {
+                    UDPunitproto.AddFloat(0f);
+                    UDPunitproto.AddFloat(0f);
+                }
+                
                 //Client.instance.Send(unitproto);
                 Client.instance.UDPSend(UDPunitproto);
             }
@@ -156,7 +164,9 @@ public class PosManager
             {
                 playersinfo[id].Update(pos);
                 playersinfo[id].LastReceiveID = DataID;
-                players[id].GetComponent<Body>().velocity = velocity;
+                
+                if(players[id].GetComponent<Body>() != null)
+                    players[id].GetComponent<Body>().velocity = velocity;
 
                 //players[id].GetComponent<PlayerController>().fict_velocity = velocity;
                 //Debug.Log(playersinfo[id].fpos);
