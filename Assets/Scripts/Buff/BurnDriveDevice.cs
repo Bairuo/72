@@ -58,11 +58,14 @@ public class BurnDriveDevice : MonoBehaviour
     void BurnDriveApply()
     {
         var c = ExComponentGenerator.instance.CreateComponentAt("BuffBurndrive", this.gameObject, "Burndrive" + (cnt += 1)) as Burndrive;
-        c.massAdd = massAdd;
-        c.massMult = massMult;
-        c.thrustAdd = thrustAdd;
-        c.thrustMult = thrustMult;
-        c.time = applyTime;
+        if(c != null)
+        {
+            c.massAdd = massAdd;
+            c.massMult = massMult;
+            c.thrustAdd = thrustAdd;
+            c.thrustMult = thrustMult;
+            c.time = applyTime;
+        }
         
         t += cooldown;
     }

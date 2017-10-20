@@ -29,7 +29,7 @@ public class ExGameObjectCreator : ExNetworkBehaviour
         int i = 0;
         foreach(var n in nx)
         {
-            n.netObject.NetID = netid + (i += 1);
+            n.netObject.NetID = netid + "-" + (i += 1);
         }
         return x;
     }
