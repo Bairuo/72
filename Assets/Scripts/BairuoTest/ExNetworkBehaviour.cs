@@ -13,7 +13,7 @@ public class ExNetworkBehaviour : MonoBehaviour
     
     public bool prepared = false;
     
-    static Dictionary<string, ExNetworkBehaviour> networkScripts = new Dictionary<string, ExNetworkBehaviour>();
+    protected static Dictionary<string, ExNetworkBehaviour> networkScripts = new Dictionary<string, ExNetworkBehaviour>();
     
     protected virtual void Awake()
     {

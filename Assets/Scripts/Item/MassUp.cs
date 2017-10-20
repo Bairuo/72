@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MassUp : ExNetworkBehaviour
 {
+    static int cnt;
+    
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(!Client.IsRoomServer()) return;
@@ -12,7 +14,7 @@ public class MassUp : ExNetworkBehaviour
         if(collision.gameObject.tag == "Player")
         {
             if(collision.gameObject.GetComponents<BuffMassUp>().Length >= 4) return;
-            ExComponentGenerator.instance.CreateComponentAt("BuffMassUp", collision.gameObject);
+            ExComponentGenerator.instance.CreateComponentAt("BuffMassUp", collision.gameObject, "MassUp" + (cnt += 1));
             Destroy(this.gameObject);
         }
     }

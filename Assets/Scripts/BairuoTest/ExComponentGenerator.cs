@@ -21,6 +21,7 @@ public class ExComponentGenerator : ExNetworkBehaviour
             componentTypes = new Dictionary<string, Type>();
             componentTypes.Add("BuffMassUp", typeof(BuffMassUp));
             componentTypes.Add("BuffSpeedUp", typeof(BuffSpeedUp));
+            componentTypes.Add("BuffBurndrive", typeof(Burndrive));
         }
         else
         {
@@ -29,7 +30,7 @@ public class ExComponentGenerator : ExNetworkBehaviour
         }
         
         AddProtocol("AddComponent", ComponentSend, null, null, ComponentReceive,
-            typeof(string), typeof(string));
+            typeof(string), typeof(string), typeof(string));
     }
     
     // ==============================================================
@@ -47,44 +48,55 @@ public class ExComponentGenerator : ExNetworkBehaviour
     
     string curTypeName;
     string curNetID;
+    string curCompID;
     
-    public void CreateComponentAt(string typeName, GameObject o)
+    public ExNetworkBehaviour CreateComponentAt(string typeName, GameObject o, string compID)
     {
-        CreateComponentAt(typeName, o.GetComponent<ExNetworkBehaviour>().netObject.NetID);
+        return CreateComponentAt(typeName, o.GetComponent<ExNetworkBehaviour>().netObject.NetID, compID);
     }
     
-    public void CreateComponentAt(string typeName, string netid)
+    public ExNetworkBehaviour CreateComponentAt(string typeName, string netid, string compID)
     {
-        if(!Client.IsRoomServer()) return; // Only server can create things...
+        if(!Client.IsRoomServer()) return null; // Only server can create things...
         
         curTypeName = typeName;
         curNetID = netid;
+        curCompID = netid + "-" + compID;
         if(!componentTypes.ContainsKey(curTypeName))
         {
             Debug.LogError("Trying to create an unsupported component.");
-            return;
+            return null;
         }
         
-        /// Create component in clients.
+        // Create component in clients.
         Send("AddComponent");
         
-        /// Local create.
-        GetNetworkBehaviour(netid).gameObject.AddComponent(componentTypes[typeName]);
+        // Local create.
+        var x = GetNetworkBehaviour(netid).gameObject.AddComponent(componentTypes[typeName]) as ExNetworkBehaviour;
+        x.netObject.NetID = netid + "-" + compID;
+        
+        return x;
     }
     
     object[] ComponentSend()
     {
         return new object[]{
             curTypeName,
-            curNetID};
+            curNetID,
+            curCompID};
     }
     
     void ComponentReceive(object[] info)
     {
         string type = info[0] as string;
         string netid = info[1] as string;
+        string curid = info[2] as string;
         
-        GetNetworkBehaviour(netid).gameObject.AddComponent(componentTypes[type]);
+        // wiil run Awake().
+        var x = GetNetworkBehaviour(netid).gameObject.AddComponent(componentTypes[type]) as ExNetworkComponent;
+        
+        // Before the Start().
+        x.netObject.NetID = curid;
     }
     
 }

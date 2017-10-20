@@ -1,15 +1,8 @@
 using UnityEngine;
 
-public abstract class Buff : MonoBehaviour
+public abstract class Buff : ExNetworkComponent
 {
     float t;
-    
-    void Start()
-    {
-        // DO NOT use begin in this section
-        // since this script will execute immediately
-        // in AddComponent().
-    }
     
     bool applied = false;
     
@@ -39,9 +32,10 @@ public abstract class Buff : MonoBehaviour
         if(t > timeLimit) Destroy(this);
     }
     
-    void OnDestroy()
+    protected override void OnDestroy()
     {
         End();
+        base.OnDestroy();
     }
     
     /// this function will run if a dataset is found.

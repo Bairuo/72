@@ -6,7 +6,7 @@ public class ExNetworkMonitor : MonoBehaviour
     
     public string localClientID;
     
-    public string netID;
+    public string[] netID;
     public bool prepared;
     public string gameObjectName;
     
@@ -17,7 +17,9 @@ public class ExNetworkMonitor : MonoBehaviour
         
         if(target == null) return;
         
-        netID = target.netObject.NetID;
+        var x = target.GetComponents<ExNetworkBehaviour>();
+        netID = new string[x.Length];
+        for(int i=0; i<x.Length; i++) netID[i] = x[i].netObject.NetID;
         prepared = target.prepared;
         gameObjectName = target.gameObject.name;
     }

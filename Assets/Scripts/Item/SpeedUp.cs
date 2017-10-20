@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SpeedUp : ExNetworkBehaviour
 {
+    static int cnt;
+    
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(!Client.IsRoomServer()) return;
@@ -12,7 +14,7 @@ public class SpeedUp : ExNetworkBehaviour
         if(collision.gameObject.tag == "Player")
         {
             if(collision.gameObject.GetComponents<BuffSpeedUp>().Length >= 4) return;
-            ExComponentGenerator.instance.CreateComponentAt("BuffSpeedUp", collision.gameObject);
+            ExComponentGenerator.instance.CreateComponentAt("BuffSpeedUp", collision.gameObject, "SpeedUp" + (cnt += 1));
             Destroy(this.gameObject);
         }
     }

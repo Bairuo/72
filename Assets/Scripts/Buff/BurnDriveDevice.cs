@@ -6,6 +6,8 @@ using System.Collections;
 /// Provides a linked skill, provides a forward speed for a specific time.
 public class BurnDriveDevice : MonoBehaviour
 {
+    static int cnt;
+    
     public Body body;
     
     public float massAdd;
@@ -55,7 +57,7 @@ public class BurnDriveDevice : MonoBehaviour
     
     void BurnDriveApply()
     {
-        Burndrive c = this.gameObject.AddComponent<Burndrive>();
+        var c = ExComponentGenerator.instance.CreateComponentAt("BuffBurndrive", this.gameObject, "Burndrive" + (cnt += 1)) as Burndrive;
         c.massAdd = massAdd;
         c.massMult = massMult;
         c.thrustAdd = thrustAdd;
