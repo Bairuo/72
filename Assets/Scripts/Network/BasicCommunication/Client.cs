@@ -49,7 +49,7 @@ public class Client
     public PosManager posmanager = new PosManager();
     public string playerid;
     public string roomid = "未知";
-    public string questroom = "-1";
+    public string questroom = "-1"; // 需要使用枚举变量修改，-2是随机房间
     public int prepareNum = 0;
     public int roomnum = 0;
     public int conn_id = -1;
@@ -240,7 +240,7 @@ public class Client
         byte[] bytes = protocol.Encode();
         byte[] length = BitConverter.GetBytes(bytes.Length);
         byte[] sendbuff = length.Concat(bytes).ToArray();
-        IPEndPoint ip = new IPEndPoint(IPAddress.Parse(Host), 9990);
+        IPEndPoint ip = new IPEndPoint(IPAddress.Parse(Host), 9970);
         UDPsocket.SendTo(sendbuff, ip);
     }
     public void UDPSend(ProtocolBase protocol, IPEndPoint remote)

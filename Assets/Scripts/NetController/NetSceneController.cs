@@ -14,7 +14,7 @@ public class NetSceneController : MonoBehaviour {
     public GameObject pConnect;
     public GameObject pStartServer;
     bool isPrepare = false;
-    int port = 9990;
+    int port = 9970;
 
     public static NetSceneController instance;
 
@@ -74,13 +74,7 @@ public class NetSceneController : MonoBehaviour {
             return;
         }
 
-        new ServerNet(); // Will register in constructor.
-        new Client(); // Will register in constructor.
-
-        ServerNet.instance.Start(Network.player.ipAddress, port);
-        Client.instance.Connect(Network.player.ipAddress, port);
-
-        sInformation.text = "服务器IP： " + Network.player.ipAddress;
+        sInformation.text = "服务器IP： " + NetInteraction.StartLANServer();
     }
 
     public void SendPrepare()
