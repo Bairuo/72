@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class NetInteraction{
     const int port = 9970;
+    const string remoteIP = "119.23.52.136";
 
     static NetInteraction()
     {
@@ -26,14 +27,30 @@ public class NetInteraction{
 
     public static bool StartWANRoom()
     {
+        Client.instance.questroom = "-1";
+        return ConnectWAN();
+    }
+
+    public static bool ConnectWANRoom(string roomID)
+    {
+        Client.instance.questroom = roomID;
+        return ConnectWAN();
+    }
+
+    public static bool ConnectWANRadom()
+    {
+        Client.instance.questroom = "-2";
+        return ConnectWAN();
+    }
+
+    public static bool ConnectWAN()
+    {
         if (ServerNet.IsUse() || Client.IsUse())
         {
             return false;
         }
 
-        Client.instance.questroom = "-1";
-        return Client.instance.Connect("119.23.52.136", port);
-
+        return Client.instance.Connect(remoteIP, port);
     }
 
     public static bool ConnectLANServer(string ip, int port)
