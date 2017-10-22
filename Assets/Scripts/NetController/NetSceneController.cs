@@ -7,12 +7,14 @@ using UnityEngine.SceneManagement;
 
 public class NetSceneController : MonoBehaviour {
     public Text IPInput;
-    public Text ipInformation;
     public Text cInformation;
     public Text sInformation;
+    public Text singleWaitInfo;
     public GameObject pStart;
     public GameObject pConnect;
     public GameObject pStartServer;
+    public GameObject pSinglePlayer;
+    public GameObject mulityGroup;
     bool isPrepare = false;
     int port = 9970;
 
@@ -28,6 +30,7 @@ public class NetSceneController : MonoBehaviour {
         pStart.SetActive(true);
         pConnect.SetActive(false);
         pStartServer.SetActive(false);
+        mulityGroup.SetActive(false);
     }
 
     void Update()
@@ -36,13 +39,13 @@ public class NetSceneController : MonoBehaviour {
         {
             Client.instance.Update();
 
-            
+            // 代码待重构
             if (ServerNet.IsUse())
             {
                 if (Client.instance.roomnum == 0) sInformation.text = "创建服务器失败";
                 else
                 {
-                    sInformation.text = "服务器IP：" + Network.player.ipAddress + "\n" + "准备玩家：" + Client.instance.prepareNum + "/" + Client.instance.roomnum + " 全部准备或人数达到4时开始游戏！";
+                    sInformation.text = NetInteraction.GetServerMsg() + "\n" + "准备玩家：" + Client.instance.prepareNum + "/" + Client.instance.roomnum + " 全部准备或人数达到4时开始游戏！";
                 }
             }
             else
@@ -65,16 +68,6 @@ public class NetSceneController : MonoBehaviour {
     public void EnterGame()
     {
         SceneManager.LoadScene(gameSceneName[nextSceneID]);
-    }
-
-    public void StartServer()
-    {
-        if (ServerNet.IsUse() || Client.IsUse())
-        {
-            return;
-        }
-
-        sInformation.text = "服务器IP： " + NetInteraction.StartLANServer();
     }
 
     public void SendPrepare()
@@ -108,11 +101,32 @@ public class NetSceneController : MonoBehaviour {
             Client.instance.Close();
     }
 
-    public void OnStartClick()
+
+    public void PlayerWithFriends()
     {
+        mulityGroup.SetActive(true);
         pStart.SetActive(false);
-        pConnect.SetActive(true);
+
+        pConnect.SetActive(false);
         pStartServer.SetActive(false);
+    }
+
+    public void OnLANServerClick()
+    {
+        NetInteraction.StartLANServer();
+        pStart.SetActive(false);
+        pConnect.SetActive(false);
+        pStartServer.SetActive(true);
+        mulityGroup.SetActive(false);
+    }
+
+    public void OnWANServerClick()
+    {
+        NetInteraction.StartWANRoom();
+        pStart.SetActive(false);
+        pConnect.SetActive(false);
+        pStartServer.SetActive(true);
+        mulityGroup.SetActive(false);
     }
 
     // Find Bug
@@ -122,14 +136,16 @@ public class NetSceneController : MonoBehaviour {
         pStart.SetActive(true);
         pConnect.SetActive(false);
         pStartServer.SetActive(false);
+        mulityGroup.SetActive(false);
     }
 
-    public void OnStartServerClick()
-    {
-        StartServer();
-        pStart.SetActive(false);
-        pConnect.SetActive(false);
-        pStartServer.SetActive(true);
-    }
+    //public void OnStartServerClick()
+    //{
+    //    StartLANServer();
+    //    pStart.SetActive(false);
+    //    pConnect.SetActive(false);
+    //    pStartServer.SetActive(true);
+    //    mulityGroup.SetActive(false);
+    //}
 
 }

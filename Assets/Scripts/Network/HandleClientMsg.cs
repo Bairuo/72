@@ -46,7 +46,8 @@ public class HandleClientMsg{
         int roomid = protol.GetInt(start, ref start);
         int conn_id = protol.GetInt(start, ref start);
         Client.instance.playerid = id.ToString();
-        Client.instance.roomid = roomid.ToString();
+        Client.instance.
+            roomid = roomid.ToString();
         Client.instance.conn_id = conn_id;
 
         Client.instance.UDPConnect();
