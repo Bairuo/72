@@ -10,6 +10,7 @@ public class NetSceneController : MonoBehaviour {
     public Text cInformation;
     public Text sInformation;
     public Text singleWaitInfo;
+    public Text joinInfo;
     public GameObject pStart;
     public GameObject pConnect;
     public GameObject pStartServer;
@@ -17,6 +18,15 @@ public class NetSceneController : MonoBehaviour {
     public GameObject mulityGroup;
     bool isPrepare = false;
     int port = 9970;
+
+    enum PrepareMode
+    {
+        None,
+        LANJoin,
+        WANJoin
+    }
+
+    PrepareMode prepareMode = PrepareMode.None;
 
     public static NetSceneController instance;
 
@@ -35,21 +45,23 @@ public class NetSceneController : MonoBehaviour {
 
     void Update()
     {
+        // 代码可能得重构
         if (Client.IsUse())
         {
             Client.instance.Update();
 
-            // 代码待重构
-            if (ServerNet.IsUse())
+            
+            if (NetInteraction.IsStartServer() || NetInteraction.IsWANRandom())
             {
                 if (Client.instance.roomnum == 0) sInformation.text = "创建服务器失败";
                 else
                 {
-                    sInformation.text = NetInteraction.GetServerMsg() + "\n" + "准备玩家：" + Client.instance.prepareNum + "/" + Client.instance.roomnum + " 全部准备或人数达到4时开始游戏！";
+                    sInformation.text = NetInteraction.GetServerInfoMsg() + "\n" + "准备玩家：" + Client.instance.prepareNum + "/" + Client.instance.roomnum + " 全部准备或人数达到4时开始游戏！";
                 }
             }
             else
             {
+
                 if (Client.instance.roomnum == 0) cInformation.text = "连接服务器失败";
                 else if (Client.instance.roomnum == 1) cInformation.text = "连接服务器失败";
                 else
@@ -57,9 +69,8 @@ public class NetSceneController : MonoBehaviour {
                     cInformation.text = "准备玩家：" + Client.instance.prepareNum + "/" + Client.instance.roomnum + " 全部准备或人数达到4时开始游戏！";
                 }
             }
-            
-            
         }
+        joinInfo.text = GetConnectPromptMsg();
     }
     
     public string[] gameSceneName;
@@ -79,6 +90,21 @@ public class NetSceneController : MonoBehaviour {
         }
     }
 
+    string GetConnectPromptMsg()
+    {
+        switch (prepareMode)
+        {
+            case PrepareMode.None:
+                return "";
+            case PrepareMode.LANJoin:
+                return "请输入服务器IP";
+            case PrepareMode.WANJoin:
+                return "请输入房间号";
+            default:
+                return "";
+        }
+    }
+
     public void StartConnect()
     {
         if (ServerNet.IsUse() || Client.IsUse())
@@ -87,10 +113,10 @@ public class NetSceneController : MonoBehaviour {
             return;
         }
 
-        Client client = new Client();
-
-        client.Connect(IPInput.text, port);
-
+        if (prepareMode == PrepareMode.LANJoin)
+            NetInteraction.ConnectLANServer(IPInput.text, port);
+        else if (prepareMode == PrepareMode.WANJoin)
+            NetInteraction.ConnectWANRoom(IPInput.text);
     }
 
     public void DisConnect()
@@ -99,6 +125,34 @@ public class NetSceneController : MonoBehaviour {
             ServerNet.instance.Close();
         if (Client.IsUse())
             Client.instance.Close();
+    }
+
+    // 感觉这么多false，true很丑，以后又有多的面板怎么办，逻辑也很混乱——fyl去重构吧
+    public void OnJoinLANRoomClick()
+    {
+        prepareMode = PrepareMode.LANJoin;
+        pStart.SetActive(false);
+        pConnect.SetActive(true);
+        pStartServer.SetActive(false);
+        mulityGroup.SetActive(false);
+    }
+
+    public void OnJoinWANRoomClick()
+    {
+        prepareMode = PrepareMode.WANJoin;
+        pStart.SetActive(false);
+        pConnect.SetActive(true);
+        pStartServer.SetActive(false);
+        mulityGroup.SetActive(false);
+    }
+
+    public void OnWANRandomClick()
+    {
+        NetInteraction.ConnectWANRadom();
+        pStart.SetActive(false);
+        pConnect.SetActive(false);
+        pStartServer.SetActive(true);
+        mulityGroup.SetActive(false);
     }
 
 
@@ -110,6 +164,8 @@ public class NetSceneController : MonoBehaviour {
         pConnect.SetActive(false);
         pStartServer.SetActive(false);
     }
+
+
 
     public void OnLANServerClick()
     {
